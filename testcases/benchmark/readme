@@ -1,0 +1,48 @@
+## 已经加入
+1. lmbench
+2. unixbench
+3. memtester
+4. stressapptest
+5. stream
+6. hackbench
+7. kernbench
+
+## 无法加入
+1. iozone
+	需要修改grub指定2G内存，若所有测试均用2G内存，可以加入
+
+2. bonnie++
+	需要修改grub指定2G内存，若所有测试均用2G内存，可以加入
+
+3. glxgears
+	图形化测试，需要从init3切换到init5
+
+4. Heaven Benchmark
+	图形性能测试，需要手动点击
+
+5. LTP接口
+	可以加入
+
+6. LTP压力
+	可以加入
+
+7. netperf
+	需要在客户端执行client
+
+#8. kernbench
+#	可以加入
+
+#9. hackbench
+#	可以加入
+
+10. sysbench
+	需要提前配置数据库
+
+11. apachebench
+	需要提前配置加压网页
+
+12. SPECjvm2008
+	环境变量配置
+
+13. fio
+	可以加入

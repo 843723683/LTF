@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<TestGroup>
+	<TestCase>
+		<CaseName>unixbench</CaseName>
+		<CaseDir>benchmark</CaseDir>
+		<CaseScript>unixbench.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+	<TestCase>
+		<CaseName>lmbench</CaseName>
+		<CaseDir>benchmark</CaseDir>
+		<CaseScript>lmbench.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+	<TestCase>
+		<CaseName>memtester</CaseName>
+		<CaseDir>benchmark</CaseDir>
+		<CaseScript>memtester.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+	<TestCase>
+		<CaseName>stressapptest</CaseName>
+		<CaseDir>benchmark</CaseDir>
+		<CaseScript>stressapptest.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+	<TestCase>
+		<CaseName>stream</CaseName>
+		<CaseDir>benchmark</CaseDir>
+		<CaseScript>stream.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+	<TestCase>
+		<CaseName>hackbench</CaseName>
+		<CaseDir>benchmark</CaseDir>
+		<CaseScript>hackbench.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+	<TestCase>
+		<CaseName>kernbench</CaseName>
+		<CaseDir>benchmark</CaseDir>
+		<CaseScript>kernbench.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+</TestGroup>

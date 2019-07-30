@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<AutoTest>
+	<TestGroup>
+		<GroupName>benchmark</GroupName>
+		<GroupXMLName>benchmark.xml</GroupXMLName>
+		<GroupRun>True</GroupRun>
+	</TestGroup>
+</AutoTest>

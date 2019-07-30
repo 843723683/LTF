@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Benchmark>
+	<BenchmarkCase>
+		<CaseName>unixbench</CaseName>
+		<CaseDepend>gcc</CaseDepend>
+		<CasePkgName>UnixBench5.1.3.tgz</CasePkgName>
+		<CaseFileName>UnixBench</CaseFileName>
+	</BenchmarktCase>
+	<BenchmarkCase>
+		<CaseName>lmbench</CaseName>
+		<CaseDepend>gcc</CaseDepend>
+		<CasePkgName>lmbench3.tar.gz</CasePkgName>
+		<CaseFileName>lmbench3</CaseFileName>
+	</BenchmarktCase>
+	<BenchmarkCase>
+		<CaseName>memtester</CaseName>
+		<CaseDepend>gcc</CaseDepend>
+		<CasePkgName>memtester-4.3.0.tar.gz</CasePkgName>
+		<CaseFileName>memtester-4.3.0</CaseFileName>
+	</BenchmarktCase>
+	<BenchmarkCase>
+		<CaseName>stressapptest</CaseName>
+		<CaseDepend>gcc:gcc-c++</CaseDepend>
+		<CasePkgName>stressapptest_1.0.6.orig.tar.gz</CasePkgName>
+		<CaseFileName>stressapptest-1.0.6_autoconf</CaseFileName>
+	</BenchmarktCase>
+	<BenchmarkCase>
+		<CaseName>stream</CaseName>
+		<CaseDepend>gcc</CaseDepend>
+		<CasePkgName>stream.tar.gz</CasePkgName>
+		<CaseFileName>stream</CaseFileName>
+	</BenchmarktCase>
+	<BenchmarkCase>
+		<CaseName>hackbench</CaseName>
+		<CaseDepend>gcc</CaseDepend>
+		<CasePkgName>ltp-full-20190517.tar.bz2</CasePkgName>
+		<CaseFileName>ltp-full-20190517</CaseFileName>
+	</BenchmarktCase>
+	<BenchmarkCase>
+		<CaseName>kernbench</CaseName>
+		<CaseDepend>gcc</CaseDepend>
+		<CasePkgName>ltp-full-20190517.tar.bz2</CasePkgName>
+		<CaseFileName>ltp-full-20190517</CaseFileName>
+	</BenchmarktCase>
+</Benchmark>
