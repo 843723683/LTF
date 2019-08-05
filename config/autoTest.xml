@@ -4,6 +4,11 @@
 	<TestGroup>
 		<GroupName>benchmark</GroupName>
 		<GroupXMLName>benchmark.xml</GroupXMLName>
+		<GroupRun>F</GroupRun>
+	</TestGroup>
+	<TestGroup>
+		<GroupName>gjb</GroupName>
+		<GroupXMLName>gjb.xml</GroupXMLName>
 		<GroupRun>True</GroupRun>
 	</TestGroup>
 </AutoTest>

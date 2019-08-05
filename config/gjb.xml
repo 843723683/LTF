@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<TestGroup>
+	<TestCase>
+		<CaseName>baseCommand</CaseName>
+		<CaseDir>gjb</CaseDir>
+		<CaseScript>gb7717-base-command.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+	<TestCase>
+		<CaseName>expandCommand</CaseName>
+		<CaseDir>gjb</CaseDir>
+		<CaseScript>gb7717-expand-command.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+</TestGroup>

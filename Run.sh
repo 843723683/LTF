@@ -217,6 +217,7 @@ else
 			RunAllAutoTest
 			# 结果解析
 			RetBrkParse
+			exit 0
 			;;
 		r)
 			RunClean
