@@ -1,4 +1,5 @@
-# Automation-Test-Framework
+# Linux-Test-Framework
+
 Linux automated testing framework
 
 一. Running tests
