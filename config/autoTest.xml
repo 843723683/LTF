@@ -11,4 +11,14 @@
 		<GroupXMLName>gjb.xml</GroupXMLName>
 		<GroupRun>True</GroupRun>
 	</TestGroup>
+	<TestGroup>
+		<GroupName>commands</GroupName>
+		<GroupXMLName>commands-all.xml</GroupXMLName>
+		<GroupRun>True</GroupRun>
+	</TestGroup>
+	<TestGroup>
+		<GroupName>language</GroupName>
+		<GroupXMLName>language.xml</GroupXMLName>
+		<GroupRun>True</GroupRun>
+	</TestGroup>
 </AutoTest>
