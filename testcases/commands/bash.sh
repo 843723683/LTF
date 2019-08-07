@@ -1,6 +1,5 @@
 #!/bin/bash
 # Author: Lz <lz843723683@163.com>
-# Note: This was a known issue in CentOS 6.0
 
 echo "Running $0 -  check that bash version info is the same with upstream."
 

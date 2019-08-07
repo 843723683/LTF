@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<TestGroup>
+	<TestCase>
+		<CaseName>all</CaseName>
+		<CaseDir>commands</CaseDir>
+		<CaseScript>all</CaseScript>
+		<CaseRun>ALL</CaseRun>
+	</TestCase>
+</TestGroup>
