@@ -120,8 +120,15 @@ RunStartTest(){
 	local ret=0
 	if [ "${caseRun}" == "True" ];then
 		##Run test
-		Run "$caseName" "$caseDir" "$caseScript"
+		Run "`basename $caseDir`-$caseName" "$caseDir" "$caseScript"
 		ret=$?
+        elif [ "${caseRun}" == "ALL" ];then
+                local allCaseName=""
+                allCaseName=$(ls ${caseDir})
+                for i in ${allCaseName}
+                do
+                        Run "`basename $caseDir`-${i%%.sh}" "$caseDir" "$i"
+                done
 	else 
 		## XML 中caseRun 设置为 False
 
