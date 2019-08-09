@@ -2,7 +2,6 @@
 # Author : Lz <lz843723683@163.com>
 
 CMD="bzip2"
-
 #判断命令是否存在
 which ${CMD} >/dev/null 2>&1 
 [ $? -ne 0 ]&&{ echo "No command :${CMD}";exit 1; }
@@ -21,7 +20,7 @@ bzip2 $FILE
 rm -rf $FILE
 
 #run file through bzcat
-bzcat $FILE.bz2 | grep -q 'bzip2-test of single file'
+bzcat ${FILE}.bz2 | grep -q 'bzip2-test of single file'
 if [ $? == 1 ]
   then
   echo 'bzcat failed'
