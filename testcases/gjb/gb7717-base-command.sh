@@ -1,6 +1,14 @@
 #!/bin/bash
 
-readonly COMMANDS="ls m4 mailx make man md5sum mkdir mkfifo mknod \
+readonly COMMANDS="ar at awk basename batch bc cat cd  chfn chgrp \
+			chmod chown chsh cksum cmp col comm cp cpio crontab \
+			csplit cut date dd df diff dirname dmesg du echo \
+			ed egrep env expand expr false fgrep file find fold \
+			fuser gencat getconf gettext grep groupadd groupdel \
+			groupmod groups gzip gunzip head hostname iconv id \
+			install ipcrm ipcs join kill killall ln localedef \
+			locate logger logname lp lpr \
+			ls m4 mailx make man md5sum mkdir mkfifo mknod \
 			mktemp more mount msgfmt mv newgrp nice nl nohup \
 			od passwd paste patch pathchk pax pidof pr printf \
 			ps pwd renice rm rmdir sed sendmail seq sh shutdown \
