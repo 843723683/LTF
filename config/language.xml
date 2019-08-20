@@ -43,4 +43,10 @@
 		<CaseScript>ruby.sh</CaseScript>
 		<CaseRun>True</CaseRun>
 	</TestCase>
+	<TestCase>
+		<CaseName>tcl</CaseName>
+		<CaseDir>language</CaseDir>
+		<CaseScript>tcl.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
 </TestGroup>
