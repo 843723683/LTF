@@ -56,13 +56,9 @@ RetBrkEnd(){
 RetBrk (){
 	case $1 in
 	TPASS|TFAIL|TCONF)
-		#打印脚本执行结果
-		printf "\t\t\t %-10s\n" "$1"
 		RetBrkFailPassConf "$1" "$2"
 		;;
 	ERROR)
-		#打印脚本执行结果
-		printf "%-30s\t\t\t %-10s\n" "$2" "$1"
 		if [ "$#" -eq "3" ];then
 			RetBrkErr "$1" "$2" "$3"
 		else
@@ -86,12 +82,18 @@ RetBrkFailPassConf(){
 	#统计TPASS TFAIL TCONF数据
 	case $1 in
 	TPASS)
+		#打印脚本执行结果
+                printf "\033[1m\033[;32m\t\t\t %-10s\033[0m\n" "$1"
 		let retTPASSNum=retTPASSNum+1
 		;;
 	TFAIL)
+		#打印脚本执行结果
+                printf "\033[1m\033[;31m\t\t\t %-10s\033[0m\n" "$1"
 		let retTFAILNum=retTFAILNum+1
 		;;
 	TCONF)
+		#打印脚本执行结果
+                printf "\033[1m\033[;33m\t\t\t %-10s\033[0m\n" "$1"
 		let retTCONFNum=retTCONFNum+1
 		;;
 	esac
@@ -103,6 +105,9 @@ RetBrkFailPassConf(){
 ##        $2=>Item name 
 ##        $3=>Write to log file info
 RetBrkErr(){
+	#打印脚本执行结果
+        printf "%-30s\t\t\t %-10s\n" "$2" "$1"
+
 	#统计ERROR数据
 	let retERRORNum=retERRORNum+1
 
