@@ -3,13 +3,13 @@
 <TestGroup>
 	<TestCase>
 		<CaseName>baseCommand</CaseName>
-		<CaseDir>gjb</CaseDir>
+		<CaseDir>GJB</CaseDir>
 		<CaseScript>gb7717-base-command.sh</CaseScript>
 		<CaseRun>True</CaseRun>
 	</TestCase>
 	<TestCase>
 		<CaseName>expandCommand</CaseName>
-		<CaseDir>gjb</CaseDir>
+		<CaseDir>GJB</CaseDir>
 		<CaseScript>gb7717-expand-command.sh</CaseScript>
 		<CaseRun>True</CaseRun>
 	</TestCase>

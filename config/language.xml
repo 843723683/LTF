@@ -3,43 +3,43 @@
 <TestGroup>
 	<TestCase>
 		<CaseName>gcc</CaseName>
-		<CaseDir>language</CaseDir>
+		<CaseDir>Language</CaseDir>
 		<CaseScript>gcc.sh</CaseScript>
 		<CaseRun>True</CaseRun>
 	</TestCase>
 	<TestCase>
 		<CaseName>gcc-c++</CaseName>
-		<CaseDir>language</CaseDir>
+		<CaseDir>Language</CaseDir>
 		<CaseScript>gcc-c++.sh</CaseScript>
 		<CaseRun>True</CaseRun>
 	</TestCase>
 	<TestCase>
 		<CaseName>python</CaseName>
-		<CaseDir>language</CaseDir>
+		<CaseDir>Language</CaseDir>
 		<CaseScript>python.sh</CaseScript>
 		<CaseRun>True</CaseRun>
 	</TestCase>
 	<TestCase>
 		<CaseName>perl</CaseName>
-		<CaseDir>language</CaseDir>
+		<CaseDir>Language</CaseDir>
 		<CaseScript>perl.sh</CaseScript>
 		<CaseRun>True</CaseRun>
 	</TestCase>
 	<TestCase>
 		<CaseName>shell</CaseName>
-		<CaseDir>language</CaseDir>
+		<CaseDir>Language</CaseDir>
 		<CaseScript>shell.sh</CaseScript>
 		<CaseRun>True</CaseRun>
 	</TestCase>
 	<TestCase>
 		<CaseName>lua</CaseName>
-		<CaseDir>language</CaseDir>
+		<CaseDir>Language</CaseDir>
 		<CaseScript>lua.sh</CaseScript>
 		<CaseRun>True</CaseRun>
 	</TestCase>
 	<TestCase>
 		<CaseName>ruby</CaseName>
-		<CaseDir>language</CaseDir>
+		<CaseDir>Language</CaseDir>
 		<CaseScript>ruby.sh</CaseScript>
 		<CaseRun>True</CaseRun>
 	</TestCase>

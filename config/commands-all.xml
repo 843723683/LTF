@@ -3,7 +3,7 @@
 <TestGroup>
 	<TestCase>
 		<CaseName>all</CaseName>
-		<CaseDir>commands</CaseDir>
+		<CaseDir>Commands</CaseDir>
 		<CaseScript>all</CaseScript>
 		<CaseRun>ALL</CaseRun>
 	</TestCase>
