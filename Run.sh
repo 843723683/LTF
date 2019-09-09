@@ -24,8 +24,8 @@ RunSetup(){
 	START_TIME="$(date "+%Y%m%d%H%M%S")" 
 	
 	# banchemark是否只进行安装测试,在main函数中可能定义
-	if [ "X${LTF_INSTALL_FALG}" == "X" ];then
-		LTF_INSTALL_FALG=""
+	if [ "X${AUTOTEST_INSTALL_FALG}" == "X" ];then
+		AUTOTEST_INSTALL_FALG=""
 	fi
 
 	# cd tools path,export tool path
@@ -52,7 +52,9 @@ RunSetup(){
 	source ${LIB_ROOT}/result.sh
 	# 创建日志文件和目录
 	RetSetup ${LOG_PATH} ${LOG_FILE}
-	
+
+	# Get architecture
+	export AUTOTEST_ARCH=`${LIB_ROOT}/gnu-os`
 }
 
 
@@ -102,7 +104,7 @@ Run(){
 	local ret=0	
 
 	RetBrkStart ${caseName}
-	sh ${caseDir}/${caseScript} "${LTF_INSTALL_FALG}" >> ${LOG_FILE} 2>&1
+	sh ${caseDir}/${caseScript} "${AUTOTEST_INSTALL_FALG}" >> ${LOG_FILE} 2>&1
 	ret="$?"
 	RunRetParse $ret		
 
@@ -226,7 +228,7 @@ main(){
 				;;
 			i)
 			## banchmark只进行安装测试
-				LTF_INSTALL_FALG="INSTALL"
+				AUTOTEST_INSTALL_FALG="INSTALL"
 				;;
 			*)
 				RUNUSAGE

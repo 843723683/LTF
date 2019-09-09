@@ -138,9 +138,15 @@ StressapptestInstall(){
 	fi	
 
 	cd ${localInstallPath}/${localFileName}
-	# 配置
-	./configure
-	[ $? -ne 0 ] && return 1
+	# 配置,判断体系架构
+	if [[ "X${AUTOTEST_ARCH}" =~ "Xaarch64" ]];then
+		echo "TCONF：Arm is not supported! Try x86_64, i686, powerpc, or armv7a"
+		return 2
+	else
+		./configure
+		[ $? -ne 0 ] && return 1
+	fi
+	
 	# 编译
 	make
 	[ $? -ne 0 ] && return 1
@@ -160,7 +166,7 @@ StressapptestRun(){
 	echo "当前剩余内存大小:${mem_size}"
 	echo "Cmd: stressapptest -M ${mem_size} -s 1200"
 
-	#过滤掉所有的控制字符之后输出
+	# 测试
         stressapptest -M ${mem_size} -s 1200 >  stressapptest.ret
 	cd -
 }
