@@ -10,6 +10,7 @@ RUNUSAGE(){
 	echo "| OPTION :                     |"
 	echo "|    -r : Clean result dir     |"
 	echo "|    -a : Run All Testcases    |"
+	echo "|    -i : Install Test         |"
 	echo "|    -f xmlFile : XML file     |"
 	echo "-------------------------------"
 	echo ""
@@ -22,6 +23,11 @@ RunSetup(){
 	#Run time
 	START_TIME="$(date "+%Y%m%d%H%M%S")" 
 	
+	# banchemark是否只进行安装测试,在main函数中可能定义
+	if [ "X${LTF_INSTALL_FALG}" == "X" ];then
+		LTF_INSTALL_FALG=""
+	fi
+
 	# cd tools path,export tool path
 	cd $(dirname $0)
 	export AUTOTEST_ROOT=`pwd`
@@ -96,8 +102,7 @@ Run(){
 	local ret=0	
 
 	RetBrkStart ${caseName}
-
-	sh ${caseDir}/${caseScript} >> ${LOG_FILE} 2>&1
+	sh ${caseDir}/${caseScript} "${LTF_INSTALL_FALG}" >> ${LOG_FILE} 2>&1
 	ret="$?"
 	RunRetParse $ret		
 
@@ -106,7 +111,7 @@ Run(){
 	return $ret
 }
 
-##TODO: 
+##TODO:解析xml中每一个测试小项的内容 
 ## In: $1=> CaseName
 ##     $2=> CaseDir
 ##     $3=> CaseScript
@@ -198,46 +203,62 @@ RunAllAutoTest(){
 	unset -v xmlGroupName xmlGroupXMLName xmlGroupRun xmlGroupNum
 }
 
+main(){
+	if [ "$#" -eq "0"  ];then
+		RUNUSAGE
+		exit 1
+	else
+		#运行指定XML测试项
+		while getopts ":f:ari" opt
+		do
+			case $opt in
+			f)
+				# 获取xmlfile名称
+				local xmlFileName=$OPTARG
+				;;
+			a)	
+				# 获取xmlfile名称
+				local xmlFileName="ALL"
+				;;
+			r)
+				RunClean
+				exit 0
+				;;
+			i)
+			## banchmark只进行安装测试
+				LTF_INSTALL_FALG="INSTALL"
+				;;
+			*)
+				RUNUSAGE
+				exit 1
+				;;
+			esac
 
+		done
 
-if [ "$#" -eq "0"  ];then
-	RUNUSAGE
-	exit 1
-else
-	#运行指定XML测试项
-	while getopts ":f:ar" opt
-	do
-		case $opt in
-		f)
-			#初始化设置
-			RunSetup
-			# 运行指定XML测试
-			RunAutoTest $OPTARG
-			# 结果解析
-			RetBrkParse
-			exit 0
-			;;
-		a)	
+		if [ "$xmlFileName" == "ALL" ];then
 			#初始化设置
 			RunSetup
 			# 运行所有测试
 			RunAllAutoTest
 			# 结果解析
 			RetBrkParse
+		elif [ "$xmlFileName" != "" ];then
+			#初始化设置
+			RunSetup
+			# 运行指定XML测试
+			RunAutoTest $xmlFileName
+			# 结果解析
+			RetBrkParse
 			exit 0
-			;;
-		r)
-			RunClean
-			exit 0
-			;;
-		*)
+		else
+			# 参数未加“-”
 			RUNUSAGE
 			exit 1
-			;;
-		esac
-	done
+			
+		fi
 
-	# 参数未加“-”
-	RUNUSAGE
-	exit 1
-fi
+		exit 0
+	fi
+}
+main $@
