@@ -1,0 +1,2 @@
+1. benchmark.xml
+	<CaseDepend>：多个依赖通过":"分割。如果没有依赖，也需要填写"-"
