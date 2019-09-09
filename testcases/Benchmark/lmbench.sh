@@ -58,9 +58,11 @@ LmbenchDep(){
 	local depTmp=""
 
 	depNum=$(echo $localDep | awk -F":" '{print NF}')
-	if [ "${depNum}" -eq "0"  ];then
-		return 0
-	fi
+        if [ "${depNum}" -eq "1"  ];then
+                if [ "${localDep}" == "-" ];then
+                        return 0
+                fi
+        fi
 
 	local index=0
 	for((index=1;index<=${depNum};++index))
@@ -150,11 +152,16 @@ LmbenchInstall(){
 		fi
 	fi
 	
+	# 编译
+	make build
+	[ $? -ne 0 ] && return 2
+	
         cd -
 
 	# 拷贝配置文件
 	cp ${localPkgPath}/lmbench.config ${localPkgPath}/config-run \
 		${localInstallPath}/${localFileName}/scripts	
+	[ $? -ne 0 ] && return 2
 
 	return $ret
 }
@@ -196,8 +203,9 @@ LmbenchUnsetup(){
 	rm -rf ${localInstallPath}/${localFileName}
 }
 
-main(){
-	LmbenchSetup
+## TODO:安装并且运行测试
+##
+LmbenchRunTest(){
 	LmbenchXMLParse
 
 	LmbenchDep
@@ -217,6 +225,33 @@ main(){
 #	LmbenchUnsetup
 }
 
-main
+## TODO:进行安装测试
+##
+LmbenchInstallTest(){
+	LmbenchXMLParse
 
-exit 0
+	LmbenchDep
+	LmbenchRetParse
+
+	LmbenchInit
+	LmbenchRetParse
+
+	LmbenchInstall
+	LmbenchRetParse
+}
+
+
+
+main(){
+	LmbenchSetup
+
+	if [ "$#" -ne "0"  ] && [ "X$1" == "X${BENCHMARK_FLAG}" ];then
+		LmbenchInstallTest
+	else
+		LmbenchRunTest
+	fi
+}
+
+main $@
+
+exit $?

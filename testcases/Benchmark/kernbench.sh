@@ -58,9 +58,11 @@ KernbenchDep(){
 	local depTmp=""
 
 	depNum=$(echo $localDep | awk -F":" '{print NF}')
-	if [ "${depNum}" -eq "0"  ];then
-		return 0
-	fi
+	if [ "${depNum}" -eq "1"  ];then
+		if [ "${localDep}" == "-" ];then
+                        return 0
+                fi
+        fi
 
 	local index=0
 	for((index=1;index<=${depNum};++index))
@@ -101,7 +103,7 @@ KernbenchInit(){
 
 	#判断是否已经解压
 	if [ -d "${localInstallPath}/${localFileName}" ];then
-		echo "Clean ${localInstallPath}/${localFileName}"
+		echo "Clean :rm -rf ${localInstallPath}/${localFileName}"
 		rm -rf ${localInstallPath}/${localFileName}
 		if [ "$?" -ne "0"  ];then
 			ret=2
@@ -138,6 +140,7 @@ KernbenchInstall(){
 
 	#配置
 	./configure
+	[ $? -ne 0 ] && return 1
 	
 	#编译
 	local cpuNum=$(lscpu | grep "^CPU(s):" | awk '{print $2}')
@@ -151,12 +154,16 @@ KernbenchInstall(){
 	else
 		make
 	fi
+	[ $? -ne 0 ] && return 1
 
 	#安装
 	make install
+	[ $? -ne 0 ] && return 1
 	
 	#修改kernbench工具
 	cp /opt/ltp/testcases/bin/kernbench ./
+	[ $? -ne 0 ] && return 1
+
 	cat kernbench | grep "if \[\[ \! \-f include/linux/kernel.h \]\]"
 	if [ "$?" -eq "0" ];then
 		sed -i 's/if \[\[ \! \-f include/if \[\[ \! \-f \/usr\/include/' kernbench
@@ -200,8 +207,9 @@ KernbenchUnsetup(){
 	rm -rf ${localInstallPath}/${localFileName}
 }
 
-main(){
-	KernbenchSetup
+## TODO:安装并且运行测试
+##
+KernbenchRunTest(){
 	KernbenchXMLParse
 
 	KernbenchDep
@@ -215,12 +223,37 @@ main(){
 
 	KernbenchRun
 	KernbenchRet
-	#sleep 5
-	#echo "hello Kernbench"
+#	sleep 5
+#	echo "hello Kernbench"
 	
 #	KernbenchUnsetup
 }
 
-main
+## TODO:进行安装测试
+##
+KernbenchInstallTest(){
+	KernbenchXMLParse
 
-exit 0
+	KernbenchDep
+	KernbenchRetParse
+
+	KernbenchInit
+	KernbenchRetParse
+
+	KernbenchInstall
+	KernbenchRetParse
+}
+
+main(){
+	KernbenchSetup
+
+        if [ "$#" -ne "0"  ] && [ "X$1" == "X${BENCHMARK_FLAG}" ];then
+		KernbenchInstallTest
+        else
+		KernbenchRunTest
+        fi
+}
+
+main $@
+
+exit $?

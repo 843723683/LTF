@@ -58,8 +58,10 @@ HackbenchDep(){
 	local depTmp=""
 
 	depNum=$(echo $localDep | awk -F":" '{print NF}')
-	if [ "${depNum}" -eq "0"  ];then
-		return 0
+	if [ "${depNum}" -eq "1"  ];then
+		if [ "${localDep}" == "-" ];then
+                	return 0
+		fi
 	fi
 
 	local index=0
@@ -135,8 +137,11 @@ HackbenchInstall(){
 	fi	
 
 	cd ${localInstallPath}/${localFileName}
+	# 配置
 	./configure
+	[ $? -ne 0 ] &&  return 1
 	
+	#编译
 	local cpuNum=$(lscpu | grep "^CPU(s):" | awk '{print $2}')
 	if [ -n "$cpuNum" ];then
 		echo $cpuNum | grep '[^0-9]'
@@ -148,8 +153,17 @@ HackbenchInstall(){
 	else
 		make
 	fi
+	[ $? -ne 0 ] &&  return 1
 
+	#安装
 	make install
+	[ $? -ne 0 ] &&  return 1
+	
+	#判断是否存在hackbench
+	if [ ! -f "/opt/ltp/testcases/bin/hackbench" ];then
+		echo "Can't find /opt/ltp/testcases/bin/hackbench "
+		return 1
+	fi
 	cd -
 
 	return $ret
@@ -189,8 +203,9 @@ HackbenchUnsetup(){
 	rm -rf ${localInstallPath}/${localFileName}
 }
 
-main(){
-	HackbenchSetup
+## TODO:安装并且运行测试
+##
+HackbenchRunTest(){
 	HackbenchXMLParse
 
 	HackbenchDep
@@ -204,12 +219,38 @@ main(){
 
 	HackbenchRun
 	HackbenchRet
-	#sleep 5
-	#echo "hello Hackbench"
-	
+#	sleep 5
+#	echo "hello Hackbench"
+
 #	HackbenchUnsetup
 }
 
-main
+## TODO:进行安装测试
+##
+HackbenchInstallTest(){
+	HackbenchXMLParse
 
-exit 0
+	HackbenchDep
+	HackbenchRetParse
+
+	HackbenchInit
+	HackbenchRetParse
+
+	HackbenchInstall
+	HackbenchRetParse
+}
+
+main(){
+	HackbenchSetup
+
+	if [ "$#" -ne "0"  ] && [ "X$1" == "X${BENCHMARK_FLAG}" ];then
+		HackbenchInstallTest
+	else
+		HackbenchRunTest
+	fi
+
+}
+
+main $@
+
+exit $?

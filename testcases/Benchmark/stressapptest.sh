@@ -59,9 +59,11 @@ StressapptestDep(){
 	local depTmp=""
 
 	depNum=$(echo $localDep | awk -F":" '{print NF}')
-	if [ "${depNum}" -eq "0"  ];then
-		return 0
-	fi
+        if [ "${depNum}" -eq "1"  ];then
+                if [ "${localDep}" == "-" ];then
+                        return 0
+                fi
+        fi
 
 	local index=0
 	for((index=1;index<=${depNum};++index))
@@ -102,7 +104,7 @@ StressapptestInit(){
 
 	#判断是否已经解压
 	if [ -d "${localInstallPath}/${localFileName}" ];then
-		echo "Clean ${localInstallPath}/${localFileName}"
+		echo "Clean :rm -rf${localInstallPath}/${localFileName}"
 		rm -rf ${localInstallPath}/${localFileName}
 		if [ "$?" -ne "0"  ];then
 			ret=2
@@ -136,9 +138,15 @@ StressapptestInstall(){
 	fi	
 
 	cd ${localInstallPath}/${localFileName}
+	# 配置
 	./configure
+	[ $? -ne 0 ] && return 1
+	# 编译
 	make
+	[ $? -ne 0 ] && return 1
+	# 安装
 	make install
+	[ $? -ne 0 ] && return 1
 	cd -
 
 	return $ret
@@ -181,8 +189,9 @@ StressapptestUnsetup(){
 	rm -rf ${localInstallPath}/${localFileName}
 }
 
-main(){
-	StressapptestSetup
+## TODO:安装并且运行测试
+##
+StressapptestRunTest(){
 	StressapptestXMLParse
 
 	StressapptestDep
@@ -196,12 +205,37 @@ main(){
 
 	StressapptestRun
 	StressapptestRet
-	#sleep 5
-	#echo "hello Stressapptest"
+#	sleep 5
+#	echo "hello Stressapptest"
 	
 #	StressapptestUnsetup
 }
 
-main
+## TODO:进行安装测试
+##
+StressapptestInstallTest(){
+	StressapptestXMLParse
 
-exit 0
+	StressapptestDep
+	StressapptestRetParse
+
+	StressapptestInit
+	StressapptestRetParse
+
+	StressapptestInstall
+	StressapptestRetParse
+}
+
+main(){
+	StressapptestSetup
+	
+	if [ "$#" -ne "0"  ] && [ "X$1" == "X${BENCHMARK_FLAG}" ];then
+		StressapptestInstallTest
+	else
+		StressapptestRunTest
+	fi
+}
+
+main $@
+
+exit $?

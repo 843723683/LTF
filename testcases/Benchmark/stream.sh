@@ -59,9 +59,11 @@ StreamDep(){
 	local depTmp=""
 
 	depNum=$(echo $localDep | awk -F":" '{print NF}')
-	if [ "${depNum}" -eq "0"  ];then
-		return 0
-	fi
+        if [ "${depNum}" -eq "1"  ];then
+                if [ "${localDep}" == "-" ];then
+                        return 0
+                fi
+        fi
 
 	local index=0
 	for((index=1;index<=${depNum};++index))
@@ -137,7 +139,9 @@ StreamInstall(){
 
 	cd ${localInstallPath}/${localFileName}
 	gcc -O stream.c -o stream-1.elf
+	[ $? -ne 0 ] && return 1
 	gcc -O -fopenmp stream.c -o stream-N.elf
+	[ $? -ne 0 ] && return 1
 	cd -
 
 	return $ret
@@ -185,8 +189,9 @@ StreamUnsetup(){
 	rm -rf ${localInstallPath}/${localFileName}
 }
 
-main(){
-	StreamSetup
+## TODO:安装并且运行测试
+##
+StreamRunTest(){
 	StreamXMLParse
 
 	StreamDep
@@ -200,12 +205,36 @@ main(){
 
 	StreamRun
 	StreamRet
-	#sleep 5
-	#echo "hello Stream"
+#	sleep 5
+#	echo "hello Stream"
 	
 #	StreamUnsetup
 }
 
-main
+## TODO:进行安装测试
+##
+StreamInstallTest(){
+	StreamXMLParse
 
-exit 0
+	StreamDep
+	StreamRetParse
+
+	StreamInit
+	StreamRetParse
+
+	StreamInstall
+	StreamRetParse
+}
+
+main(){
+	StreamSetup
+	if [ "$#" -ne "0"  ] && [ "X$1" == "X${BENCHMARK_FLAG}" ];then
+		StreamInstallTest
+	else
+		StreamRunTest
+	fi
+}
+
+main $@
+
+exit $?

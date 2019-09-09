@@ -58,9 +58,11 @@ MemtesterDep(){
 	local depTmp=""
 
 	depNum=$(echo $localDep | awk -F":" '{print NF}')
-	if [ "${depNum}" -eq "0"  ];then
-		return 0
-	fi
+        if [ "${depNum}" -eq "1"  ];then
+                if [ "${localDep}" == "-" ];then
+                        return 0
+                fi
+        fi
 
 	local index=0
 	for((index=1;index<=${depNum};++index))
@@ -101,7 +103,7 @@ MemtesterInit(){
 
 	#判断是否已经解压
 	if [ -d "${localInstallPath}/${localFileName}" ];then
-		echo "Clean ${localInstallPath}/${localFileName}"
+		echo "Clean :rm -rf ${localInstallPath}/${localFileName}"
 		rm -rf ${localInstallPath}/${localFileName}
 		if [ "$?" -ne "0"  ];then
 			ret=2
@@ -136,7 +138,9 @@ MemtesterInstall(){
 
 	cd ${localInstallPath}/${localFileName}
 	make
+	[ $? -ne 0 ]&& return 1
 	make install
+	[ $? -ne 0 ]&& return 1
 	cd -
 
 	return $ret
@@ -179,8 +183,9 @@ MemtesterUnsetup(){
 	rm -rf ${localInstallPath}/${localFileName}
 }
 
-main(){
-	MemtesterSetup
+## TODO:安装并且运行测试
+##
+MemtesterRunTest(){
 	MemtesterXMLParse
 
 	MemtesterDep
@@ -194,12 +199,37 @@ main(){
 
 	MemtesterRun
 	MemtesterRet
-	#sleep 5
-	#echo "hello Memtester"
+#	sleep 5
+#	echo "hello Memtester"
 	
 #	MemtesterUnsetup
 }
 
-main
+## TODO:进行安装测试
+##
+MemtesterInstallTest(){
+	MemtesterXMLParse
 
-exit 0
+	MemtesterDep
+	MemtesterRetParse
+
+	MemtesterInit
+	MemtesterRetParse
+
+	MemtesterInstall
+	MemtesterRetParse
+}
+
+main(){
+	MemtesterSetup
+	
+	if [ "$#" -ne "0"  ] && [ "X$1" == "X${BENCHMARK_FLAG}" ];then
+		MemtesterInstallTest
+	else
+		MemtesterRunTest
+	fi
+}
+
+main $@
+
+exit $?
