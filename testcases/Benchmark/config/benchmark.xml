@@ -32,6 +32,12 @@
 		<CaseFileName>stream</CaseFileName>
 	</BenchmarktCase>
 	<BenchmarkCase>
+		<CaseName>sysbench</CaseName>
+		<CaseDepend>gcc:automake:libtool</CaseDepend>
+		<CasePkgName>sysbench-1.0.17.tar.gz</CasePkgName>
+		<CaseFileName>sysbench-1.0.17</CaseFileName>
+	</BenchmarktCase>
+	<BenchmarkCase>
 		<CaseName>hackbench</CaseName>
 		<CaseDepend>gcc</CaseDepend>
 		<CasePkgName>ltp-full-20190517.tar.bz2</CasePkgName>

@@ -32,6 +32,12 @@
 		<CaseRun>True</CaseRun>
 	</TestCase>
 	<TestCase>
+		<CaseName>sysbench</CaseName>
+		<CaseDir>Benchmark</CaseDir>
+		<CaseScript>sysbench.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+	<TestCase>
 		<CaseName>hackbench</CaseName>
 		<CaseDir>Benchmark</CaseDir>
 		<CaseScript>hackbench.sh</CaseScript>
