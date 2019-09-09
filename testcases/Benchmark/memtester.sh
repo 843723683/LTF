@@ -110,6 +110,9 @@ MemtesterInit(){
 		fi
 	fi
 
+	# memtester结果目录
+	MEMTESTER_RET_DIRNAME="memtest-ret"
+
 	return $ret
 }
 
@@ -137,6 +140,13 @@ MemtesterInstall(){
 	fi	
 
 	cd ${localInstallPath}/${localFileName}
+	#创建结果目录
+	if [ -d ${MEMTESTER_RET_DIRNAME} ];then
+		rm ${MEMTESTER_RET_DIRNAME}/* -rf
+	else
+		mkdir ${MEMTESTER_RET_DIRNAME}	
+	fi
+
 	make
 	[ $? -ne 0 ]&& return 1
 	make install
@@ -150,12 +160,33 @@ MemtesterInstall(){
 ##
 MemtesterRun(){
 	cd ${localInstallPath}/${localFileName}
+
+	# 获取剩余内存大小
 	mem_size=$(free -m | awk '{print $4}' | sed -n '2p')
 	echo "当前剩余内存大小:${mem_size}"
 	echo "Cmd: memtester ${mem_size}M 1"
 
-	#过滤掉所有的控制字符之后输出
-        memtester ${mem_size}M 1 | col -b > memtester.ret
+        # 获取CPU个数
+        CPU_NUM=$(lscpu | grep "^CPU(s):" | awk '{print $2}')
+        [ $? -ne 0 ] && { echo "FAIL: lscpu failed";return 2; }
+        # 判断 $CPU_NUM 是否为空 
+        [ "X$CPU_NUM" == "X" ] && { echo "FAIL: lscpu CPU(s) is NULL";return 2; }
+        # 判断 $CPU_NUM 是否为数字 
+        echo ${CPU_NUM} | grep -q '[^0-9]'
+        [ $? -eq 0 ] && { echo "FAIL:Get CPU_NUM is not digit";return 2; }
+
+	# 计算每个线程需要测试内存
+	avg_mem_size=$((mem_size/CPU_NUM))
+
+	[ ! -d ${MEMTESTER_RET_DIRNAME} ] && mkdir ${MEMTESTER_RET_DIRNAME}
+	# 进行测试
+	for((i=0;i<(${CPU_NUM}-1);++i))
+	do
+		#过滤掉所有的控制字符之后输出
+	        memtester ${avg_mem_size}M ${i} | col -b > ${MEMTESTER_RET_DIRNAME}/memtester-${i}.ret &
+	done
+	memtester ${avg_mem_size}M ${i} | col -b > ${MEMTESTER_RET_DIRNAME}/memtester-end.ret
+
 	cd -
 }
 
@@ -171,7 +202,10 @@ MemtesterRet(){
 		fi
 
 		##result 
-		cp memtester.ret ${retPath}
+                if [ -d "${MEMTESTER_RET_DIRNAME}" ];then
+			cp -r ${MEMTESTER_RET_DIRNAME} ${retPath} 
+                fi
+
 	fi
         
 	
