@@ -55,4 +55,10 @@
 		<CaseScript>fio.sh</CaseScript>
 		<CaseRun>True</CaseRun>
 	</TestCase>
+	<TestCase>
+		<CaseName>ltp-interface</CaseName>
+		<CaseDir>Benchmark</CaseDir>
+		<CaseScript>ltp-interface.sh</CaseScript>
+		<CaseRun>False</CaseRun>
+	</TestCase>
 </TestGroup>
