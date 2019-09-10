@@ -1,6 +1,8 @@
 #!/bin/bash
 
 toolName="sysbench"
+toolRetDir="${toolName}-ret"
+
 ## TODO:搭建运行环境
 ##
 SysbenchSetup(){
@@ -125,9 +127,6 @@ SysbenchInit(){
         echo ${CPU_NUM} | grep -q '[^0-9]'
         [ $? -eq 0 ] && { echo "FAIL:Get CPU_NUM is not digit";return 2; }
 
-        # sysbench结果目录
-        SYSBENCH_RET_DIRNAME="sysbench-ret"
-
 	return $ret
 }
 
@@ -145,13 +144,7 @@ SysbenchInstall(){
 	fi
 	
 	cd ${localInstallPath}/${localFileName}
-        #创建结果目录
-        if [ -d ${SYSBENCH_RET_DIRNAME} ];then
-                rm ${SYSBENCH_RET_DIRNAME}/* -rf
-        else
-                mkdir ${SYSBENCH_RET_DIRNAME}
-        fi
-
+	
 	./autogen.sh
 	[ "$?" -ne "0" ] && return 1
 	# 配置
@@ -172,15 +165,17 @@ SysbenchInstall(){
 ##
 SysbenchRun(){
 	cd ${localInstallPath}/${localFileName}
-	[ ! -d ${SYSBENCH_RET_DIRNAME} ] && mkdir ${SYSBENCH_RET_DIRNAME}
+	
+	[ ! -d ${toolRetDir} ] && mkdir ${toolRetDir}
+	
 	# 内存：多线程-随机
-	sysbench --threads=${CPU_NUM} --memory-block-size=8k --memory-total-size=${mem_size}G --memory-access-mode=rnd memory run > ${SYSBENCH_RET_DIRNAME}/sysbench-rnd.ret
+	sysbench --threads=${CPU_NUM} --memory-block-size=8k --memory-total-size=${mem_size}G --memory-access-mode=rnd memory run > ${toolRetDir}/sysbench-rnd.ret
 	# 内存：多线程-连续
-	sysbench --threads=${CPU_NUM} --memory-block-size=8k --memory-total-size=${mem_size}G --memory-access-mode=seq memory run > ${SYSBENCH_RET_DIRNAME}/sysbench-seq.ret
+	sysbench --threads=${CPU_NUM} --memory-block-size=8k --memory-total-size=${mem_size}G --memory-access-mode=seq memory run > ${toolRetDir}/sysbench-seq.ret
 	# 内存：单线程-随机
-	sysbench --threads=1 --memory-block-size=8k --memory-total-size=${mem_size}G --memory-access-mode=rnd memory run > ${SYSBENCH_RET_DIRNAME}/sysbench-rnd-1cpu.ret
+	sysbench --threads=1 --memory-block-size=8k --memory-total-size=${mem_size}G --memory-access-mode=rnd memory run > ${toolRetDir}/sysbench-rnd-1cpu.ret
 	# 内存：单线程-连续
-	sysbench --threads=1 --memory-block-size=8k --memory-total-size=${mem_size}G --memory-access-mode=seq memory run > ${SYSBENCH_RET_DIRNAME}/sysbench-seq-1cpu.ret
+	sysbench --threads=1 --memory-block-size=8k --memory-total-size=${mem_size}G --memory-access-mode=seq memory run > ${toolRetDir}/sysbench-seq-1cpu.ret
 	
 	cd -
 }
@@ -196,15 +191,23 @@ SysbenchRet(){
 			mkdir -p ${retPath}
 		fi
 
-                ##result 
-                if [ -d "${SYSBENCH_RET_DIRNAME}" ];then
-                        cp -r ${SYSBENCH_RET_DIRNAME} ${retPath}
+		[ ! -d "${retPath}/${toolRetDir}" ] && mkdir ${retPath}/${toolRetDir}
+
+                # result 
+                if [ -d "${toolRetDir}" ];then
+                        cp -r ${toolRetDir}/* ${retPath}/${toolRetDir}
                 fi
 	
 	fi
         
 	cd -
 }
+
+
+SysbenchUnsetup(){
+	rm -rf ${localInstallPath}/${localFileName}
+}
+
 
 ## TODO:解析函数返回值
 ## exit：1->程序退出，失败
@@ -216,10 +219,6 @@ SysbenchRetParse(){
 	fi	
 }
 
-
-SysbenchUnsetup(){
-	rm -rf ${localInstallPath}/${localFileName}
-}
 
 ## TODO:安装并且运行测试
 ##

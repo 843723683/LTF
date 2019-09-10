@@ -1,6 +1,8 @@
 #!/bin/bash
 
 toolName="unixbench"
+toolRetDir="${toolName}-ret"
+
 ## TODO:搭建运行环境
 ##
 UnixbenchSetup(){
@@ -156,10 +158,12 @@ UnixbenchInstall(){
 		return 2
 	fi
 	
-	# 编译
 	cd ${localInstallPath}/${localFileName}
+	
+	# 编译
 	make
 	[ "$?" -ne "0" ] && return 1
+
 	cd -
 	
 	UnixbenchSetThread
@@ -167,16 +171,6 @@ UnixbenchInstall(){
 	[ "$ret" -ne "0" ] && return $ret
 
 	return $ret
-}
-
-## TODO:解析函数返回值
-## exit：1->程序退出，失败
-##     ：2->程序退出，阻塞
-UnixbenchRetParse(){
-	local tmp="$?"
-	if [ "${tmp}" -ne "0"  ];then
-		exit ${tmp}
-	fi	
 }
 
 ## TODO：运行测试
@@ -198,19 +192,32 @@ UnixbenchRet(){
 			mkdir -p ${retPath}
 		fi
 
+		[ ! -d "${retPath}/${toolRetDir}" ] && mkdir ${retPath}/${toolRetDir}
+		
+		# result
 		if [ -d "./results" ];then
-			cp -r ./results ${retPath}/${toolName}-ret
+			cp -r ./results/* ${retPath}/${toolRetDir}
 		fi
 	fi
-        
 	
 	cd -
-
 }
 
 UnixbenchUnsetup(){
 	rm -rf ${localInstallPath}/${localFileName}
 }
+
+
+## TODO:解析函数返回值
+## exit：1->程序退出，失败
+##     ：2->程序退出，阻塞
+UnixbenchRetParse(){
+	local tmp="$?"
+	if [ "${tmp}" -ne "0"  ];then
+		exit ${tmp}
+	fi	
+}
+
 
 ## TODO:安装并且运行测试
 ##

@@ -1,6 +1,8 @@
 #!/bin/bash
 
 toolName="fio"
+toolRetDir="${toolName}-ret"
+
 ## TODO:搭建运行环境
 ##
 FioSetup(){
@@ -143,16 +145,6 @@ FioInstall(){
 	return $ret
 }
 
-## TODO:解析函数返回值
-## exit：1->程序退出，失败
-##     ：2->程序退出，阻塞
-FioRetParse(){
-	local tmp="$?"
-	if [ "${tmp}" -ne "0"  ];then
-		exit ${tmp}
-	fi	
-}
-
 ## TODO：运行测试
 ##
 FioRun(){
@@ -173,6 +165,8 @@ FioRet(){
 			mkdir -p ${retPath}
 		fi
 
+		[ ! -d "${retPath}/${toolRetDir}" ] && mkdir ${retPath}/${toolRetDir}
+
 #		if [ -d "./results" ];then
 #			cp -r ./results ${retPath}/${toolName}-ret
 #		fi
@@ -183,9 +177,22 @@ FioRet(){
 
 }
 
+
 FioUnsetup(){
 	rm -rf ${localInstallPath}/${localFileName}
 }
+
+
+## TODO:解析函数返回值
+## exit：1->程序退出，失败
+##     ：2->程序退出，阻塞
+FioRetParse(){
+	local tmp="$?"
+	if [ "${tmp}" -ne "0"  ];then
+		exit ${tmp}
+	fi	
+}
+
 
 ## TODO:安装并且运行测试
 ##

@@ -1,6 +1,8 @@
 #!/bin/bash
 
 toolName="hackbench"
+toolRetDir="${toolName}-ret"
+
 ## TODO:搭建运行环境
 ##
 HackbenchSetup(){
@@ -113,16 +115,6 @@ HackbenchInit(){
 	return $ret
 }
 
-## TODO:解析函数返回值
-## exit：1->程序退出，失败
-##     ：2->程序退出，阻塞
-HackbenchRetParse(){
-	local tmp="$?"
-	if [ "${tmp}" -ne "0"  ];then
-		exit ${tmp}
-	fi	
-}
-
 ## TODO：安装测试工具
 ## Out :0=>TPASS
 ##	1=>TFAIL
@@ -190,18 +182,32 @@ HackbenchRet(){
 			mkdir -p ${retPath}
 		fi
 
-		##result 
-		cp hackbench.ret ${retPath}
+		[ ! -d "${retPath}/${toolRetDir}" ] && mkdir ${retPath}/${toolRetDir}
+
+		# result
+		cp hackbench.ret ${retPath}/${toolRetDir}
 	fi
-        
 	
 	cd -
 
 }
 
+
 HackbenchUnsetup(){
 	rm -rf ${localInstallPath}/${localFileName}
 }
+
+
+## TODO:解析函数返回值
+## exit：1->程序退出，失败
+##     ：2->程序退出，阻塞
+HackbenchRetParse(){
+	local tmp="$?"
+	if [ "${tmp}" -ne "0"  ];then
+		exit ${tmp}
+	fi	
+}
+
 
 ## TODO:安装并且运行测试
 ##

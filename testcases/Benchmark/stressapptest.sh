@@ -1,6 +1,8 @@
 #!/bin/bash
 
 toolName="stressapptest"
+toolRetDir="${toolName}-ret"
+
 
 ## TODO:搭建测试运行环境
 ##
@@ -114,16 +116,6 @@ StressapptestInit(){
 	return $ret
 }
 
-## TODO:解析函数返回值
-## exit：1->程序退出，失败
-##     ：2->程序退出，阻塞
-StressapptestRetParse(){
-	local tmp="$?"
-	if [ "${tmp}" -ne "0"  ];then
-		exit ${tmp}
-	fi	
-}
-
 ## TODO：安装测试工具
 ## Out :0=>TPASS
 ##	1=>TFAIL
@@ -182,10 +174,11 @@ StressapptestRet(){
 			mkdir -p ${retPath}
 		fi
 
-		##result 
-		cp stressapptest.ret ${retPath}
+		[ ! -d "${retPath}/${toolRetDir}" ] && mkdir ${retPath}/${toolRetDir}
+
+		# result 
+		cp stressapptest.ret ${retPath}/${toolRetDir}
 	fi
-        
 	
 	cd -
 
@@ -194,6 +187,18 @@ StressapptestRet(){
 StressapptestUnsetup(){
 	rm -rf ${localInstallPath}/${localFileName}
 }
+
+
+## TODO:解析函数返回值
+## exit：1->程序退出，失败
+##     ：2->程序退出，阻塞
+StressapptestRetParse(){
+	local tmp="$?"
+	if [ "${tmp}" -ne "0"  ];then
+		exit ${tmp}
+	fi	
+}
+
 
 ## TODO:安装并且运行测试
 ##

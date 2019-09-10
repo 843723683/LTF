@@ -1,6 +1,8 @@
 #!/bin/bash
 
 toolName="kernbench"
+toolRetDir="${toolName}-ret"
+
 ## TODO:搭建运行环境
 ##
 KernbenchSetup(){
@@ -113,16 +115,6 @@ KernbenchInit(){
 	return $ret
 }
 
-## TODO:解析函数返回值
-## exit：1->程序退出，失败
-##     ：2->程序退出，阻塞
-KernbenchRetParse(){
-	local tmp="$?"
-	if [ "${tmp}" -ne "0"  ];then
-		exit ${tmp}
-	fi	
-}
-
 ## TODO：安装测试工具
 ## Out :0=>TPASS
 ##	1=>TFAIL
@@ -194,8 +186,10 @@ KernbenchRet(){
 			mkdir -p ${retPath}
 		fi
 
-		##result 
-		cp kernbench.ret ${retPath}
+		[ ! -d "${retPath}/${toolRetDir}" ] && mkdir ${retPath}/${toolRetDir}
+
+		# result
+		cp kernbench.ret ${retPath}/${toolRetDir}
 	fi
         
 	
@@ -203,9 +197,22 @@ KernbenchRet(){
 
 }
 
+
 KernbenchUnsetup(){
 	rm -rf ${localInstallPath}/${localFileName}
 }
+
+
+## TODO:解析函数返回值
+## exit：1->程序退出，失败
+##     ：2->程序退出，阻塞
+KernbenchRetParse(){
+	local tmp="$?"
+	if [ "${tmp}" -ne "0"  ];then
+		exit ${tmp}
+	fi	
+}
+
 
 ## TODO:安装并且运行测试
 ##
