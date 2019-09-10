@@ -1,6 +1,8 @@
 #!/bin/bash
 
 toolName="memtester"
+toolRetDir="${toolName}-ret"
+
 ## TODO:搭建运行环境
 ##
 MemtesterSetup(){
@@ -110,20 +112,7 @@ MemtesterInit(){
 		fi
 	fi
 
-	# memtester结果目录
-	MEMTESTER_RET_DIRNAME="memtest-ret"
-
 	return $ret
-}
-
-## TODO:解析函数返回值
-## exit：1->程序退出，失败
-##     ：2->程序退出，阻塞
-MemtesterRetParse(){
-	local tmp="$?"
-	if [ "${tmp}" -ne "0"  ];then
-		exit ${tmp}
-	fi	
 }
 
 ## TODO：安装测试工具
@@ -140,12 +129,6 @@ MemtesterInstall(){
 	fi	
 
 	cd ${localInstallPath}/${localFileName}
-	#创建结果目录
-	if [ -d ${MEMTESTER_RET_DIRNAME} ];then
-		rm ${MEMTESTER_RET_DIRNAME}/* -rf
-	else
-		mkdir ${MEMTESTER_RET_DIRNAME}	
-	fi
 
 	make
 	[ $? -ne 0 ]&& return 1
@@ -164,7 +147,6 @@ MemtesterRun(){
 	# 获取剩余内存大小
 	mem_size=$(free -m | awk '{print $4}' | sed -n '2p')
 	echo "当前剩余内存大小:${mem_size}"
-	echo "Cmd: memtester ${mem_size}M 1"
 
         # 获取CPU个数
         CPU_NUM=$(lscpu | grep "^CPU(s):" | awk '{print $2}')
@@ -178,14 +160,25 @@ MemtesterRun(){
 	# 计算每个线程需要测试内存
 	avg_mem_size=$((mem_size/CPU_NUM))
 
-	[ ! -d ${MEMTESTER_RET_DIRNAME} ] && mkdir ${MEMTESTER_RET_DIRNAME}
+	[ ! -d ${toolRetDir} ] && mkdir ${toolRetDir}
 	# 进行测试
 	for((i=0;i<(${CPU_NUM}-1);++i))
 	do
 		#过滤掉所有的控制字符之后输出
-	        memtester ${avg_mem_size}M ${i} | col -b > ${MEMTESTER_RET_DIRNAME}/memtester-${i}.ret &
+		echo "memtester thread $i"
+	        memtester ${avg_mem_size}M 1 | col -b > ${toolRetDir}/memtester-${i}.ret &
 	done
-	memtester ${avg_mem_size}M ${i} | col -b > ${MEMTESTER_RET_DIRNAME}/memtester-end.ret
+	memtester ${avg_mem_size}M 1 | col -b > ${toolRetDir}/memtester-end.ret
+
+	# 判断所有的memtester进程是否退出
+	local count=`ps -ef |grep "memtester" |grep -v "grep" |grep -v ".sh" |wc -l`
+	while [ "$count" -ne "0" ]
+	do
+		echo "Wait memtester stop. count = $count "
+		echo `ps -ef |grep "memtester" |grep -v "grep" |grep -v ".sh"`
+		sleep 60
+		count=`ps -ef |grep "memtester" |grep -v "grep" |grep -v ".sh" |wc -l`
+	done
 
 	cd -
 }
@@ -201,21 +194,35 @@ MemtesterRet(){
 			mkdir -p ${retPath}
 		fi
 
-		##result 
-                if [ -d "${MEMTESTER_RET_DIRNAME}" ];then
-			cp -r ${MEMTESTER_RET_DIRNAME} ${retPath} 
+		[ ! -d "${retPath}/${toolRetDir}" ] && mkdir ${retPath}/${toolRetDir}
+
+		# result 
+                if [ -d "${toolRetDir}" ];then
+			cp -r ${toolRetDir}/* ${retPath}/${toolRetDir}
                 fi
 
 	fi
-        
 	
 	cd -
 
 }
 
+
 MemtesterUnsetup(){
 	rm -rf ${localInstallPath}/${localFileName}
 }
+
+
+## TODO:解析函数返回值
+## exit：1->程序退出，失败
+##     ：2->程序退出，阻塞
+MemtesterRetParse(){
+	local tmp="$?"
+	if [ "${tmp}" -ne "0"  ];then
+		exit ${tmp}
+	fi	
+}
+
 
 ## TODO:安装并且运行测试
 ##
