@@ -32,8 +32,9 @@ HackbenchXMLParse(){
 	XMLGetItemNum     xmlCaseName     xmlCaseNum
         XMLUnsetup
 
+	local border=$((${xmlCaseNum}-1))
 	local index=0
-	for ((index=0;index<${xmlCaseNum};++index))
+	for index in `seq 0 ${border}`
         do
                 if [ "${xmlCaseName[${index}]}" == "${toolName}" ];then
 			localName="${xmlCaseName[$index]}"
@@ -67,7 +68,7 @@ HackbenchDep(){
 	fi
 
 	local index=0
-	for((index=1;index<=${depNum};++index))
+	for index in `seq 1 ${depNum}`
 	do
 		depTmp=$(echo $localDep | awk -F":" "{print \$${index}}")
 		#判断是否安装依赖包

@@ -32,8 +32,9 @@ MemtesterXMLParse(){
 	XMLGetItemNum     xmlCaseName     xmlCaseNum
         XMLUnsetup
 
-	local index=0
-	for ((index=0;index<${xmlCaseNum};++index))
+        local border=$((${xmlCaseNum}-1))
+        local index=0
+        for index in `seq 0 ${border}`
         do
                 if [ "${xmlCaseName[${index}]}" == "${toolName}" ];then
 			localName="${xmlCaseName[$index]}"
@@ -66,8 +67,8 @@ MemtesterDep(){
                 fi
         fi
 
-	local index=0
-	for((index=1;index<=${depNum};++index))
+        local index=0
+        for index in `seq 1 ${depNum}`
 	do
 		depTmp=$(echo $localDep | awk -F":" "{print \$${index}}")
 		#判断是否安装依赖包
@@ -161,13 +162,18 @@ MemtesterRun(){
 	avg_mem_size=$((mem_size/CPU_NUM))
 
 	[ ! -d ${toolRetDir} ] && mkdir ${toolRetDir}
+
 	# 进行测试
-	for((i=0;i<(${CPU_NUM}-1);++i))
-	do
-		#过滤掉所有的控制字符之后输出
-		echo "memtester thread $i"
-	        memtester ${avg_mem_size}M 1 | col -b > ${toolRetDir}/memtester-${i}.ret &
-	done
+	if [ ${CPU_NUM} -gt 1 ];then
+		local i=0
+	        local border=$((${CPU_NUM}-2))
+	        for i in `seq 0 ${border}`
+		do
+			#过滤掉所有的控制字符之后输出
+			echo "memtester thread $i"
+		        memtester ${avg_mem_size}M 1 | col -b > ${toolRetDir}/memtester-${i}.ret &
+		done
+	fi
 	memtester ${avg_mem_size}M 1 | col -b > ${toolRetDir}/memtester-end.ret
 
 	# 判断所有的memtester进程是否退出

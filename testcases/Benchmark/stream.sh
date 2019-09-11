@@ -33,8 +33,9 @@ StreamXMLParse(){
 	XMLGetItemNum     xmlCaseName     xmlCaseNum
         XMLUnsetup
 
-	local index=0
-	for ((index=0;index<${xmlCaseNum};++index))
+        local border=$((${xmlCaseNum}-1))
+        local index=0
+        for index in `seq 0 ${border}`
         do
                 if [ "${xmlCaseName[${index}]}" == "${toolName}"  ];then
 			localName="${xmlCaseName[$index]}"
@@ -67,8 +68,8 @@ StreamDep(){
                 fi
         fi
 
-	local index=0
-	for((index=1;index<=${depNum};++index))
+        local index=0
+        for index in `seq 1 ${depNum}`
 	do
 		depTmp=$(echo $localDep | awk -F":" "{print \$${index}}")
 		#判断是否安装依赖包
@@ -145,11 +146,11 @@ StreamRun(){
 	cd ${localInstallPath}/${localFileName}
 
 	local index=0
-	for((index=0;index<5;++index))
+	for index in `seq 1 5`
 	do
 		./stream-1.elf >> stream-1.ret
 	done
-	for((index=0;index<5;++index))
+	for index in `seq 1 5`
 	do
 		./stream-N.elf >> stream-N.ret
 	done

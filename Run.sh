@@ -132,6 +132,7 @@ RunStartTest(){
         elif [ "${caseRun}" == "ALL" ];then
                 local allCaseName=""
                 allCaseName=$(ls ${caseDir})
+		local i=0
                 for i in ${allCaseName}
                 do
                         Run "`basename $caseDir`-${i%%.sh}" "$caseDir" "$i"
@@ -170,8 +171,9 @@ RunAutoTest(){
 #	echo ${xmlCaseName[*]} - ${xmlCaseDir[*]} - ${xmlCaseScript[*]} - ${xmlCaseRun[*]} - $xmlCaseNum
 	
 	# 运行XML中每一个测试项	
+	local border=$((${xmlCaseNum}-1))
 	local index=0
-	for((index=0 ;index < ${xmlCaseNum} ; ++index))
+        for index in `seq 0 ${border}`
 	do
 		RunStartTest ${xmlCaseName[${index}]} \
 				${TESTCASE_ROOT}/${xmlCaseDir[${index}]} \
@@ -192,8 +194,9 @@ RunAllAutoTest(){
 	XMLGetItemNum     xmlGroupName  xmlGroupNum
 	XMLUnsetup
 
+	local border=$((${xmlGroupNum}-1))
 	local index=0
-	for((index=0;index<${xmlGroupNum};++index))
+        for index in `seq 0 ${border}`
 	do
 		if [ "${xmlGroupRun[${index}]}" == "True" ];then
 			RunAutoTest ${xmlGroupXMLName[$index]}

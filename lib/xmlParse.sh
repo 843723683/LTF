@@ -9,8 +9,10 @@ XMLParse(){
 	itemName=($(sed -n 's/.*<\/\(.*\)>/\1/p' $1 | sort | uniq))
 	itemNum=${#itemName[*]}
 		
+	# 数组边界
+	local border=$((${itemNum}-1))
 	local index=0
-	for((index=0; index < ${itemNum}; ++index))
+	for index in `seq 0 ${border}`
 	do
 		eval ${itemName[${index}]}="($(sed -n 's/.*>\(.*\)<\/'${itemName[${index}]}'>/\1/p' $1))"
 	done
@@ -34,8 +36,9 @@ XMLGetItemNum(){
 }
 
 XMLUnsetup(){
+	local border=$((${itemNum}-1))
 	local index=0
-	for((index=0; index < itemNum; ++index))
+	for index in `seq 0 ${border}`
 	do
 		unset -v ${itemName[${index}]}
 	done
