@@ -114,6 +114,11 @@ StressapptestInit(){
 		fi
 	fi
 
+        # 获取总内存大小
+	StressapptestGetMemSizeMB
+        local memSize=$?
+        [ $memSize -le 0 ] && { echo "FAIL:mem size is $memSize";ret=2; }
+	
 	return $ret
 }
 
@@ -154,15 +159,21 @@ StressapptestInstall(){
 ## TODO：运行测试
 ##
 StressapptestRun(){
-	cd ${localInstallPath}/${localFileName}
-	mem_size=$(free -m | awk '{print $4}' | sed -n '2p')
-	echo "当前剩余内存大小:${mem_size}"
-	echo "Cmd: stressapptest -M ${mem_size} -s 1200"
+        # 获取总内存大小
+	StressapptestGetMemSizeMB
+        local memSize=$?
+        [ $memSize -le 0 ] && { echo "FAIL:mem size is $memSize";return 2; }
+        echo "当前剩余内存大小:${memSize}"
 
+	cd ${localInstallPath}/${localFileName}
+
+	echo "Cmd: stressapptest -M ${memSize} -s 1200"
 	# 测试
-        stressapptest -M ${mem_size} -s 1200 >  stressapptest.ret
+        stressapptest -M ${memSize} -s 1200 >  stressapptest.ret
+
 	cd -
 }
+
 
 ## TODO: 结果收集
 ##
@@ -198,6 +209,28 @@ StressapptestRetParse(){
 	if [ "${tmp}" -ne "0"  ];then
 		exit ${tmp}
 	fi	
+}
+
+
+## TODO:获取剩余内存大小
+## Out :-1 => 获取失败
+##   other => 剩余内存大小，单位MB
+##
+StressapptestGetMemSizeMB(){
+        # 获取剩余内存大小
+        local memSize=$(free -m | awk '{print $4}' | sed -n '2p')
+        [ $? -ne 0 ] && { echo "FAIL: Get mem size failed";return -1; }
+
+        # 判断 $memSize 是否为空 
+        [ "X$memSize" == "X" ] && { echo "FAIL: Get mem size is NULL";return -1; }
+
+        # 判断 $memSize 是否为数字 
+        echo ${memSize} | grep -q '[^0-9]'
+        [ $? -eq 0 ] && { echo "FAIL:Get memSize is not digit";return -1; }
+
+        echo "Success :Get mem Size = $memSize"
+
+        return $memSize
 }
 
 

@@ -112,6 +112,11 @@ KernbenchInit(){
 			ret=2
 		fi
 	fi
+        
+	# 获取CPU个数
+        KernbenchGetCpuNum
+        local cpuNum=$?
+        [ $cpuNum -le 0 ] && { echo "FAIL:cpu num is $cpuNum";ret=2; }
 
 	return $ret
 }
@@ -134,18 +139,17 @@ KernbenchInstall(){
 	#配置
 	./configure
 	[ $? -ne 0 ] && return 1
+
+        # 获取CPU个数
+        KernbenchGetCpuNum
+        local cpuNum=$?
+        [ $cpuNum -le 0 ] && { echo "FAIL:cpu num is $cpuNum";return 2; }
 	
 	#编译
-	local cpuNum=$(lscpu | grep "^CPU(s):" | awk '{print $2}')
-	if [ -n "$cpuNum" ];then
-		echo $cpuNum | grep '[^0-9]'
-		if [ "$?" -eq "0" ];then
-			make 
-		else
-			make -j ${cpuNum}
-		fi
+	if [ "$cpuNum" -eq "0" ];then
+		make 
 	else
-		make
+		make -j ${cpuNum}
 	fi
 	[ $? -ne 0 ] && return 1
 
@@ -161,10 +165,12 @@ KernbenchInstall(){
 	if [ "$?" -eq "0" ];then
 		sed -i 's/if \[\[ \! \-f include/if \[\[ \! \-f \/usr\/include/' kernbench
 	fi
+
 	cd -
 
 	return $ret
 }
+
 
 ## TODO：运行测试
 ##
@@ -175,6 +181,7 @@ KernbenchRun(){
 
 	cd -
 }
+
 
 ## TODO: 结果收集
 ##
@@ -192,10 +199,8 @@ KernbenchRet(){
 		# result
 		cp kernbench.ret ${retPath}/${toolRetDir}
 	fi
-        
 	
 	cd -
-
 }
 
 
@@ -212,6 +217,28 @@ KernbenchRetParse(){
 	if [ "${tmp}" -ne "0"  ];then
 		exit ${tmp}
 	fi	
+}
+
+
+## TODO:获取CPU个数
+## Out :-1 => 获取失败
+##   other => CPU个数
+##
+KernbenchGetCpuNum(){
+        # 获取CPU个数
+        local cpuNum=$(cat /proc/cpuinfo | grep "processor" | wc -l)
+        [ $? -ne 0 ] && { echo "FAIL: Get cpu num failed";return -1; }
+
+        # 判断 $cpuNum 是否为空 
+        [ "X$cpuNum" == "X" ] && { echo "FAIL: Get CPU(s) is NULL";return -1; }
+
+        # 判断 $cpuNum 是否为数字 
+        echo ${cpuNum} | grep -q '[^0-9]'
+        [ $? -eq 0 ] && { echo "FAIL:Get cpuNum is not digit";return -1; }
+
+        echo "Success :Get cpu Num = $cpuNum"
+
+        return $cpuNum
 }
 
 

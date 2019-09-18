@@ -114,19 +114,14 @@ SysbenchInit(){
 	fi
         
 	# 获取总内存大小
-        mem_size=$(free -g | awk '{print $2}' | sed -n '2p')
-        echo ${mem_size} | grep -q '[^0-9]'
-        [ $? -eq 0 ] && { echo "FAIL:Get mem_size is not digit";return 2; }
-        echo "当前内存大小:${mem_size}"
+        SysbenchGetMemSizeGB
+        local memSize=$?
+        [ $memSize -le 0 ] && { echo "FAIL:mem size is $memSize";ret=2; }
 
         # 获取CPU个数
-        CPU_NUM=$(lscpu | grep "^CPU(s):" | awk '{print $2}')
-        [ $? -ne 0 ] && { echo "FAIL: lscpu failed";return 2; }
-        # 判断 $CPU_NUM 是否为空 
-        [ "X$CPU_NUM" == "X" ] && { echo "FAIL: lscpu CPU(s) is NULL";return 2; }
-        # 判断 $CPU_NUM 是否为数字 
-        echo ${CPU_NUM} | grep -q '[^0-9]'
-        [ $? -eq 0 ] && { echo "FAIL:Get CPU_NUM is not digit";return 2; }
+        SysbenchGetCpuNum
+        local cpuNum=$?
+        [ $cpuNum -le 0 ] && { echo "FAIL:cpu num is $cpuNum";ret=2; }
 
 	return $ret
 }
@@ -165,18 +160,27 @@ SysbenchInstall(){
 ## TODO：运行测试
 ##
 SysbenchRun(){
+	# 获取总内存大小
+        SysbenchGetMemSizeGB
+        local memSize=$?
+        [ $memSize -le 0 ] && { echo "FAIL:mem size is $memSize";return 2; }
+
+	# 获取CPU个数
+        SysbenchGetCpuNum
+        local cpuNum=$?
+        [ $cpuNum -le 0 ] && { echo "FAIL:cpu num is $cpuNum";return 2; }
+	
 	cd ${localInstallPath}/${localFileName}
-	
 	[ ! -d ${toolRetDir} ] && mkdir ${toolRetDir}
-	
+        
 	# 内存：多线程-随机
-	sysbench --threads=${CPU_NUM} --memory-block-size=8k --memory-total-size=${mem_size}G --memory-access-mode=rnd memory run > ${toolRetDir}/sysbench-rnd.ret
+	sysbench --threads=${cpuNum} --memory-block-size=8k --memory-total-size=${memSize}G --memory-access-mode=rnd memory run > ${toolRetDir}/sysbench-rnd.ret
 	# 内存：多线程-连续
-	sysbench --threads=${CPU_NUM} --memory-block-size=8k --memory-total-size=${mem_size}G --memory-access-mode=seq memory run > ${toolRetDir}/sysbench-seq.ret
+	sysbench --threads=${cpuNum} --memory-block-size=8k --memory-total-size=${memSize}G --memory-access-mode=seq memory run > ${toolRetDir}/sysbench-seq.ret
 	# 内存：单线程-随机
-	sysbench --threads=1 --memory-block-size=8k --memory-total-size=${mem_size}G --memory-access-mode=rnd memory run > ${toolRetDir}/sysbench-rnd-1cpu.ret
+	sysbench --threads=1 --memory-block-size=8k --memory-total-size=${memSize}G --memory-access-mode=rnd memory run > ${toolRetDir}/sysbench-rnd-1cpu.ret
 	# 内存：单线程-连续
-	sysbench --threads=1 --memory-block-size=8k --memory-total-size=${mem_size}G --memory-access-mode=seq memory run > ${toolRetDir}/sysbench-seq-1cpu.ret
+	sysbench --threads=1 --memory-block-size=8k --memory-total-size=${memSize}G --memory-access-mode=seq memory run > ${toolRetDir}/sysbench-seq-1cpu.ret
 	
 	cd -
 }
@@ -218,6 +222,50 @@ SysbenchRetParse(){
 	if [ "${tmp}" -ne "0"  ];then
 		exit ${tmp}
 	fi	
+}
+
+
+## TODO:获取CPU个数
+## Out :-1 => 获取失败
+##   other => CPU个数
+##
+SysbenchGetCpuNum(){
+        # 获取CPU个数
+        local cpuNum=$(cat /proc/cpuinfo | grep "processor" | wc -l)
+        [ $? -ne 0 ] && { echo "FAIL: Get cpu num failed";return -1; }
+
+        # 判断 $cpuNum 是否为空 
+        [ "X$cpuNum" == "X" ] && { echo "FAIL: Get CPU(s) is NULL";return -1; }
+
+        # 判断 $cpuNum 是否为数字 
+        echo ${cpuNum} | grep -q '[^0-9]'
+        [ $? -eq 0 ] && { echo "FAIL:Get cpuNum is not digit";return -1; }
+
+        echo "Success :Get cpu Num = $cpuNum"
+
+        return $cpuNum
+}
+
+
+## TODO:获取总内存大小
+## Out :-1 => 获取失败
+##   other => 内存大小，单位GB
+##
+SysbenchGetMemSizeGB(){
+        # 获取总内存大小
+        local memSize=$(free -g | awk '{print $2}' | sed -n '2p')
+        [ $? -ne 0 ] && { echo "FAIL: Get mem size failed";return -1; }
+
+        # 判断 $memSize 是否为空 
+        [ "X$memSize" == "X" ] && { echo "FAIL: Get mem size is NULL";return -1; }
+
+        # 判断 $memSize 是否为数字 
+        echo ${memSize} | grep -q '[^0-9]'
+        [ $? -eq 0 ] && { echo "FAIL:Get memSize is not digit";return -1; }
+
+        echo "Success :Get mem Size = $memSize"
+
+        return $memSize
 }
 
 

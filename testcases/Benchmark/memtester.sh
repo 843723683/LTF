@@ -113,6 +113,16 @@ MemtesterInit(){
 		fi
 	fi
 
+        # 获取总内存大小
+	MemtesterGetMemSizeMB
+        local memSize=$?
+        [ $memSize -le 0 ] && { echo "FAIL:mem size is $memSize";ret=2; }
+
+        # 获取CPU个数
+	MemtesterGetCpuNum
+        local cpuNum=$?
+        [ $cpuNum -le 0 ] && { echo "FAIL:cpu num is $cpuNum";ret=2; }
+
 	return $ret
 }
 
@@ -143,30 +153,28 @@ MemtesterInstall(){
 ## TODO：运行测试
 ##
 MemtesterRun(){
-	cd ${localInstallPath}/${localFileName}
-
-	# 获取剩余内存大小
-	mem_size=$(free -m | awk '{print $4}' | sed -n '2p')
-	echo "当前剩余内存大小:${mem_size}"
+        # 获取总内存大小
+	MemtesterGetMemSizeMB
+        local memSize=$?
+        [ $memSize -le 0 ] && { echo "FAIL:mem size is $memSize";return 2; }
+	echo "当前剩余内存大小:${memSize}"
 
         # 获取CPU个数
-        CPU_NUM=$(lscpu | grep "^CPU(s):" | awk '{print $2}')
-        [ $? -ne 0 ] && { echo "FAIL: lscpu failed";return 2; }
-        # 判断 $CPU_NUM 是否为空 
-        [ "X$CPU_NUM" == "X" ] && { echo "FAIL: lscpu CPU(s) is NULL";return 2; }
-        # 判断 $CPU_NUM 是否为数字 
-        echo ${CPU_NUM} | grep -q '[^0-9]'
-        [ $? -eq 0 ] && { echo "FAIL:Get CPU_NUM is not digit";return 2; }
+	MemtesterGetCpuNum
+        local cpuNum=$?
+        [ $cpuNum -le 0 ] && { echo "FAIL:cpu num is $cpuNum";return 2; }
+	
+	cd ${localInstallPath}/${localFileName}
 
 	# 计算每个线程需要测试内存
-	avg_mem_size=$((mem_size/CPU_NUM))
+	avg_mem_size=$((${memSize}/${cpuNum}))
 
 	[ ! -d ${toolRetDir} ] && mkdir ${toolRetDir}
 
 	# 进行测试
-	if [ ${CPU_NUM} -gt 1 ];then
+	if [ ${cpuNum} -gt 1 ];then
 		local i=0
-	        local border=$((${CPU_NUM}-2))
+	        local border=$((${cpuNum}-2))
 	        for i in `seq 0 ${border}`
 		do
 			#过滤掉所有的控制字符之后输出
@@ -227,6 +235,50 @@ MemtesterRetParse(){
 	if [ "${tmp}" -ne "0"  ];then
 		exit ${tmp}
 	fi	
+}
+
+
+## TODO:获取CPU个数
+## Out :-1 => 获取失败
+##   other => CPU个数
+##
+MemtesterGetCpuNum(){
+        # 获取CPU个数
+        local cpuNum=$(cat /proc/cpuinfo | grep "processor" | wc -l)
+        [ $? -ne 0 ] && { echo "FAIL: Get cpu num failed";return -1; }
+
+        # 判断 $cpuNum 是否为空 
+        [ "X$cpuNum" == "X" ] && { echo "FAIL: Get CPU(s) is NULL";return -1; }
+
+        # 判断 $cpuNum 是否为数字 
+        echo ${cpuNum} | grep -q '[^0-9]'
+        [ $? -eq 0 ] && { echo "FAIL:Get cpuNum is not digit";return -1; }
+
+        echo "Success :Get cpu Num = $cpuNum"
+
+        return $cpuNum
+}
+
+
+## TODO:获取剩余内存大小
+## Out :-1 => 获取失败
+##   other => 剩余内存大小，单位MB
+##
+MemtesterGetMemSizeMB(){
+        # 获取剩余内存大小
+        local memSize=$(free -m | awk '{print $4}' | sed -n '2p')
+        [ $? -ne 0 ] && { echo "FAIL: Get mem size failed";return -1; }
+
+        # 判断 $memSize 是否为空 
+        [ "X$memSize" == "X" ] && { echo "FAIL: Get mem size is NULL";return -1; }
+
+        # 判断 $memSize 是否为数字 
+        echo ${memSize} | grep -q '[^0-9]'
+        [ $? -eq 0 ] && { echo "FAIL:Get memSize is not digit";return -1; }
+
+        echo "Success :Get mem Size = $memSize"
+
+        return $memSize
 }
 
 

@@ -112,6 +112,11 @@ UnixbenchInit(){
 			ret=2
 		fi
 	fi
+	
+	# 获取CPU个数
+	UnixbenchGetCpuNum
+	local cpuNum=$?
+	[ $cpuNum -le 0 ] && { echo "FAIL:cpu num is $cpuNum";ret=2; }
 
 	return $ret
 }
@@ -122,23 +127,19 @@ UnixbenchInit(){
 ##      2=>TCONF
 UnixbenchSetThread(){
 	# 获取CPU个数
-	CPU_NUM=$(lscpu | grep "^CPU(s):" | awk '{print $2}')
-	[ $? -ne 0 ] && { echo "FAIL: lscpu failed";return 2; }
-	# 判断 $CPU_NUM 是否为空 
-	[ "X$CPU_NUM" == "X" ] && { echo "FAIL: lscpu CPU(s) is NULL";return 2; }
-	# 判断 $CPU_NUM 是否为数字 
-	echo ${CPU_NUM} | grep -q '[^0-9]'
-	[ $? -eq 0 ] && { echo "FAIL:Get CPU_NUM is not digit";return 2; }
+	UnixbenchGetCpuNum
+	local cpuNum=$?
+	[ $cpuNum -le 0 ] && { echo "FAIL:cpu num is $cpuNum";return 2; }
 
-	if [ $CPU_NUM -le 16 ];then
+	if [ $cpuNum -le 16 ];then
 		return 0
 	fi
 
-	echo "Set Cpu num = ${CPU_NUM}"	
+	echo "Set Cpu num = ${cpuNum}"	
 	cd ${localInstallPath}/${localFileName}
 	# 设置unixbench支持多线程
-	sed -i "s/\"System Benchmarks\", 'maxCopies' => 16/\"System Benchmarks\", 'maxCopies' => $CPU_NUM/" Run	
-	[ $? -ne 0 ] && { echo "FAIL:Set CPU_NUM to \"Run\" ";return 2; }
+	sed -i "s/\"System Benchmarks\", 'maxCopies' => 16/\"System Benchmarks\", 'maxCopies' => $cpuNum/" Run	
+	[ $? -ne 0 ] && { echo "FAIL:Set cpuNum to \"Run\" ";return 2; }
 	
 	cd -
 	
@@ -209,6 +210,7 @@ UnixbenchUnsetup(){
 }
 
 
+
 ## TODO:解析函数返回值
 ## exit：1->程序退出，失败
 ##     ：2->程序退出，阻塞
@@ -217,6 +219,28 @@ UnixbenchRetParse(){
 	if [ "${tmp}" -ne "0"  ];then
 		exit ${tmp}
 	fi	
+}
+
+
+## TODO:获取CPU个数
+## Out :-1 => 获取失败
+##   other => CPU个数
+##
+UnixbenchGetCpuNum(){
+	# 获取CPU个数
+	local cpuNum=$(cat /proc/cpuinfo | grep "processor" | wc -l)
+	[ $? -ne 0 ] && { echo "FAIL: Get cpu num failed";return -1; }
+
+	# 判断 $cpuNum 是否为空 
+	[ "X$cpuNum" == "X" ] && { echo "FAIL: Get CPU(s) is NULL";return -1; }
+
+	# 判断 $cpuNum 是否为数字 
+	echo ${cpuNum} | grep -q '[^0-9]'
+	[ $? -eq 0 ] && { echo "FAIL:Get cpuNum is not digit";return -1; }
+	
+	echo "Success :Get cpu Num = $cpuNum"
+	
+	return $cpuNum
 }
 
 
