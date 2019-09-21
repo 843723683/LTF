@@ -2,6 +2,15 @@
 
 Linux automated testing framework
 
+
+ ./Run [OPTION]
+  OPTION : 
+	-r : Clean result dir
+	-a : Run All Testcases
+	-i : Install Test     
+	-f xmlFile : XML file
+	
+
 一. Running tests
 
 To run these tests on your local machine :
