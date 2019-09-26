@@ -4,16 +4,16 @@
 ##
 ##
 RUNUSAGE(){
-	echo ""
-	echo "-------------------------------"
-	echo "| Usage  : ./Run [OPTION]      |"
-	echo "| OPTION :                     |"
-	echo "|    -r : Clean result dir     |"
-	echo "|    -a : Run All Testcases    |"
-	echo "|    -i : Install Test         |"
-	echo "|    -f xmlFile : XML file     |"
-	echo "-------------------------------"
-	echo ""
+	cat >&2 <<-EOF
+	 -------------------------------
+	| Usage  : ./Run [OPTION]       |
+	| OPTION :                      |
+	|    -r : Clean result dir      |
+	|    -a : Run All Testcases     |
+	|    -i : Install Test          |
+	|    -f xmlFile : XML file      |
+	 -------------------------------
+	EOF
 }
 
 ## TODO:Init

@@ -20,18 +20,42 @@ RetSetup(){
 	RetBrkUsage
 }
 
+
+RetBrkUsage(){
+	
+	printf " \n\
+\t\t#     #######   ######\n \
+\t\t#        #      #\n \
+\t\t#        #      #####\n \
+\t\t#        #      #\n \
+\t\t#        #      #\n \
+\t\t#####    #      #\n\n \
+"
+	
+	printf "\n"	
+	printf "%s: %s\n\n" "Test Start Time" "$(date)"
+	printf "%-s\n" ---------------------------------------------------------
+	printf "%-30s\t\t\t %-10s\n" TestCase  Result
+	printf "%-30s\t\t\t %-10s\n" --------  ------
+}
+
+
 RetBrkParse(){
 	let retTotal=retTPASSNum+retTFAILNum+retTCONFNum
-	echo ""
-	echo "-------------------------"
-	echo "Total Test : ${retTotal}"
-	echo "Total TPASS: ${retTPASSNum}"
-	echo "Total TFAIL: ${retTFAILNum}"
-	echo "Total TCONF: ${retTCONFNum}"
-	echo "Total ERROR: ${retERRORNum}"
-	echo "-------------------------"
-	echo "详细日志信息：${logFile}"
-	echo ""
+	cat >&1 <<-EOF
+
+
+--------------------
+Total Test : ${retTotal}
+Total TPASS: ${retTPASSNum}
+Total TFAIL: ${retTFAILNum}
+Total TCONF: ${retTCONFNum}
+Total ERROR: ${retERRORNum}
+--------------------
+详细日志信息：${logFile}
+
+
+	EOF
 }
 
 ## TODO : 写入开始时间和Item name
@@ -115,14 +139,5 @@ RetBrkErr(){
 		echo "$(date)" >> $logFile
 		echo "$1 : $3" >> $logFile
 	fi
-}
-
-RetBrkUsage(){
-	
-	printf "\n"	
-	printf "%s: %s\n" "Test Start Time" "$(date)"
-	printf "%-s\n" ------------------------------------------------------
-	printf "%-30s\t\t\t %-10s\n" TestCase  Result
-	printf "%-30s\t\t\t %-10s\n" --------  ------
 }
 
