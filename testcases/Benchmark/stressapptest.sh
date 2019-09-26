@@ -69,6 +69,7 @@ StressapptestDep(){
         fi
 
         local index=0
+	local failpkg=""
         for index in `seq 1 ${depNum}`
 	do
 		depTmp=$(echo $localDep | awk -F":" "{print \$${index}}")
@@ -77,10 +78,14 @@ StressapptestDep(){
 		local ret="$?"
 		#没有安装依赖
 		if [ "${ret}" -ne "0"  ];then
-			echo "Not install ${depTmp}"
-			return 2
+			failpkg="$failpkg $depTmp"
 		fi
 	done
+
+        if [ "X$failpkg" != "X" ];then
+                echo "Not install ${failpkg}"
+                return 2
+        fi
 
 	return 0
 }

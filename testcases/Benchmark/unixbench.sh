@@ -68,6 +68,7 @@ UnixbenchDep(){
 	fi
 
         local index=0
+	local failpkg=""
         for index in `seq 1 ${depNum}`
 	do
 		depTmp=$(echo $localDep | awk -F":" "{print \$${index}}")
@@ -76,10 +77,14 @@ UnixbenchDep(){
 		local ret="$?"
 		#没有安装依赖
 		if [ "${ret}" -ne "0"  ];then
-			echo "Not install ${depTmp}"
-			return 2
+			failpkg="$failpkg $depTmp"
 		fi
 	done
+
+	if [ "X$failpkg" != "X" ];then
+                echo "Not install ${failpkg}"
+                return 2
+        fi
 
 	return 0
 }
@@ -178,8 +183,19 @@ UnixbenchInstall(){
 ## TODO：运行测试
 ##
 UnixbenchRun(){
+	# 获取CPU个数
+	UnixbenchGetCpuNum
+	local cpuNum=$?
+	[ $cpuNum -le 0 ] && { echo "FAIL:cpu num is $cpuNum";ret=2; }
+
 	cd ${localInstallPath}/${localFileName}
-	./Run 
+
+	if [ ${cpuNum} -eq 1 ];then
+		./Run -c 1
+	else
+		./Run -c 1 -c ${cpuNum}
+	fi
+
 	cd -
 }
 
