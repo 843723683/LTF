@@ -1,16 +1,20 @@
 # Linux-Test-Framework
 
 Linux automated testing framework
-
+	
 一. Running tests
 
-To run these tests on your local machine :
+1. To run these tests on your local machine :
 
 ./Run.sh -a
 
-Run only performance tests (config/*.xml) :
+2. Run only performance tests (config/*.xml) :
 
 ./Run.sh -f benchmark.xml
+
+3. Only perform the installation test. Only for performance testing. Avoid architecture, cpu and other abnormal interrupt tests
+
+./Run.sh -f benchmark.xml -i
 
 二. Writing tests
 
