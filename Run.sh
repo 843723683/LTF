@@ -43,6 +43,12 @@ RunSetup(){
 		AUTOTEST_XML="autoTest.xml"
 	fi
 
+	# Get architecture
+	export AUTOTEST_ARCH=`${LIB_ROOT}/gnu-os`
+	
+	# Get Sysinfo
+	source ${LIB_ROOT}/getSysInfo.sh
+
 	# source xmlParse.sh
 	source ${LIB_ROOT}/xmlParse.sh
 
@@ -52,9 +58,6 @@ RunSetup(){
 	source ${LIB_ROOT}/result.sh
 	# 创建日志文件和目录
 	RetSetup ${LOG_PATH} ${LOG_FILE}
-
-	# Get architecture
-	export AUTOTEST_ARCH=`${LIB_ROOT}/gnu-os`
 }
 
 

@@ -24,16 +24,29 @@ RetSetup(){
 RetBrkUsage(){
 	
 	printf " \n\
-\t\t#     #######   ######\n \
-\t\t#        #      #\n \
-\t\t#        #      #####\n \
-\t\t#        #      #\n \
-\t\t#        #      #\n \
-\t\t#####    #      #\n\n \
-"
+\t\t#       #######   ######\n \
+\t\t#          #      #\n \
+\t\t#          #      #####\n \
+\t\t#          #      #\n \
+\t\t#          #      #\n \
+\t\t######     #      #\n\n"
+	
+	printf "%-s\n" ---------------------------------------------------------
+
+	cat >&1 <<-EOF
+
+Hostname        : $GSI_HOSTNAME
+System Version  : $GSI_SYSVER
+Kernel Version  : $GSI_OSVER
+Kernel Relase   : $GSI_OSREL
+Machine         : $AUTOTEST_ARCH
+Runlevel        : $GSI_RUNLEVEL
+Language        : $GSI_LANGUAGE
+Enforce         : $GSI_ENFORCE
+Test Start Time : $(date)
+	EOF
 	
 	printf "\n"	
-	printf "%s: %s\n\n" "Test Start Time" "$(date)"
 	printf "%-s\n" ---------------------------------------------------------
 	printf "%-30s\t\t\t %-10s\n" TestCase  Result
 	printf "%-30s\t\t\t %-10s\n" --------  ------
@@ -46,7 +59,7 @@ RetBrkParse(){
 
 
 --------------------
-Total Test : ${retTotal}
+Total Tests: ${retTotal}
 Total TPASS: ${retTPASSNum}
 Total TFAIL: ${retTFAILNum}
 Total TCONF: ${retTCONFNum}

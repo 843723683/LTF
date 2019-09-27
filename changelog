@@ -5,3 +5,4 @@
 1. 修改unixbench测试方法，添加-c参数指定单线程和多线程
 2. 优化benchmark中包列表检测方法。检查完所有的包列表之后再判断检查状态。
 3. 优化终端打印信息
+4. 新增终端打印信息：主机名、系统版本号，内核版本号，内核release日期、runlevel、language、Enforce
