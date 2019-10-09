@@ -49,4 +49,22 @@
 		<CaseScript>tcl.sh</CaseScript>
 		<CaseRun>True</CaseRun>
 	</TestCase>
+	<TestCase>
+		<CaseName>php</CaseName>
+		<CaseDir>Language</CaseDir>
+		<CaseScript>php.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+	<TestCase>
+		<CaseName>java</CaseName>
+		<CaseDir>Language</CaseDir>
+		<CaseScript>java.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+	<TestCase>
+		<CaseName>javascript</CaseName>
+		<CaseDir>Language</CaseDir>
+		<CaseScript>javascript.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
 </TestGroup>
