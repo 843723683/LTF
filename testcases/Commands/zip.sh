@@ -3,7 +3,7 @@
 
 CMD="zip"
 TMPDIR="/var/tmp/dirTar"
-TMPFILE="${TMPDIR}/test-tar"
+TMPFILE="${TMPDIR}/test-zip"
 
 echo "$0 test ${CMD}"
 
@@ -18,16 +18,17 @@ cat > ${TMPFILE} <<EOF
 test zip
 EOF
 
-zip -q /var/tmp/test-tar.zip $TMPDIR/*
+zip -q /var/tmp/test-zip.zip $TMPDIR/*
 [ $? -ne 0 ] && { echo "zip failed!";exit 1; }
 rm -rf $TMPDIR
 
-unzip -q /var/tmp/test-tar.zip -d /
+unzip -q /var/tmp/test-zip.zip -d /
 [ $? -ne 0 ] && { echo "unzip failed!";exit 1; }
 
 cat $TMPFILE | grep -q "test zip"
 [ $? -ne 0 ] && exit 1
 
 rm ${TMPDIR} -rf
+rm /var/tmp/test-zip.zip -rf
 
 exit 0
