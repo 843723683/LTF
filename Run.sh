@@ -107,7 +107,7 @@ Run(){
 	local ret=0	
 
 	RetBrkStart ${caseName}
-	sh ${caseDir}/${caseScript} "${AUTOTEST_INSTALL_FALG}" >> ${LOG_FILE} 2>&1
+	bash ${caseDir}/${caseScript} "${AUTOTEST_INSTALL_FALG}" >> ${LOG_FILE} 2>&1
 	ret="$?"
 	RunRetParse $ret		
 
