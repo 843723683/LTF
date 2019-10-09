@@ -9,7 +9,7 @@ echo "$0 test ${CMD}"
 
 # 判断命令是否存在
 which ${CMD} &>/dev/null
-[ $? -ne 0 ] && { echo "No command :${CMD}";exit 1; }
+[ $? -ne 0 ] && { echo "${CMD} :Command not found";exit 1; }
 
 cat > ${TEST_FILE} <<EOF
 console.log("helloworld")

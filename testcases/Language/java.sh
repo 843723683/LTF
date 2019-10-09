@@ -11,9 +11,9 @@ echo "$0 test ${CMD_COMPILE} and ${CMD_RUN}"
 
 # 判断命令是否存在
 which ${CMD_COMPILE} &>/dev/null
-[ $? -ne 0 ] && { echo "No command :${CMD_COMPILE}";exit 1; }
+[ $? -ne 0 ] && { echo "${CMD_COMPILE} :Command not found";exit 1; }
 which ${CMD_RUN} &>/dev/null
-[ $? -ne 0 ] && { echo "No command :${CMD_RUN}";exit 1; }
+[ $? -ne 0 ] && { echo "${CMD_RUN} :Command not found";exit 1; }
 
 cat > ${TEST_FILE} <<EOF
 public class javatest {

@@ -7,6 +7,6 @@
 3. 修改unixbench测试方法，添加-c参数指定单线程和多线程
 4. 优化benchmark中包列表检测方法。检查完所有的包列表之后再判断检查状态。
 5. 新增Language测试（php,java,javascript）
-6. 解决command-zip.sh测试完成后，未清除"/var/tmp/test-tar.zip"文件问题
-
-
+6. 优化Language测试报错信息
+7. 解决command-zip.sh测试完成后，未清除"/var/tmp/test-tar.zip"文件问题
+8. 修改Run.sh中执行脚本命令，由"sh"修改为"bash"

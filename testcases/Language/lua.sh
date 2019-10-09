@@ -9,13 +9,13 @@ echo "$0 test ${CMD}"
 
 #判断命令是否存在
 which ${CMD} >/dev/null 2>&1 
-[ $? -ne 0 ]&&{ echo "No command :${CMD}";exit 1; }
+[ $? -ne 0 ]&&{ echo "${CMD} :Command not found";exit 1; }
 
 cat > ${TEST_FILE}<<EOF
 print ("helloworld")
 EOF
 
-lua ${TEST_FILE} | grep -q "helloworld" 
+${CMD} ${TEST_FILE} | grep -q "helloworld" 
 ret=$?
 
 rm ${TEST_FILE}

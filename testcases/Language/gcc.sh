@@ -10,7 +10,7 @@ echo "$0 test ${CMD}"
 
 #判断命令是否存在
 which ${CMD} >/dev/null 2>&1 
-[ $? -ne 0 ]&&{ echo "No command :${CMD}";exit 1; }
+[ $? -ne 0 ]&&{ echo "${CMD} :Command not found";exit 1; }
 
 cat > ${TEST_FILE}<<EOF
 #include <stdio.h>
@@ -22,7 +22,7 @@ int main(int argc,char *argv[]){
 
 EOF
 
-gcc -o ${TEST_EXE} ${TEST_FILE}
+${CMD} -o ${TEST_EXE} ${TEST_FILE}
 
 ${TEST_EXE} | grep -q "helloworld" 
 ret=$?
