@@ -39,13 +39,13 @@
 	</BenchmarktCase>
 	<BenchmarkCase>
 		<CaseName>hackbench</CaseName>
-		<CaseDepend>gcc</CaseDepend>
+		<CaseDepend>gcc:bzip2</CaseDepend>
 		<CasePkgName>ltp-full-20190517.tar.bz2</CasePkgName>
 		<CaseFileName>ltp-full-20190517</CaseFileName>
 	</BenchmarktCase>
 	<BenchmarkCase>
 		<CaseName>kernbench</CaseName>
-		<CaseDepend>gcc</CaseDepend>
+		<CaseDepend>gcc:bzip2</CaseDepend>
 		<CasePkgName>ltp-full-20190517.tar.bz2</CasePkgName>
 		<CaseFileName>ltp-full-20190517</CaseFileName>
 	</BenchmarktCase>
