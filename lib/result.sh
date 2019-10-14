@@ -2,13 +2,11 @@
 
 ## TODO : init
 ## In   : $1=>Log Path
-##        $2=>Log File
-
 RetSetup(){
 	if [ ! -d "$1" ];then
+		logPath=${1}
 		mkdir -p $1
 	fi
-	logFile="$2"
 
 	retTPASSNum=0
 	retTFAILNum=0
@@ -65,7 +63,8 @@ Total TFAIL: ${retTFAILNum}
 Total TCONF: ${retTCONFNum}
 Total ERROR: ${retERRORNum}
 --------------------
-详细日志信息：${logFile}
+
+Detailed：${logPath}
 
 
 	EOF
@@ -73,16 +72,21 @@ Total ERROR: ${retERRORNum}
 
 ## TODO : 写入开始时间和Item name
 ## In   : $1=>Item name 
+##      : $2=>logFile：日志文件路径
 RetBrkStart(){
 	#打印脚本名称
 	printf "%-30s" "$1"
 	
+	local logFile=$2
 	echo "##  Run $1 : $(date)" >> ${logFile}
 }
 
+
 ## TODO : 写入结束时间和Item name
 ## In   : $1=>Item name 
+##      : $2=>logFile：日志文件路径
 RetBrkEnd(){
+	local logFile=$2
 	echo "## Finish $1 : $(date)" >> ${logFile}
 }
 
@@ -90,14 +94,15 @@ RetBrkEnd(){
 ## In   : $1=>TFAIL or TPASS or TCONF or ERROR
 ##        $2=>Item name 
 ##        $3=>Write to log file info
+##        $4=>logFile：日志文件路径
 RetBrk (){
 	case $1 in
 	TPASS|TFAIL|TCONF)
 		RetBrkFailPassConf "$1" "$2"
 		;;
 	ERROR)
-		if [ "$#" -eq "3" ];then
-			RetBrkErr "$1" "$2" "$3"
+		if [ "$#" -eq "4" ];then
+			RetBrkErr "$1" "$2" "$3" "$4"
 		else
 			RetBrkErr "$1" "$2"
 		fi
@@ -141,14 +146,17 @@ RetBrkFailPassConf(){
 ## In   : $1=>ERROR
 ##        $2=>Item name 
 ##        $3=>Write to log file info
+##        $4=>logFile：日志文件路径
 RetBrkErr(){
+	local logFile="$4"
+
 	#打印脚本执行结果
         printf "%-30s\t\t\t %-10s\n" "$2" "$1"
 
 	#统计ERROR数据
 	let retERRORNum=retERRORNum+1
 
-	if [ "$#" -eq "3" ];then
+	if [ "$#" -eq "4" ];then
 		echo "$(date)" >> $logFile
 		echo "$1 : $3" >> $logFile
 	fi

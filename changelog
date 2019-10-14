@@ -11,3 +11,4 @@
 7. 解决command-zip.sh测试完成后，未清除"/var/tmp/test-tar.zip"文件问题
 8. 修改Run.sh中执行脚本命令，由"sh"修改为"bash"
 9. 解决benchmark解压缩报错问题。添加依赖检测bzip2
+10. 优化日志呈现方式。日志文件根据testcase中的测试集合名分开保存。

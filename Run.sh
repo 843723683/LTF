@@ -57,7 +57,7 @@ RunSetup(){
 	LOG_FILE=${LOG_PATH}/${START_TIME}.ret
 	source ${LIB_ROOT}/result.sh
 	# 创建日志文件和目录
-	RetSetup ${LOG_PATH} ${LOG_FILE}
+	RetSetup ${LOG_PATH}
 }
 
 
@@ -104,14 +104,17 @@ Run(){
 	local caseDir=$2
 	local caseScript=$3
 
+	# 日志文件
+	local logFile=${LOG_PATH}/$(basename ${caseDir}).ret
+	
 	local ret=0	
 
-	RetBrkStart ${caseName}
-	bash ${caseDir}/${caseScript} "${AUTOTEST_INSTALL_FALG}" >> ${LOG_FILE} 2>&1
+	RetBrkStart ${caseName} ${logFile}
+	bash ${caseDir}/${caseScript} "${AUTOTEST_INSTALL_FALG}" >> ${logFile} 2>&1
 	ret="$?"
 	RunRetParse $ret		
 
-	RetBrkEnd ${caseName}
+	RetBrkEnd ${caseName} ${logFile}
 	
 	return $ret
 }
@@ -158,7 +161,7 @@ RunStartTest(){
 RunAutoTest(){
 	if [ ! -f "${CFG_ROOT}/$1" ];then
 		RetBrk "ERROR" "XML File" \
-			"Can't find XML file (${CFG_ROOT}/$1)"
+			"Can't find XML file (${CFG_ROOT}/$1)" ${LOG_FILE}
 		return 1
 	fi
 
