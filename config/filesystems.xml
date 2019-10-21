@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<TestGroup>
+	<TestCase>
+		<CaseName>ext2</CaseName>
+		<CaseDir>FileSystems</CaseDir>
+		<CaseScript>filesystem.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+	<TestCase>
+		<CaseName>ext3</CaseName>
+		<CaseDir>FileSystems</CaseDir>
+		<CaseScript>filesystem.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+	<TestCase>
+		<CaseName>ext4</CaseName>
+		<CaseDir>FileSystems</CaseDir>
+		<CaseScript>filesystem.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+	<TestCase>
+		<CaseName>ntfs</CaseName>
+		<CaseDir>FileSystems</CaseDir>
+		<CaseScript>filesystem.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+	<TestCase>
+		<CaseName>fat</CaseName>
+		<CaseDir>FileSystems</CaseDir>
+		<CaseScript>filesystem.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+	<TestCase>
+		<CaseName>xfs</CaseName>
+		<CaseDir>FileSystems</CaseDir>
+		<CaseScript>filesystem.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+	<TestCase>
+		<CaseName>volume</CaseName>
+		<CaseDir>FileSystems</CaseDir>
+		<CaseScript>filesystem.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+	<TestCase>
+		<CaseName>file</CaseName>
+		<CaseDir>FileSystems</CaseDir>
+		<CaseScript>filesystem.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+</TestGroup>

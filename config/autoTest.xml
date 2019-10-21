@@ -21,4 +21,9 @@
 		<GroupXMLName>language.xml</GroupXMLName>
 		<GroupRun>True</GroupRun>
 	</TestGroup>
+	<TestGroup>
+		<GroupName>filesystems</GroupName>
+		<GroupXMLName>filesystems.xml</GroupXMLName>
+		<GroupRun>True</GroupRun>
+	</TestGroup>
 </AutoTest>
