@@ -109,12 +109,13 @@ Run(){
 	
 	local ret=0	
 
-	RetBrkStart ${caseName} ${logFile}
-	bash ${caseDir}/${caseScript} "${AUTOTEST_INSTALL_FALG}" >> ${logFile} 2>&1
+	RetBrkStart "`basename $caseDir`-$caseName" ${logFile}
+	# 第一个参数：${caseDir}/${CaseName}。第二个参数：是否只进行安装测试。
+	bash ${caseDir}/${caseScript} "${caseDir}/${caseName}" "${AUTOTEST_INSTALL_FALG}" >> ${logFile} 2>&1
 	ret="$?"
 	RunRetParse $ret		
 
-	RetBrkEnd ${caseName} ${logFile}
+	RetBrkEnd "`basename $caseDir`-$caseName" ${logFile}
 	
 	return $ret
 }
@@ -133,7 +134,7 @@ RunStartTest(){
 	local ret=0
 	if [ "${caseRun}" == "True" ];then
 		##Run test
-		Run "`basename $caseDir`-$caseName" "$caseDir" "$caseScript"
+		Run "$caseName" "$caseDir" "$caseScript"
 		ret=$?
         elif [ "${caseRun}" == "ALL" ];then
                 local allCaseName=""
@@ -141,7 +142,7 @@ RunStartTest(){
 		local i=0
                 for i in ${allCaseName}
                 do
-                        Run "`basename $caseDir`-${i%%.sh}" "$caseDir" "$i"
+                        Run "${i%%.sh}" "$caseDir" "$i"
                 done
 	else 
 		## XML 中caseRun 设置为 False
