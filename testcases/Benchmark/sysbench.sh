@@ -290,7 +290,8 @@ SysbenchRunTest(){
 
 	SysbenchRun
 	SysbenchRet
-#	sleep 5
+
+	sleep ${BENCHMARK_WAIT_300S}
 #	echo "hello Sysbench"
 	
 #	SysbenchUnsetup
@@ -314,7 +315,7 @@ SysbenchInstallTest(){
 main(){
 	SysbenchSetup
 	
-	if [ "$#" -ne "0"  ] && [ "X$1" == "X${BENCHMARK_FLAG}" ];then
+	if [ "$#" -ne "0"  ] && [ "X$2" == "X${BENCHMARK_FLAG}" ];then
 		SysbenchInstallTest
 	else
 		SysbenchRunTest

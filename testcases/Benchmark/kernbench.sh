@@ -263,7 +263,8 @@ KernbenchRunTest(){
 
 	KernbenchRun
 	KernbenchRet
-#	sleep 5
+
+	sleep ${BENCHMARK_WAIT_300S}
 #	echo "hello Kernbench"
 	
 #	KernbenchUnsetup
@@ -287,7 +288,7 @@ KernbenchInstallTest(){
 main(){
 	KernbenchSetup
 
-        if [ "$#" -ne "0"  ] && [ "X$1" == "X${BENCHMARK_FLAG}" ];then
+        if [ "$#" -ne "0"  ] && [ "X$2" == "X${BENCHMARK_FLAG}" ];then
 		KernbenchInstallTest
         else
 		KernbenchRunTest

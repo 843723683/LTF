@@ -261,7 +261,8 @@ LtpRunTest(){
 
 	LtpRun
 	LtpRet
-#	sleep 5
+
+	sleep ${BENCHMARK_WAIT_300S}
 #	echo "hello Ltp"
 
 #	LtpUnsetup
@@ -285,7 +286,7 @@ LtpInstallTest(){
 main(){
 	LtpSetup
 
-	if [ "$#" -ne "0"  ] && [ "X$1" == "X${BENCHMARK_FLAG}" ];then
+	if [ "$#" -ne "0"  ] && [ "X$2" == "X${BENCHMARK_FLAG}" ];then
 		LtpInstallTest
 	else
 		LtpRunTest

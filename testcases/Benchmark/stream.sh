@@ -218,7 +218,8 @@ StreamRunTest(){
 
 	StreamRun
 	StreamRet
-#	sleep 5
+
+	sleep ${BENCHMARK_WAIT_300S}
 #	echo "hello Stream"
 	
 #	StreamUnsetup
@@ -241,7 +242,7 @@ StreamInstallTest(){
 
 main(){
 	StreamSetup
-	if [ "$#" -ne "0"  ] && [ "X$1" == "X${BENCHMARK_FLAG}" ];then
+	if [ "$#" -ne "0"  ] && [ "X$2" == "X${BENCHMARK_FLAG}" ];then
 		StreamInstallTest
 	else
 		StreamRunTest

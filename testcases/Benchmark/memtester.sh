@@ -303,7 +303,8 @@ MemtesterRunTest(){
 
 	MemtesterRun
 	MemtesterRet
-#	sleep 5
+
+	sleep ${BENCHMARK_WAIT_300S}
 #	echo "hello Memtester"
 	
 #	MemtesterUnsetup
@@ -327,7 +328,7 @@ MemtesterInstallTest(){
 main(){
 	MemtesterSetup
 	
-	if [ "$#" -ne "0"  ] && [ "X$1" == "X${BENCHMARK_FLAG}" ];then
+	if [ "$#" -ne "0"  ] && [ "X$2" == "X${BENCHMARK_FLAG}" ];then
 		MemtesterInstallTest
 	else
 		MemtesterRunTest

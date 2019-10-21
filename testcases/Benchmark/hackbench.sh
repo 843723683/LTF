@@ -257,7 +257,8 @@ HackbenchRunTest(){
 
 	HackbenchRun
 	HackbenchRet
-#	sleep 5
+	
+	sleep ${BENCHMARK_WAIT_300S}
 #	echo "hello Hackbench"
 
 #	HackbenchUnsetup
@@ -281,7 +282,7 @@ HackbenchInstallTest(){
 main(){
 	HackbenchSetup
 
-	if [ "$#" -ne "0"  ] && [ "X$1" == "X${BENCHMARK_FLAG}" ];then
+	if [ "$#" -ne "0"  ] && [ "X$2" == "X${BENCHMARK_FLAG}" ];then
 		HackbenchInstallTest
 	else
 		HackbenchRunTest

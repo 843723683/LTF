@@ -255,7 +255,8 @@ StressapptestRunTest(){
 
 	StressapptestRun
 	StressapptestRet
-#	sleep 5
+
+	sleep ${BENCHMARK_WAIT_300S}
 #	echo "hello Stressapptest"
 	
 #	StressapptestUnsetup
@@ -279,7 +280,7 @@ StressapptestInstallTest(){
 main(){
 	StressapptestSetup
 	
-	if [ "$#" -ne "0"  ] && [ "X$1" == "X${BENCHMARK_FLAG}" ];then
+	if [ "$#" -ne "0"  ] && [ "X$2" == "X${BENCHMARK_FLAG}" ];then
 		StressapptestInstallTest
 	else
 		StressapptestRunTest

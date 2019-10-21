@@ -12,3 +12,7 @@
 8. 修改Run.sh中执行脚本命令，由"sh"修改为"bash"
 9. 解决benchmark解压缩报错问题。添加依赖检测bzip2
 10. 优化日志呈现方式。日志文件根据testcase中的测试集合名分开保存。
+11. 新增benchmark测试后等待300s，解决unixbench测试后马上执行lmbench测试导致结果较差，直观感受就是lmbench测试时间过长
+12. 新增文件系统相关测试，包括：文件属性、ext2、ext3、ext4、ntfs、fat、xfs、逻辑卷
+13. 新增脚本传参${caseDir}/${caseName},将原来的第一个参数${BENCHMARK_FLAG}移至第二个参数。新增第一个参数目的为了FileSystem测试能够通过caseName参数来指定测试
+14. 修改GJB基础测试集:string->strings
