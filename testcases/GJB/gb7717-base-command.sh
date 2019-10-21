@@ -12,7 +12,7 @@ readonly COMMANDS="ar at awk basename batch bc cat cd  chfn chgrp \
 			mktemp more mount msgfmt mv newgrp nice nl nohup \
 			od passwd paste patch pathchk pax pidof pr printf \
 			ps pwd renice rm rmdir sed sendmail seq sh shutdown \
-			sleep sort split string strip stty su sync tail tar \
+			sleep sort split strings strip stty su sync tail tar \
 			tee test time touch tr true tsort tty umount uname \
 			unexpand uniq useradd userdel usermod wc xargs zcat "
 ret=0
