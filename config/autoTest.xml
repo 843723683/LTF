@@ -2,9 +2,9 @@
 
 <AutoTest>
 	<TestGroup>
-		<GroupName>benchmark</GroupName>
-		<GroupXMLName>benchmark.xml</GroupXMLName>
-		<GroupRun>F</GroupRun>
+		<GroupName>benchmarks</GroupName>
+		<GroupXMLName>benchmarks.xml</GroupXMLName>
+		<GroupRun>True</GroupRun>
 	</TestGroup>
 	<TestGroup>
 		<GroupName>gjb</GroupName>
@@ -17,8 +17,8 @@
 		<GroupRun>True</GroupRun>
 	</TestGroup>
 	<TestGroup>
-		<GroupName>language</GroupName>
-		<GroupXMLName>language.xml</GroupXMLName>
+		<GroupName>languages</GroupName>
+		<GroupXMLName>languages.xml</GroupXMLName>
 		<GroupRun>True</GroupRun>
 	</TestGroup>
 	<TestGroup>
