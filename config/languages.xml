@@ -32,6 +32,12 @@
 		<CaseRun>True</CaseRun>
 	</TestCase>
 	<TestCase>
+		<CaseName>golang</CaseName>
+		<CaseDir>Languages</CaseDir>
+		<CaseScript>golang.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+	<TestCase>
 		<CaseName>lua</CaseName>
 		<CaseDir>Languages</CaseDir>
 		<CaseScript>lua.sh</CaseScript>
