@@ -19,7 +19,7 @@ func main() {
 }
 EOF
 
-${CMD} run hello.go | grep -q "helloworld" 
+${CMD} run ${TEST_FILE} | grep -q "hello world" 
 ret=$?
 
 rm ${TEST_FILE}

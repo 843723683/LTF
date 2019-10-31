@@ -16,3 +16,4 @@
 12. 新增文件系统相关测试，包括：文件属性、ext2、ext3、ext4、ntfs、fat、xfs、逻辑卷
 13. 新增脚本传参${caseDir}/${caseName},将原来的第一个参数${BENCHMARK_FLAG}移至第二个参数。新增第一个参数目的为了FileSystem测试能够通过caseName参数来指定测试
 14. 修改GJB基础测试集:string->strings
+15. 新增go语言测试
