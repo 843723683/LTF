@@ -56,7 +56,7 @@
 		<CaseFileName>fio-fio-3.12</CaseFileName>
 	</BenchmarktCase>
 	<BenchmarkCase>
-		<CaseName>ltpInterface</CaseName>
+		<CaseName>ltp-interface</CaseName>
 		<CaseDepend>gcc</CaseDepend>
 		<CasePkgName>ltp-full-20190517.tar.bz2</CasePkgName>
 		<CaseFileName>ltp-full-20190517</CaseFileName>

@@ -53,12 +53,12 @@
 		<CaseName>fio</CaseName>
 		<CaseDir>Benchmarks</CaseDir>
 		<CaseScript>fio.sh</CaseScript>
-		<CaseRun>False</CaseRun>
+		<CaseRun>True</CaseRun>
 	</TestCase>
 	<TestCase>
-		<CaseName>ltpInterface</CaseName>
+		<CaseName>ltp-interface</CaseName>
 		<CaseDir>Benchmarks</CaseDir>
-		<CaseScript>ltpInterface.sh</CaseScript>
+		<CaseScript>ltp-interface.sh</CaseScript>
 		<CaseRun>False</CaseRun>
 	</TestCase>
 </TestGroup>

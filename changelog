@@ -17,3 +17,4 @@
 13. 新增脚本传参${caseDir}/${caseName},将原来的第一个参数${BENCHMARK_FLAG}移至第二个参数。新增第一个参数目的为了FileSystem测试能够通过caseName参数来指定测试
 14. 修改GJB基础测试集:string->strings
 15. 新增go语言测试
+16. 全新Benchmark测试框架，将基础操作(Setup，XML解析，依赖判断，初始化，安装，运行等)抽象到lib/benchmark.sh中，全部重写所有的benchmark测试脚本。将从前的Benchmark暂时保留，重命名为Benchmark-old，不再进行维护。增加运行前休眠300S，测试完后释放内存操作

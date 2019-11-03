@@ -2,21 +2,23 @@
 
 ## TODO: 搭建运行环境
 ##
-HackbenchSetup(){
+LtpInterfaceSetup(){
 	# 工具名称,需要和XML文件中CaseName一致
-	local toolName="hackbench"
+	local toolName="ltpInterface"
 	# 运行结果保存文件名
-	hackbenchRetName="${toolName}.ret"
+	ltpInterfaceRetName="${toolName}.ret"
+        # 源结果目录名
+        ltpInterfaceRetPath="${toolName}-ret"
 	# 源结果路径.若存在于解压包中，可以用":"代替
 	local toolOrigRetDir="/opt/ltp"
 	# 源结果文件或目录名 
-	local toolOrigRetName="${hackbenchRetName}"
+	local toolOrigRetName="${ltpInterfaceRetPath}"
 	
 	# 加载benchmark工具函数
 	source $(dirname $0)/lib/benchmark.sh
 	
 	# 注册函数
-	RegisterFunc_BHK "HackbenchInit" "HackbenchInstall" "HackbenchRun"
+	RegisterFunc_BHK "LtpInterfaceInit" "LtpInterfaceInstall" "LtpInterfaceRun"
 	
 	# 注册变量
 	RegisterVar_BHK "${toolName}" "${toolOrigRetDir}" "${toolOrigRetName}"
@@ -28,7 +30,7 @@ HackbenchSetup(){
 ##	 1=>TFAIL
 ##       2=>TCONF
 ##
-HackbenchInit(){
+LtpInterfaceInit(){
 	local ret=0
 
         # 获取CPU个数
@@ -45,7 +47,7 @@ HackbenchInit(){
 ## Out :0=>TPASS
 ##	1=>TFAIL
 ##      2=>TCONF
-HackbenchInstall(){
+LtpInterfaceInstall(){
 	local ret=0
        
         # 获取CPU个数
@@ -72,29 +74,35 @@ HackbenchInstall(){
 	make install
 	[ $? -ne 0 ] &&  return 1
 	
-	#判断是否存在hackbench
-	if [ ! -f "/opt/ltp/testcases/bin/hackbench" ];then
-		echo "Can't find /opt/ltp/testcases/bin/hackbench "
-		return 1
-	fi
-
 	return $ret
 }
 
 ## TODO：运行测试
 ##
-HackbenchRun(){
+LtpInterfaceRun(){
 	cd /opt/ltp/
-	
-	./runltp -f sched -s hackbench | tee ${hackbenchRetName} 
+        
+	# 创建结果保存目录
+        [ ! -d ${ltpInterfaceRetPath} ] && mkdir ${ltpInterfaceRetPath}
 
-	cd -
+        ./runltp | tee ./${ltpInterfaceRetPath}/${ltpInterfaceRetName}
+
+	# 拷贝结果到${ltpInterfaceRetPath}
+	if [ -d "./results" ];then
+		cp -r ./results ${ltpInterfaceRetPath}
+	fi
+	
+	if [ -d "./output" ];then
+		cp -r ./output ${ltpInterfaceRetPath}
+	fi
+
+        cd -
 }
 
 
 main(){
 	# 加载benchmark.sh文件
-	HackbenchSetup
+	LtpInterfaceSetup
 
 	# 调用主函数
 	Main_BHK $@

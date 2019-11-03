@@ -1,126 +1,43 @@
 #!/bin/bash
 
-toolName="stream"
-toolRetDir="${toolName}-ret"
 
-
-## TODO:搭建测试运行环境
+## TODO:搭建运行环境
 ##
 StreamSetup(){
-	# XML配置文件路径
-	CONFIG_XML=$(dirname $0)/config/benchmark.xml
-	# cfg配置文件路径
-	source $(dirname $0)/config/benchmark.cfg
-	# 加载解析XML库
-	source ${AUTOTEST_ROOT}/lib/xmlParse.sh
-}
+	# 加载benchmark工具函数
+	source $(dirname $0)/lib/benchmark.sh
 
-## TODO:解析XML文件，获取工具安装位置等
-##
-StreamXMLParse(){
-	localName=""
-	localDep=""
-	localPkgPath=""
-	localPkgName=""
-	localFileName=""
-	localInstallPath=""
-
-        XMLParse ${CONFIG_XML}
-        XMLGetItemContent CaseName        xmlCaseName
-        XMLGetItemContent CaseDepend      xmlCaseDep
-        XMLGetItemContent CasePkgName     xmlCasePkgName
-        XMLGetItemContent CaseFileName    xmlCaseFileName
-	XMLGetItemNum     xmlCaseName     xmlCaseNum
-        XMLUnsetup
-
-        local border=$((${xmlCaseNum}-1))
-        local index=0
-        for index in `seq 0 ${border}`
-        do
-                if [ "${xmlCaseName[${index}]}" == "${toolName}"  ];then
-			localName="${xmlCaseName[$index]}"
-                        localDep="${xmlCaseDep[$index]}"
-			localPkgName="${xmlCasePkgName[$index]}"
-			localFileName="${xmlCaseFileName[$index]}"
-			break
-                fi
-        done
-	localPkgPath="${AUTOTEST_ROOT}/${BENCHMARK_PKG_PATH}"
-	localInstallPath="${BENCHMARK_PKG_INSTALL_PATH}"
-
-	unset -v xmlCaseName xmlCaseDep xmlCasePkgName xmlCaseFileName xmlCaseNum 
+        # 工具名称,需要和XML文件中CaseName一致
+        local toolName="stream"
+        # 运行结果保存文件
+        streamRetName_one="${toolName}-1.ret"
+        streamRetName_N="${toolName}-N.ret"
+        # 源结果目录名
+        streamRetPath="${toolName}-ret"
+        # 源结果路径.若存在于解压包中，可以用":"代替
+        local toolOrigRetDir=":"
+        # 源结果文件或目录名 
+        local toolOrigRetName="${streamRetPath}"
 	
-#	echo "$localName -$localDep-$localPkgPath-$localPkgName-$localFileName-$localInstallPath "
+	# 注册函数
+	RegisterFunc_BHK "StreamInit" "StreamInstall" "StreamRun"
+
+        # 注册变量
+        RegisterVar_BHK "${toolName}" "${toolOrigRetDir}" "${toolOrigRetName}"
 }
 
-## TODO:依赖关系检查
-## Out :0=>TPASS
-##	1=>TFAIL
-##      2=>TCONF,未安装指定依赖
-StreamDep(){
-	local depNum=0
-	local depTmp=""
 
-	depNum=$(echo $localDep | awk -F":" '{print NF}')
-        if [ "${depNum}" -eq "1"  ];then
-                if [ "${localDep}" == "-" ];then
-                        return 0
-                fi
-        fi
-
-        local index=0
-	local failpkg=""
-        for index in `seq 1 ${depNum}`
-	do
-		depTmp=$(echo $localDep | awk -F":" "{print \$${index}}")
-		#判断是否安装依赖包
-		$BENCHMARK_PKG_CMD $depTmp > /dev/null
-		local ret="$?"
-		#没有安装依赖
-		if [ "${ret}" -ne "0"  ];then
-			failpkg="$failpkg $depTmp"
-		fi
-	done
-
-        if [ "X$failpkg" != "X" ];then
-                echo "Not install ${failpkg}"
-                return 2
-        fi
-
-	return 0
-}
-
-## TODO:安装前准备
-## Out :0=>TPASS
-##	1=>TFAIL
-##      2=>TCONF
+## TODO: 个性化,安装前检查
+## Out : 0=>TPASS
+##	 1=>TFAIL
+##       2=>TCONF
 ##
 StreamInit(){
 	local ret=0
-	#判断安装包是否存在
-	if [ ! -f "${localPkgPath}/${localPkgName}"  ];then
-		echo "Not Find ${localPkgPath}/${localPkgName}"
-		ret=2
-	fi
-	#判断安装路径是否存在
-	if [ ! -f "${localInstallPath}" ];then
-		mkdir -p ${localInstallPath}
-		if [ "$?" -ne "0"  ];then
-			ret=2
-		fi
-	fi
-
-	#判断是否已经解压
-	if [ -d "${localInstallPath}/${localFileName}" ];then
-		echo "Clean ${localInstallPath}/${localFileName}"
-		rm -rf ${localInstallPath}/${localFileName}
-		if [ "$?" -ne "0"  ];then
-			ret=2
-		fi
-	fi
 
 	return $ret
 }
+
 
 ## TODO：安装测试工具
 ## Out :0=>TPASS
@@ -128,19 +45,11 @@ StreamInit(){
 ##      2=>TCONF
 StreamInstall(){
 	local ret=0
-	#解压缩
-	tar -zxvf ${localPkgPath}/${localPkgName} -C ${localInstallPath} > /dev/null 2>&1
-	if [ "$?" -ne "0" ];then
-		echo "解压缩失败"
-		return 2
-	fi	
 
-	cd ${localInstallPath}/${localFileName}
-	gcc -O stream.c -o stream-1.elf
-	[ $? -ne 0 ] && return 1
-	gcc -O -fopenmp stream.c -o stream-N.elf
-	[ $? -ne 0 ] && return 1
-	cd -
+        gcc -O stream.c -o stream-1.elf
+        [ $? -ne 0 ] && return 1
+        gcc -O -fopenmp stream.c -o stream-N.elf
+        [ $? -ne 0 ] && return 1
 
 	return $ret
 }
@@ -148,105 +57,27 @@ StreamInstall(){
 ## TODO：运行测试
 ##
 StreamRun(){
-	cd ${localInstallPath}/${localFileName}
+        # 创建结果保存目录
+        [ ! -d ${streamRetPath} ] && mkdir ${streamRetPath}
 
-	local index=0
-	for index in `seq 1 5`
-	do
-		./stream-1.elf >> stream-1.ret
-	done
-	for index in `seq 1 5`
-	do
-		./stream-N.elf >> stream-N.ret
-	done
-
-	cd -
+        local index=0
+        for index in `seq 1 5`
+        do
+                ./stream-1.elf | tee -a ${streamRetPath}/${streamRetName_one}
+        done
+        for index in `seq 1 5`
+        do
+                ./stream-N.elf | tee -a ${streamRetPath}/${streamRetName_N}
+        done
 }
 
-## TODO: 结果收集
-##
-StreamRet(){
-        cd ${localInstallPath}/${localFileName}
-
-	local retPath=${LOG_PATH}/${BENCHMARK_RET_PATH}
-        if [ -d "${LOG_PATH}" ];then
-		if [ ! -d "${retPath}" ];then
-			mkdir -p ${retPath}
-		fi
-
-		[ ! -d "${retPath}/${toolRetDir}" ] && mkdir ${retPath}/${toolRetDir}
-
-		# result 
-		cp stream-1.ret stream-N.ret ${retPath}/${toolRetDir}
-	fi
-        
-	
-	cd -
-
-}
-
-
-StreamUnsetup(){
-	rm -rf ${localInstallPath}/${localFileName}
-}
-
-
-## TODO:解析函数返回值
-## exit：1->程序退出，失败
-##     ：2->程序退出，阻塞
-StreamRetParse(){
-	local tmp="$?"
-	if [ "${tmp}" -ne "0"  ];then
-		exit ${tmp}
-	fi	
-}
-
-
-## TODO:安装并且运行测试
-##
-StreamRunTest(){
-	StreamXMLParse
-
-	StreamDep
-	StreamRetParse
-
-	StreamInit
-	StreamRetParse
-
-	StreamInstall
-	StreamRetParse
-
-	StreamRun
-	StreamRet
-
-	sleep ${BENCHMARK_WAIT_300S}
-#	echo "hello Stream"
-	
-#	StreamUnsetup
-}
-
-## TODO:进行安装测试
-##
-StreamInstallTest(){
-	StreamXMLParse
-
-	StreamDep
-	StreamRetParse
-
-	StreamInit
-	StreamRetParse
-
-	StreamInstall
-	StreamRetParse
-}
 
 main(){
+	# 加载必要文件
 	StreamSetup
-	if [ "$#" -ne "0"  ] && [ "X$2" == "X${BENCHMARK_FLAG}" ];then
-		StreamInstallTest
-	else
-		StreamRunTest
-	fi
+
+	# 调用主函数
+	Main_BHK $@
 }
 
 main $@
