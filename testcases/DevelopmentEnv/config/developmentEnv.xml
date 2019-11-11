@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Benchmark>
+	<BenchmarkCase>
+		<CaseName>libevent</CaseName>
+		<CaseSourceName>libevent.c</CaseSourceName>
+	</BenchmarktCase>
+	<BenchmarkCase>
+		<CaseName>libprotobuf</CaseName>
+		<CaseSourceName>libprotobuf.cc:libprotobuf.proto</CaseSourceName>
+	</BenchmarktCase>
+</Benchmark>

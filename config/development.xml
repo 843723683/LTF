@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<TestGroup>
+	<TestCase>
+		<CaseName>libevent</CaseName>
+		<CaseDir>DevelopmentEnv</CaseDir>
+		<CaseScript>libevent.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+	<TestCase>
+		<CaseName>libprotobuf</CaseName>
+		<CaseDir>DevelopmentEnv</CaseDir>
+		<CaseScript>libprotobuf.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+</TestGroup>
