@@ -31,12 +31,12 @@ Setup_PTB(){
         fi
 
 	# 注册函数
-        RegisterFunc_BHK "Init_PTB" "Install_PTB" "Run_PTB" "Assert_PTB" "Clean_PTB"
-	RetParse_BHK
+        RegisterFunc_DME "Init_PTB" "Install_PTB" "Run_PTB" "Assert_PTB" "Clean_PTB"
+	RetParse_DME
 
 	# 注册变量
-	RegisterVar_BHK "${toolName}"	
-	RetParse_BHK
+	RegisterVar_DME "${toolName}"	
+	RetParse_DME
 }
 
 
@@ -152,11 +152,10 @@ Clean_PTB(){
 }
 
 Main_PTB(){
-        # 加载benchmark.sh文件
         Setup_PTB
 
         # 调用主函数
-        Main_BHK $@
+        Main_DME $@
 }
 
 Main_PTB $@

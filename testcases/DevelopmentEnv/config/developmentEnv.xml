@@ -9,4 +9,20 @@
 		<CaseName>libprotobuf</CaseName>
 		<CaseSourceName>libprotobuf.cc:libprotobuf.proto</CaseSourceName>
 	</BenchmarktCase>
+	<BenchmarkCase>
+		<CaseName>libsqlite</CaseName>
+		<CaseSourceName>libsqlite.c</CaseSourceName>
+	</BenchmarktCase>
+	<BenchmarkCase>
+		<CaseName>libvirt</CaseName>
+		<CaseSourceName>libvirt.c</CaseSourceName>
+	</BenchmarktCase>
+	<BenchmarkCase>
+		<CaseName>openmp</CaseName>
+		<CaseSourceName>stream.c</CaseSourceName>
+	</BenchmarktCase>
+	<BenchmarkCase>
+		<CaseName>mpich</CaseName>
+		<CaseSourceName>mpich.c</CaseSourceName>
+	</BenchmarktCase>
 </Benchmark>

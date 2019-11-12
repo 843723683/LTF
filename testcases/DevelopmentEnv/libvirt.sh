@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 
 # ----------------------------------------------------------------------
-# Filename:   libevent.sh
-# Version:    1.0
-# Date:       2019/11/11
-# Author:     Lz
-# Email:      lz843723683@163.com
-# History：     
-#             Version 1.0, 2019/11/11
-# Function:   libevent.sh - 测试支持libevent开发和运行环境
-# Out:        
+# Filename : libvirt.sh 
+# Version  : 1.0
+# Date     : 2019/11/12
+# Author   : Lz
+# Email    : lz843723683@163.com
+# History  :     
+#            Version 1.0, 2019/11/12
+# Function : libvirt.sh  - 测试支持 libvirt 开发和运行环境
+# Out      :        
 #              0=> Success
 #              1=> Fail
 #              other=> TCONF
@@ -18,9 +18,9 @@
 
 ## TODO: 搭建运行环境
 #
-Setup_EVT(){
+Setup_VIRT(){
 	# 工具名称,需要和XML文件中CaseName一致
-        local toolName="libevent"
+        local toolName="libvirt"
 
 	# 加载运行环境工具函数
         if [ -f "$(dirname $0)/lib/developmentEnv.sh"  ];then
@@ -31,7 +31,7 @@ Setup_EVT(){
         fi
 
 	# 注册函数
-        RegisterFunc_DME "Init_EVT" "Install_EVT" "Run_EVT" "Assert_EVT" "Clean_EVT"
+        RegisterFunc_DME "Init_VIRT" "Install_VIRT" "Run_VIRT" "Assert_VIRT" "Clean_VIRT"
 	RetParse_DME
 
 	# 注册变量
@@ -45,16 +45,16 @@ Setup_EVT(){
 #        1=>TFAIL
 #        2=>TCONF
 # 
-Init_EVT(){
+Init_VIRT(){
         local ret=0
-
+	
 	# 二进制名
-	exeFile_evt="libevent.elf"
+	exeFile_evt="libvirt.elf"
 	if [ -f "${exeFile_evt}"  ];then
 		rm ${exeFile_evt}
 	fi
 	# 结果文件名
-	retFile_evt="libevent.ret"
+	retFile_evt="libvirt.ret"
 	if [ -f "${retFile_evt}"  ];then
 		rm ${retFile_evt}
 	fi
@@ -65,10 +65,11 @@ Init_EVT(){
 
 ## TODO :进行编译安装等操作
 #
-Install_EVT(){
+Install_VIRT(){
 	local ret=0
+
 	# 编译
-	gcc libevent.c -o ${exeFile_evt} -levent
+	gcc libvirt.c -o ${exeFile_evt} -lvirt
 	ret=$?
 
 	return ${ret}
@@ -77,11 +78,16 @@ Install_EVT(){
 
 ## TODO：运行测试
 #
-Run_EVT(){
+Run_VIRT(){
 	local ret=0
 
-        ./${exeFile_evt} > ${retFile_evt}
+        ./${exeFile_evt} > ${retFile_evt} 2>&1
 	ret=$?
+
+	# 如果ret为1,则置为成功
+	if [ ${ret} -eq 1 ];then
+		ret=0
+	fi
 
 	return ${ret}
 }
@@ -89,13 +95,36 @@ Run_EVT(){
 
 ## TODO : 断言分析
 # 
-Assert_EVT(){
-	local strnum=0
-	strnum=$(cat ${retFile_evt} | grep "hello world" | wc -l)
-	# 判断结果是否正确
-	if [ ${strnum} -ne 5 ];then
-		echo "Libevent Assert Failed !"
-		return 1
+Assert_VIRT(){
+	# 默认为失败
+	local ret=1
+
+	# 判断是否未装KVM
+	cat ${retFile_evt} | grep -q "Failed to connect to hypervisor"
+	if [ $? -eq 0 ];then
+		echo "Libvirt :Failed connetct to hypervisor"
+		return 0
+	fi
+
+	# 判断是否未启动虚拟机
+	cat ${retFile_evt} | grep -q "Failed to find Domain"
+	if [ $? -eq 0 ];then
+		echo "Libvirt :Failed to find Domain"
+		return 0
+	fi
+	
+	# 
+	cat ${retFile_evt} | grep -q "Failed to get information for Domain"
+	if [ $? -eq 0 ];then
+		echo "Libvirt :Failed to get information for Domain"
+		return 0
+	fi
+
+	# 判断是否找到id=1的虚拟机
+	cat ${retFile_evt} | grep -q "Success"
+	if [ $? -eq 0 ];then
+		echo "Libvirt :Success"
+		return 0
 	fi
 
 	return ${ret}
@@ -104,7 +133,7 @@ Assert_EVT(){
 
 ## TODO : 清除生成的文件
 #
-Clean_EVT(){
+Clean_VIRT(){
 	if [ -f "${exeFile_evt}"  ];then
 		rm ${exeFile_evt}
 	fi
@@ -112,18 +141,18 @@ Clean_EVT(){
 	if [ -f "${retFile_evt}"  ];then
 		rm ${retFile_evt}
 	fi
-	
-	unset -v exeFile_evt retFile_evt
+
+	unset -v exeFile_evt retFile_evt 
 }
 
-Main_EVT(){
-        Setup_EVT
+Main_VIRT(){
+        Setup_VIRT
 
         # 调用主函数
         Main_DME $@
 }
 
-Main_EVT $@
+Main_VIRT $@
 
 exit $?
 

@@ -22,6 +22,11 @@
 		<GroupRun>True</GroupRun>
 	</TestGroup>
 	<TestGroup>
+		<GroupName>development</GroupName>
+		<GroupXMLName>development.xml</GroupXMLName>
+		<GroupRun>True</GroupRun>
+	</TestGroup>
+	<TestGroup>
 		<GroupName>filesystems</GroupName>
 		<GroupXMLName>filesystems.xml</GroupXMLName>
 		<GroupRun>True</GroupRun>

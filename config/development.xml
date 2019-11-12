@@ -13,4 +13,28 @@
 		<CaseScript>libprotobuf.sh</CaseScript>
 		<CaseRun>True</CaseRun>
 	</TestCase>
+	<TestCase>
+		<CaseName>libsqlite</CaseName>
+		<CaseDir>DevelopmentEnv</CaseDir>
+		<CaseScript>libsqlite.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+	<TestCase>
+		<CaseName>libvirt</CaseName>
+		<CaseDir>DevelopmentEnv</CaseDir>
+		<CaseScript>libvirt.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+	<TestCase>
+		<CaseName>openmp</CaseName>
+		<CaseDir>DevelopmentEnv</CaseDir>
+		<CaseScript>openmp.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+	<TestCase>
+		<CaseName>mpich</CaseName>
+		<CaseDir>DevelopmentEnv</CaseDir>
+		<CaseScript>mpich.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
 </TestGroup>
