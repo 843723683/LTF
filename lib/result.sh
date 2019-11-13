@@ -5,7 +5,11 @@
 RetSetup(){
 	if [ ! -d "$1" ];then
 		logPath=${1}
-		mkdir -p $1
+		mkdir -p $1 &>/dev/null
+		# 判断是否创建失败
+		if [ $? -ne 0 ];then
+			return 1
+		fi
 	fi
 
 	retTPASSNum=0
@@ -16,6 +20,8 @@ RetSetup(){
 
 	# 开始界面
 	RetBrkUsage
+	
+	return 0
 }
 
 

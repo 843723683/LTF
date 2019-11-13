@@ -58,6 +58,11 @@ RunSetup(){
 	source ${LIB_ROOT}/result.sh
 	# 创建日志文件和目录
 	RetSetup ${LOG_PATH}
+	# 判断是否创建失败
+	if [ $? -eq 1 ];then
+		echo "[ ERROR ] :Can't create directory '${LOG_PATH}' "
+		exit 1
+	fi
 }
 
 
@@ -69,7 +74,13 @@ RunClean(){
 	local logPath=`pwd`/output
 
 	if [ -d "${logPath}" ];then
-		rm ${logPath} -rf
+		rm ${logPath} -rf &>/dev/null
+		
+		# 判断是否清楚失败
+        	if [ $? -ne 0 ];then
+	                echo "[ ERROR ] :Can't remove '${logPath}' "
+                	exit 1
+        	fi
 	fi
 	echo "Clean Finish"
 }
