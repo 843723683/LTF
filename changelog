@@ -19,3 +19,5 @@
 15. 新增go语言测试
 16. 全新Benchmark测试框架，将基础操作(Setup，XML解析，依赖判断，初始化，安装，运行等)抽象到lib/benchmark.sh中，全部重写所有的benchmark测试脚本。将从前的Benchmark暂时保留，重命名为Benchmark-old，不再进行维护。增加运行前休眠300S，测试完后释放内存操作
 17. 新增开发库测试，共包括6项测试：libevent、libprotobuf、libsqlite、libvirt、openmp、mpich
+18. 新增Filesystems-逻辑卷容量减小测试
+19. 优化Filesystems测试框架，将更多通用函数集中到lib/fs-lib.sh中.目前file/01-attributes.sh使用最新框架，后续有需要在进一步修改其他Filesystems脚本。

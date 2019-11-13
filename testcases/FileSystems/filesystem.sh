@@ -25,18 +25,16 @@
 ##        other=> TCONF
 FSInit(){
 	local testdir="$1"
-    # 加载库函数
-    if [ -f "./lib/fs-lib.sh" ];then
-        source ./lib/fs-lib.sh
-    else
-        echo "./lib/fs-lib.sh : Can't find !"
-        return 1
-    fi
+	# 加载库函数
+	if [ -f "./lib/fs-lib.sh" ];then
+		source ./lib/fs-lib.sh
+	else
+		echo "./lib/fs-lib.sh : Can't find !"
+		return 1
+	fi
 
 	# 判断目录有效性
-	if [ -d "${testdir}" ];then
-		echo "Start Test FileSystem - ${testdir}"
-	else
+	if [ ! -d "${testdir}" ];then
 		echo "TCONF : Can't find testcases (${testdir})"
 		return ${TCONF}
 	fi
@@ -54,29 +52,33 @@ FSInit(){
 FSRun(){
 	# 测试文件目录
 	local testdir="$1"
-	# 测试文件，通过数组保存
-	local testfilelist=($(find ${testdir} -type f | sort))
 	# 测试文件路径
 	local testfile=""
 	local ret="${TPASS}"
+	
+	# 进入测试目录
+	cd ${testdir}
+	# 测试文件，通过数组保存
+	local testfilelist=($(find ./ -type f | sort))
 
 	for testfile in ${testfilelist[*]}
 	do
 		[[ "$testfile" =~ "readme"|"swp" ]] && continue
 		if [ -x "$testfile" ];then
+			echo "Start Test FileSystem : ${testdir}-${testfile#*/} "
 			bash $testfile
 			ret=$?
 		else
-			echo "[ TFAIL ] $testfile : No executable permissions"
+			echo "[ TFAIL ] ${testfile#*/} : No executable permissions"
 			continue
 		fi
 
 		if [ $ret -eq ${TPASS} ];then
-			echo "[ TPASS ] - $testfile"
+			echo "[ TPASS ] - ${testfile#*/}"
 		elif [ $ret -eq ${TFAIL} ];then
-			echo "[ TFAIL ] - $testfile"
+			echo "[ TFAIL ] - ${testfile#*/}"
 		else
-			echo "[ TCONF ] - $testfile"
+			echo "[ TCONF ] - ${testfile#*/}"
 		fi
 	done
 
