@@ -29,7 +29,7 @@ FSInit(){
 	if [ -f "./lib/fs-lib.sh" ];then
 		source ./lib/fs-lib.sh
 	else
-		echo "./lib/fs-lib.sh : Can't find !"
+		echo "./lib/fs-lib.sh : Can't found file !"
 		return 1
 	fi
 

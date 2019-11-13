@@ -21,3 +21,4 @@
 17. 新增开发库测试，共包括6项测试：libevent、libprotobuf、libsqlite、libvirt、openmp、mpich
 18. 新增Filesystems-逻辑卷容量减小测试
 19. 优化Filesystems测试框架，将更多通用函数集中到lib/fs-lib.sh中.目前file/01-attributes.sh使用最新框架，后续有需要在进一步修改其他Filesystems脚本。
+20. 解决./Run.sh权限不足报错，判断rm and mkdir 返回值
