@@ -69,7 +69,7 @@ FSRun(){
 			bash $testfile
 			ret=$?
 		else
-			echo "[ TFAIL ] ${testfile#*/} : No executable permissions"
+			echo "[ TCONF ] ${testfile#*/} : No executable permissions"
 			continue
 		fi
 
@@ -77,8 +77,10 @@ FSRun(){
 			echo "[ TPASS ] - ${testfile#*/}"
 		elif [ $ret -eq ${TFAIL} ];then
 			echo "[ TFAIL ] - ${testfile#*/}"
+			break
 		else
 			echo "[ TCONF ] - ${testfile#*/}"
+			break
 		fi
 	done
 
