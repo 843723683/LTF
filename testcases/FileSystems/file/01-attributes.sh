@@ -108,8 +108,8 @@ FileAttrTest02(){
 	local tmpFile="file-attr2"
 	touch ${tmpFile}
 
-	ls ${tmpFile} >/dev/null
-    	FileRetParse_FSLIB "文件存储位置 : ls ${tmpFile}" "False"
+	pwd ${tmpFile} >/dev/null
+    	FileRetParse_FSLIB "文件存储位置 : pwd ${tmpFile}" "False"
 }
 
 
@@ -184,9 +184,45 @@ FileAttrTest06(){
 }
 
 
-## TODO: test 创建大文件分别创建254,255,256个字母文件，最多支持255字母
+## TODO: test 创建、写、读硬链接
 #
 FileAttrTest07(){
+	cd ${TESTDIR_ATTR}
+	local tmpFile="test_ln"
+	touch ${tmpFile} 
+
+	ln ${tmpFile} ${tmpFile}-ln
+	FileRetParse_FSLIB "硬链接 : ln ${tmpFile} ${tmpFile}-ln" "False"
+	
+	echo "helloworld" > ${tmpFile}-ln
+	FileRetParse_FSLIB "写硬链接 : echo \"helloworld\" > ${tmpFile}-ln" "False"
+
+	cat ${tmpFile} | grep -q helloworld
+	FileRetParse_FSLIB "读硬链接 : cat ${tmpFile} | grep -q helloworld" "False"
+}
+
+
+## TODO: test 创建、写、读软链接
+#
+FileAttrTest08(){
+	cd ${TESTDIR_ATTR}
+	local tmpFile="test_lns"
+	touch ${tmpFile} 
+
+	ln -s ${tmpFile} ${tmpFile}-ln
+	FileRetParse_FSLIB "软链接 : ln -s ${tmpFile} ${tmpFile}-ln" "False"
+	
+	echo "helloworld" > ${tmpFile}-ln
+	FileRetParse_FSLIB "写软链接 : echo \"helloworld\" > ${tmpFile}-ln" "False"
+
+	cat ${tmpFile} | grep -q helloworld
+	FileRetParse_FSLIB "读软链接 : cat ${tmpFile} | grep -q helloworld" "False"
+}
+
+
+## TODO: test 创建大文件分别创建254,255,256个字母文件，最多支持255字母
+#
+FileAttrTest09(){
 	cd ${TESTDIR_ATTR}
 
 	local index=0
@@ -212,7 +248,7 @@ FileAttrTest07(){
 
 ## TODO: test 创建大文件分别创建84,85,86个中文名文件，最多支持85中文名
 #
-FileAttrTest08(){
+FileAttrTest10(){
 	cd ${TESTDIR_ATTR}
 
 	local index=0
@@ -238,7 +274,7 @@ FileAttrTest08(){
 
 ## TODO: test 创建大文件分别创建特殊字符文件
 #
-FileAttrTest08(){
+FileAttrTest11(){
 	cd ${TESTDIR_ATTR}
 
 	local index=0
@@ -320,6 +356,15 @@ FileAttrMain(){
 	FileAttrCleanEmpty
 
 	FileAttrTest08
+	FileAttrCleanEmpty
+
+	FileAttrTest09
+	FileAttrCleanEmpty
+
+	FileAttrTest10
+	FileAttrCleanEmpty
+
+	FileAttrTest11
 	FileAttrCleanEmpty
 
 	FileAttrExit

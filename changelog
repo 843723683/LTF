@@ -23,5 +23,5 @@
 19. 优化Filesystems测试框架，将更多通用函数集中到lib/fs-lib.sh中.目前file/01-attributes.sh使用最新框架，后续有需要在进一步修改其他Filesystems脚本。
 20. 解决./Run.sh权限不足报错，判断rm and mkdir 返回值
 21. 解决BUG，filesystems中同一目录，后一个脚本测试结果会覆盖前一个测试结果，导致前一个TFAIL可能会被后续结果覆盖。修改为只要报错就会退出，不会在继续同一目录下的后续脚本。
-22. 解决BUG，01-ntfs.sh中ntfs文件系统挂载后马上取消挂载报错(umount:/var/tmp/ntfs01-dir：目标忙)，中间增加2s延时
-23. 增加Filesystem-01attributes.sh中测试，增加：长文件名测试，定位等
+22. 解决BUG，01-ntfs.sh中ntfs文件系统挂载后马上取消挂载报错(umount:/var/tmp/ntfs01-dir：目标忙),所有文件系统测试，挂载和取消挂载之间增加2s延时
+23. 增加Filesystem-01attributes.sh中测试：软链接、硬链接、长文件名，定位等
