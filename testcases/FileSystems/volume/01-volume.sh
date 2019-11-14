@@ -219,7 +219,7 @@ Volume01RetParse(){
 	else
 		echo "[fail] : ${logstr}"
 		Volume01Clean
-		if [ "Z$flag" != "False" ];then
+		if [ "Z$flag" != "ZFalse" ];then
 			exit ${TFAIL}
 		else
 			VOLUME01RET=${TFAIL}

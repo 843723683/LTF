@@ -33,7 +33,7 @@ Volume02OnCtrlC(){
 ##
 Volume02USAGE(){
 	cat >&1 <<EOF
---------- volume - 02 物理卷、卷组、逻辑卷扩容 ---------
+--------- volume - 02 物理卷、卷组、逻辑卷扩容以及逻辑卷缩小 ---------
 EOF
 }
 
@@ -287,7 +287,7 @@ Volume02RetParse(){
 	else
 		echo "[fail] : ${logstr}"
 		Volume02Clean
-		if [ "Z$flag" != "False" ];then
+		if [ "Z$flag" != "ZFalse" ];then
 			exit ${TFAIL}
 		else
 			VOLUME02RET=${TFAIL}
