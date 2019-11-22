@@ -26,3 +26,4 @@
 22. 解决BUG，01-ntfs.sh中ntfs文件系统挂载后马上取消挂载报错(umount:/var/tmp/ntfs01-dir：目标忙),所有文件系统测试，挂载和取消挂载之间增加2s延时
 23. 增加Filesystem-01attributes.sh中测试：软链接、硬链接、长文件名，定位等
 24. 解决FileSystems/volume测试中，遇到错误不退出行为。判断语句出错误
+25. 增加GJB命令测试，134+14个命令几乎全部验证3个命令
