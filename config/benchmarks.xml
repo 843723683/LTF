@@ -61,4 +61,16 @@
 		<CaseScript>ltpInterface.sh</CaseScript>
 		<CaseRun>False</CaseRun>
 	</TestCase>
+	<TestCase>
+		<CaseName>glxgears</CaseName>
+		<CaseDir>Benchmarks</CaseDir>
+		<CaseScript>glxgears.sh</CaseScript>
+		<CaseRun>False</CaseRun>
+	</TestCase>
+	<TestCase>
+		<CaseName>x11perf</CaseName>
+		<CaseDir>Benchmarks</CaseDir>
+		<CaseScript>x11perf.sh</CaseScript>
+		<CaseRun>False</CaseRun>
+	</TestCase>
 </TestGroup>
