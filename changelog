@@ -27,3 +27,6 @@
 23. 增加Filesystem-01attributes.sh中测试：软链接、硬链接、长文件名，定位等
 24. 解决FileSystems/volume测试中，遇到错误不退出行为。判断语句出错误
 25. 增加GJB命令测试，134+14个命令几乎全部验证3个命令
+26. 优化benchmark测试框架，用于支持无压缩包和无安装目录的问题
+27. 新加benchmark测试：x11perf和glxgears
+28. 新增系统信息打印：shell环境

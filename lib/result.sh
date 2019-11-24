@@ -39,14 +39,15 @@ RetBrkUsage(){
 
 	cat >&1 <<-EOF
 
+Machine         : $AUTOTEST_ARCH
 Hostname        : $GSI_HOSTNAME
 System Version  : $GSI_SYSVER
 Kernel Version  : $GSI_OSVER
 Kernel Relase   : $GSI_OSREL
-Machine         : $AUTOTEST_ARCH
 Runlevel        : $GSI_RUNLEVEL
 Language        : $GSI_LANGUAGE
 Enforce         : $GSI_ENFORCE
+ShellEnv        : $GSI_SHELLENV
 Test Start Time : $(date)
 	EOF
 	
