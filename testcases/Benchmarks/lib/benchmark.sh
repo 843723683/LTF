@@ -198,29 +198,40 @@ Dep_BHK(){
 Init_BHK(){
         local ret=0
 
-        # 判断安装包是否存在
-        if [ ! -f "${localPkgPath}/${localPkgName}"  ];then
-                echo "Can't found ${localPkgPath}/${localPkgName}"
-                return 2
-        fi
-
         # 判断安装路径是否存在,不存在则新建
         if [ ! -f "${localInstallPath}" ];then
                 mkdir -p ${localInstallPath}
                 if [ "$?" -ne "0"  ];then
-                        ret=2
+                        return 2
                 fi
         fi
 
-        # 判断是否已经解压，存在则清除
+	# 判断是否提供安装包
+	if [ "${localPkgName}" == "-" ];then
+		# 没有提供包 #
+		
+		# 判断localFileName是否为"-"
+		if [ "${localFileName}" == "-"  ];then
+			# 未指定localFileName,则为localName
+			localFileName="${localName}"
+		fi
+	else
+        	# 提供包，判断安装包是否存在
+        	if [ ! -f "${localPkgPath}/${localPkgName}"  ];then
+        	        echo "Can't found ${localPkgPath}/${localPkgName}"
+        	        return 2
+        	fi
+	fi	
+
+        # 判断localInstallPath目录中是否存在localFileName，存在则清除
         if [ -d "${localInstallPath}/${localFileName}" ];then
                 echo "Clean ${localInstallPath}/${localFileName}"
                 rm -rf ${localInstallPath}/${localFileName}
                 if [ "$?" -ne "0"  ];then
-                        ret=2
+                        return 2
                 fi
         fi
-	
+
 	# 初始化
         eval ${regInitFunc_bhk}
 	ret=$?
@@ -232,13 +243,24 @@ Init_BHK(){
 # TODO: 安装测试工具。解压测试和调用安装函数(配置，编译，安装)
 Install_BHK(){
 	local ret=0
-        #解压缩
-        tar -xvf ${localPkgPath}/${localPkgName} -C ${localInstallPath} > /dev/null 2>&1
-        if [ "$?" -ne "0" ];then
-                echo "解压缩失败"
-                return 2
-        fi
-	
+
+	# 判断是否提供安装包
+	if [ "${localPkgName}" == "-" ];then
+        	# 未提供压缩包
+		mkdir "${localInstallPath}/${localFileName}"
+        	if [ "$?" -ne "0" ];then
+        	        echo "新建目录失败：mkdir ${localInstallPath}/${localFileName}"
+        	        return 2
+        	fi
+	else
+		# 提供压缩包
+        	tar -xvf ${localPkgPath}/${localPkgName} -C ${localInstallPath} > /dev/null 2>&1
+        	if [ "$?" -ne "0" ];then
+        	        echo "解压缩失败"
+        	        return 2
+        	fi
+	fi	
+
 	# 判断是否存在解压后目录
 	if [ ! -d "${localInstallPath}/${localFileName}" ];then
 		# 不存在则报错退出
