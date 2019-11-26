@@ -46,6 +46,13 @@ X11perfInit(){
 		ret=2
 	fi
 
+        # 判断能否关闭垂直同步
+        export vblank_mode=0
+        if [ $? -ne 0 ];then
+                echo "Fail : export vblank_mode=0 !"
+                ret=2
+        fi
+
 	return $ret
 }
 
@@ -63,6 +70,9 @@ X11perfInstall(){
 
 ## TODO：运行测试
 X11perfRun(){
+        # 判断能否关闭垂直同步
+        export vblank_mode=0
+
         # 运行x11perf测试
 	# 点
 	echo "# start x11perf -dot" > ${x11perfRetName}

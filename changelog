@@ -30,3 +30,4 @@
 26. 优化benchmark测试框架，用于支持无压缩包和无安装目录的问题
 27. 新加benchmark测试：x11perf和glxgears
 28. 新增系统信息打印：shell环境
+29. 优化benchmark(x11perf,glxgears)，添加关闭垂直同步操作

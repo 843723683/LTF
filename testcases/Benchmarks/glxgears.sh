@@ -46,6 +46,13 @@ GlxgearsInit(){
 		ret=2
 	fi
 
+	# 判断能否关闭垂直同步
+	export vblank_mode=0
+	if [ $? -ne 0 ];then
+		echo "Fail : export vblank_mode=0 !"
+		ret=2
+	fi
+
 	return $ret
 }
 
@@ -64,7 +71,8 @@ GlxgearsInstall(){
 ##
 GlxgearsRun(){
 	# 关闭垂直同步
-	export vblank_mode=1
+	export vblank_mode=0
+
         # 运行glxgears测试
 	glxgears > ${glxRetName} &
 	
