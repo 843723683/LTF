@@ -71,7 +71,7 @@ Total TCONF: ${retTCONFNum}
 Total ERROR: ${retERRORNum}
 --------------------
 
-Detailed：${logPath}
+Detailed: ${logPath}
 
 
 	EOF

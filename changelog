@@ -31,3 +31,4 @@
 27. 新加benchmark测试：x11perf和glxgears
 28. 新增系统信息打印：shell环境
 29. 优化benchmark(x11perf,glxgears)，添加关闭垂直同步操作
+30. 解决Filesystems中，当申请到的回环设备autoclear标志为1时，导致losetup -d清除回环设备无效。Centos1810中出现此问题

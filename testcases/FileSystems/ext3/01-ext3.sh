@@ -93,11 +93,30 @@ EXT301Test(){
 	umount ${loopDev}
 	EXT301RetParse "umount ${loopDev}"
 
-	# 卸载回环设备
-	if [ "Z${loopDev}" != "Z" ];then
-		losetup -d ${loopDev}
-		EXT301RetParse "losetup -d ${loopDev}"
-	fi
+        # 卸载回环设备
+        losetup -d ${loopDev}
+        EXT301RetParse "losetup -d ${loopDev}"
+
+        # 判断是否卸载成功，如果没有卸载，应该是autoclear = 1
+        losetup -a | grep -q ${loopDev}
+        if [ $? -eq 0 ];then
+                local tmploop="true"
+                while [ "${tmploop}" == "true" ]
+                do
+                        umount ${loopDev}
+                        [ $? -eq 0 ] && tmploop="false"
+
+                        # 可能存在umount提示not mounted,导致死循环
+                        losetup -a | grep -q ${loopDev}
+                        [ $? -ne 0 ] && tmploop="false"
+
+                        # 休眠1s
+                        sleep 1
+                done
+
+                EXT301RetParse "AUTOCLEAR = 1: umount ${loopDev}"
+        fi
+
 
 	return ${TPASS}
 }
@@ -106,6 +125,8 @@ EXT301Test(){
 ## TODO: 测试收尾清除工作
 ##
 EXT301Clean(){
+	echo "Clean ..."
+
 	# 判断是否挂载
 	mount | grep -q ${loopDev}
 	if [ $? -eq 0 ];then
@@ -113,10 +134,31 @@ EXT301Clean(){
 	fi
 
 	# 判断是否使用回环设备
-	losetup -a | grep -q ${loopDev}
-	if [ $? -eq 0 ];then
-		losetup -d ${loopDev}
-	fi
+        losetup -a | grep -q ${loopDev}
+        if [ $? -eq 0 ];then
+                losetup -d ${loopDev}
+                EXT301RetParse "losetup -d ${loopDev}"
+        fi
+
+        # 判断是否卸载成功，如果没有卸载，应该是autoclear = 1
+        losetup -a | grep -q ${loopDev}
+        if [ $? -eq 0 ];then
+                local tmploop="true"
+                while [ "${tmploop}" == "true" ]
+                do
+                        umount ${loopDev}
+                        [ $? -eq 0 ] && tmploop="false"
+
+                        # 可能存在umount提示not mounted,导致死循环
+                        losetup -a | grep -q ${loopDev}
+                        [ $? -ne 0 ] && tmploop="false"
+
+                        # 休眠1s
+                        sleep 1
+                done
+
+                EXT301RetParse "AUTOCLEAR = 1: umount ${loopDev}"
+        fi
 
 	# 删除挂在目录
 	if [ -d "${imgMountDir}" ];then
