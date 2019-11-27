@@ -52,15 +52,24 @@ RunSetup(){
 	# source xmlParse.sh
 	source ${LIB_ROOT}/xmlParse.sh
 
-	# source result.sh
-	export LOG_PATH=${LOG_ROOT}/${START_TIME}	
-	LOG_FILE=${LOG_PATH}/${START_TIME}.ret
-	source ${LIB_ROOT}/result.sh
 	# 创建日志文件和目录
+	export LOG_PATH=${LOG_ROOT}/${START_TIME}	
+        if [ ! -d "${LOG_PATH}" ];then
+                mkdir -p ${LOG_PATH} &>/dev/null
+                # 判断是否创建失败
+                if [ $? -ne 0 ];then
+			echo "[ ERROR ] :Can't create directory '${LOG_PATH}' "
+			exit 1
+                fi
+        fi
+	LOG_FILE=${LOG_PATH}/${START_TIME}.ret
+
+	# source result.sh
+	source ${LIB_ROOT}/result.sh
 	RetSetup ${LOG_PATH}
-	# 判断是否创建失败
+	# 判断是否初始化成功
 	if [ $? -eq 1 ];then
-		echo "[ ERROR ] :Can't create directory '${LOG_PATH}' "
+		echo "[ ERROR ] :RetSetup function "
 		exit 1
 	fi
 }
@@ -124,7 +133,7 @@ Run(){
 	# 第一个参数：${caseDir}/${CaseName}。第二个参数：是否只进行安装测试。
 	bash ${caseDir}/${caseScript} "${caseDir}/${caseName}" "${AUTOTEST_INSTALL_FALG}" >> ${logFile} 2>&1
 	ret="$?"
-	RunRetParse $ret		
+	RunRetParse $ret
 
 	RetBrkEnd "`basename $caseDir`-$caseName" ${logFile}
 	

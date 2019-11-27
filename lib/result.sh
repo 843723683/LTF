@@ -3,8 +3,8 @@
 ## TODO : init
 ## In   : $1=>Log Path
 RetSetup(){
+	logPath=${1}
 	if [ ! -d "$1" ];then
-		logPath=${1}
 		mkdir -p $1 &>/dev/null
 		# 判断是否创建失败
 		if [ $? -ne 0 ];then
