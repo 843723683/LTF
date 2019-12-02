@@ -374,6 +374,43 @@ Sleep_BHK(){
 }
 
 
+## TODO:获取指定目录存储可用大小,单位KB
+#   In : $1 => 变量名，用于保存
+#      : $2 => 指定目录名
+#  Out : 0 => TPASS，获取成败
+#        1 => TFAIL，获取失败
+#        2 => TCONF，阻塞
+GetDirAvailMemKB_BHK(){
+	# 判断是否传入参数
+	if [ $# -ne "2" ];then
+		echo "[ TCONF ] : GetDirAvailMem_BHK 参数传递错误"
+		return 2
+	fi
+	if [ ! -d "$2" ];then
+		echo "[ TCONF ] : No such directory. ($2)"
+		return 2
+	fi
+	local dirname="$2"
+
+        # 获取目录可用空间
+        local availmem=$(df -l ${dirname} | awk '{print $4}' | sed -n '2p')
+
+        # 判断 $availmem 是否为空 
+        [ "X$availmem" == "X" ] && { echo "[ FAIL ] : Get Available is NULL";return 1; }
+
+        # 判断 $availmem 是否为数字 
+        echo ${availmem} | grep -q '[^0-9]'
+        [ $? -eq 0 ] && { echo "[ FAIL ] : Get Available is not digit";return 1; }
+
+        echo "[ Success ] : Get Available num = ${availmem}KB"
+
+	# 将可用内存保存到第一个参数中
+	eval $1="${availmem}"
+
+        return 0
+}
+
+
 ## TODO:获取CPU个数
 #   In : $1 => 变量名，用于保存cpu个数
 #  Out : 0 => TPASS，获取成败
@@ -382,20 +419,20 @@ Sleep_BHK(){
 GetCpuNum_BHK(){
 	# 判断是否传入参数
 	if [ $# -ne "1" ];then
-		echo "TFAIL: GetCpuNum_BHK 参数传递错误"
+		echo "[ TFAIL ] : GetCpuNum_BHK 参数传递错误"
 		return 2
 	fi
 
         # 获取CPU个数
         local cpunum=$(cat /proc/cpuinfo | grep "processor" | wc -l)
-        [ $? -ne 0 ] && { echo "FAIL: Get cpu num failed";return 1; }
+        [ $? -ne 0 ] && { echo "[ FAIL ] : Get cpu num failed";return 1; }
 
         # 判断 $cpunum 是否为空 
-        [ "X$cpunum" == "X" ] && { echo "FAIL: Get CPU(s) is NULL";return 1; }
+        [ "X$cpunum" == "X" ] && { echo "[ FAIL ] : Get CPU(s) is NULL";return 1; }
 
         # 判断 $cpunum 是否为数字 
         echo ${cpunum} | grep -q '[^0-9]'
-        [ $? -eq 0 ] && { echo "FAIL:Get cpunum is not digit";return 1; }
+        [ $? -eq 0 ] && { echo "[ FAIL ] : Get cpunum is not digit";return 1; }
 
         echo "Success :Get Cpu num = $cpunum"
 
@@ -414,20 +451,20 @@ GetCpuNum_BHK(){
 GetFreeMemSizeMB_BHK(){
 	# 判断是否传入参数
 	if [ $# -ne "1" ];then
-		echo "TFAIL: GetFreeMemSizeMB_BHK 参数传递错误"
+		echo "[ TFAIL ] : GetFreeMemSizeMB_BHK 参数传递错误"
 		return 2
 	fi
         
 	# 获取剩余内存大小
         local memsize=$(free -m | awk '{print $4}' | sed -n '2p')
-        [ $? -ne 0 ] && { echo "FAIL: Get mem size failed";return 1; }
+        [ $? -ne 0 ] && { echo "[ FAIL ] : Get mem size failed";return 1; }
 
         # 判断 $memsize 是否为空 
-        [ "X$memsize" == "X" ] && { echo "FAIL: Get mem size is NULL";return 1; }
+        [ "X$memsize" == "X" ] && { echo "[ FAIL ]: Get mem size is NULL";return 1; }
 
         # 判断 $memsize 是否为数字 
         echo ${memsize} | grep -q '[^0-9]'
-        [ $? -eq 0 ] && { echo "FAIL:Get memsize is not digit";return 1; }
+        [ $? -eq 0 ] && { echo "[ FAIL ] : Get memsize is not digit";return 1; }
 
 	echo "Success :Get mem Size = ${memsize}MB"
 	
@@ -446,23 +483,23 @@ GetFreeMemSizeMB_BHK(){
 GetTotalMemSizeGB_BHK(){
 	# 判断是否传入参数
 	if [ $# -ne "1" ];then
-		echo "TFAIL: GetTotalMemSizeGB_BHK 参数传递错误"
+		echo "[ TFAIL ] : GetTotalMemSizeGB_BHK 参数传递错误"
 		return 2
 	fi
         
 	# 获取总内存大小
         local memsize=$(free -g | awk '{print $2}' | sed -n '2p')
-        [ $? -ne 0 ] && { echo "FAIL: Get mem size failed";return 1; }
+        [ $? -ne 0 ] && { echo "[ FAIL ] : Get mem size failed";return 1; }
 
 	# 内存总大小+1GB
 	let memsize=memsize+1
 
         # 判断 $memsize 是否为空 
-        [ "X$memsize" == "X" ] && { echo "FAIL: Get mem size is NULL";return 1; }
+        [ "X$memsize" == "X" ] && { echo "[ FAIL ] : Get mem size is NULL";return 1; }
 
         # 判断 $memsize 是否为数字 
         echo ${memsize} | grep -q '[^0-9]'
-        [ $? -eq 0 ] && { echo "FAIL:Get memsize is not digit";return 1; }
+        [ $? -eq 0 ] && { echo "[ FAIL ] :Get memsize is not digit";return 1; }
 
 	echo "Success :Get mem Size = ${memsize}GB"
 	

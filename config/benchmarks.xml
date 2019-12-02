@@ -50,6 +50,12 @@
 		<CaseRun>True</CaseRun>
 	</TestCase>
 	<TestCase>
+		<CaseName>iozone</CaseName>
+		<CaseDir>Benchmarks</CaseDir>
+		<CaseScript>iozone.sh</CaseScript>
+		<CaseRun>False</CaseRun>
+	</TestCase>
+	<TestCase>
 		<CaseName>fio</CaseName>
 		<CaseDir>Benchmarks</CaseDir>
 		<CaseScript>fio.sh</CaseScript>

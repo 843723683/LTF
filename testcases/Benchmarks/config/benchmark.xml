@@ -50,6 +50,12 @@
 		<CaseFileName>ltp-full-20190517</CaseFileName>
 	</BenchmarktCase>
 	<BenchmarkCase>
+		<CaseName>iozone</CaseName>
+		<CaseDepend>gcc</CaseDepend>
+		<CasePkgName>iozone3_424.tgz</CasePkgName>
+		<CaseFileName>iozone3_424/src/current/</CaseFileName>
+	</BenchmarktCase>
+	<BenchmarkCase>
 		<CaseName>fio</CaseName>
 		<CaseDepend>gcc:zlib-devel</CaseDepend>
 		<CasePkgName>fio-fio-3.12.tar.gz</CasePkgName>
