@@ -56,6 +56,12 @@
 		<CaseFileName>iozone3_424/src/current/</CaseFileName>
 	</BenchmarktCase>
 	<BenchmarkCase>
+		<CaseName>bonnie</CaseName>
+		<CaseDepend>gcc</CaseDepend>
+		<CasePkgName>bonnie++-1.03a.tgz</CasePkgName>
+		<CaseFileName>bonnie++-1.03a</CaseFileName>
+	</BenchmarktCase>
+	<BenchmarkCase>
 		<CaseName>fio</CaseName>
 		<CaseDepend>gcc:zlib-devel</CaseDepend>
 		<CasePkgName>fio-fio-3.12.tar.gz</CasePkgName>
