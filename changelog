@@ -28,7 +28,8 @@
 24. 解决FileSystems/volume测试中，遇到错误不退出行为。判断语句出错误
 25. 增加GJB命令测试，134+14个命令几乎全部验证3个命令
 26. 优化benchmark测试框架，用于支持无压缩包和无安装目录的问题
-27. 新加benchmark测试：x11perf和glxgears
+27. 新加benchmark测试：x11perf、glxgears、iozone、bonnie++
 28. 新增系统信息打印：shell环境
 29. 优化benchmark(x11perf,glxgears)，添加关闭垂直同步操作
 30. 解决Filesystems中，当申请到的回环设备autoclear标志为1时，导致losetup -d清除回环设备无效。Centos1810中出现此问题
+31. 解决memtester工具BUG，memtester工具包在make install报错，详情可见benchmark-tools中readme

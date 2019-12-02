@@ -1,0 +1,16 @@
+一. memtester
+问题：在ubuntu系统make install 报错: install: target '/usr/local/man/man8/' is not a directory: No such file or directory
+解决：修改Makefile
+	将mkdir -m 755 -p $(INSTALLPATH)/{bin,man/man8}
+	修改为: mkdir -m 755 -p $(INSTALLPATH)/man/man8
+	        mkdir -m 755 -p $(INSTALLPATH)/bin
+
+
+二. unixbench
+        问题：pip context多线程会有读写错误
+        解决：github下载最新context1.c替换。由于最新版本unixbench编译不通过，所以只替换一个文>件
+
+
+三. lmbench
+	问题：lmbench不支持aarch64体系架构
+	解决：下载最新gnu-os进行替换,http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD
