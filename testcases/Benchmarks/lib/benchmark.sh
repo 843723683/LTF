@@ -152,14 +152,14 @@ XMLParse_BHK(){
 
 
 ## TODO:依赖关系检查
-## Out :0=>TPASS
-##      1=>TFAIL
-##      2=>未安装指定依赖
+## Out :0 => TPASS
+##      1 => TFAIL
+##      2 => TCONF
 Dep_BHK(){
         local depNum=0
         local depTmp=""
 
-	# 没有需要的依赖包
+	# 没有指定的依赖包
         depNum=$(echo $localDep | awk -F":" '{print NF}')
         if [ "${depNum}" -eq "1"  ];then
                 if [ "${localDep}" == "-" ];then
@@ -167,13 +167,31 @@ Dep_BHK(){
                 fi
         fi
 
+	# 依赖检测命令
+	local pkgcmd=""
+	which rpm > /dev/null
+	if [ $? -eq 0 ];then
+		# 存在rpm命令
+		pkgcmd="rpm -ql"	
+	else
+		which dpkg > /dev/null
+		if [ $? -eq 0 ];then
+			# 存在dpkg命令
+			pkgcmd="dpkg -L"
+		else
+			# 不存在dpkg和rpm命令
+			echo "[ TCONF ] : Can't found commands. dpkg or rpm "
+			return 2
+		fi
+	fi
+
         local index=0
         local failpkg=""
         for index in `seq 1 ${depNum}`
         do
                 depTmp=$(echo $localDep | awk -F":" "{print \$${index}}")
                 #判断是否安装依赖包
-                $BENCHMARK_PKG_CMD $depTmp > /dev/null
+                $pkgcmd $depTmp > /dev/null
                 local ret="$?"
                 #没有安装依赖
                 if [ "${ret}" -ne "0"  ];then
