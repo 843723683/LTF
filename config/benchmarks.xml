@@ -53,13 +53,25 @@
 		<CaseName>iozone</CaseName>
 		<CaseDir>Benchmarks</CaseDir>
 		<CaseScript>iozone.sh</CaseScript>
-		<CaseRun>False</CaseRun>
+		<CaseRun>True</CaseRun>
 	</TestCase>
 	<TestCase>
 		<CaseName>bonnie++</CaseName>
 		<CaseDir>Benchmarks</CaseDir>
 		<CaseScript>bonnie.sh</CaseScript>
-		<CaseRun>False</CaseRun>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+	<TestCase>
+		<CaseName>glxgears</CaseName>
+		<CaseDir>Benchmarks</CaseDir>
+		<CaseScript>glxgears.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+	<TestCase>
+		<CaseName>x11perf</CaseName>
+		<CaseDir>Benchmarks</CaseDir>
+		<CaseScript>x11perf.sh</CaseScript>
+		<CaseRun>True</CaseRun>
 	</TestCase>
 	<TestCase>
 		<CaseName>fio</CaseName>
@@ -71,18 +83,6 @@
 		<CaseName>ltpInterface</CaseName>
 		<CaseDir>Benchmarks</CaseDir>
 		<CaseScript>ltpInterface.sh</CaseScript>
-		<CaseRun>False</CaseRun>
-	</TestCase>
-	<TestCase>
-		<CaseName>glxgears</CaseName>
-		<CaseDir>Benchmarks</CaseDir>
-		<CaseScript>glxgears.sh</CaseScript>
-		<CaseRun>False</CaseRun>
-	</TestCase>
-	<TestCase>
-		<CaseName>x11perf</CaseName>
-		<CaseDir>Benchmarks</CaseDir>
-		<CaseScript>x11perf.sh</CaseScript>
 		<CaseRun>False</CaseRun>
 	</TestCase>
 </TestGroup>
