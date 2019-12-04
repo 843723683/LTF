@@ -70,6 +70,10 @@ InstallTest_BHK(){
 	# 依赖解析
         Dep_BHK
         RetParse_BHK
+	
+	# 命令校验
+	CmdCheck_BHK
+        RetParse_BHK
 
 	# 初始化
 	Init_BHK
@@ -105,6 +109,8 @@ XMLParse_BHK(){
         localName=""
 	# 测试工具依赖
         localDep=""
+	# 测试工具需要的命令
+        localCmd=""
 	# 测试工具源码包存放路径
         localPkgPath=""
 	# 测试工具安装包名
@@ -117,6 +123,7 @@ XMLParse_BHK(){
         XMLParse ${CONFIG_XML}
         XMLGetItemContent CaseName        xmlCaseName
         XMLGetItemContent CaseDepend      xmlCaseDep
+        XMLGetItemContent CaseCommand     xmlCaseCmd
         XMLGetItemContent CasePkgName     xmlCasePkgName
         XMLGetItemContent CaseFileName    xmlCaseFileName
         XMLGetItemNum     xmlCaseName     xmlCaseNum
@@ -129,6 +136,7 @@ XMLParse_BHK(){
                 if [ "${xmlCaseName[${index}]}" == "${regToolName_bhk}" ];then
                         localName="${xmlCaseName[$index]}"
                         localDep="${xmlCaseDep[$index]}"
+                        localCmd="${xmlCaseCmd[$index]}"
                         localPkgName="${xmlCasePkgName[$index]}"
                         localFileName="${xmlCaseFileName[$index]}"
                         break
@@ -143,9 +151,9 @@ XMLParse_BHK(){
         localPkgPath="${AUTOTEST_ROOT}/${BENCHMARK_PKG_PATH}"
         localInstallPath="${BENCHMARK_PKG_INSTALL_PATH}"
 
-        unset -v xmlCaseName xmlCaseDep xmlCasePkgName xmlCaseFileName xmlCaseNum 
+        unset -v xmlCaseName xmlCaseDep xmlCaseCmd xmlCasePkgName xmlCaseFileName xmlCaseNum 
 
-#       echo "$localName -$localDep-$localPkgPath-$localPkgName-$localFileName-$localInstallPath "
+#       echo "$localName -$localDep - $localCmd -$localPkgPath-$localPkgName-$localFileName-$localInstallPath "
 	
 	return 0
 }
@@ -192,15 +200,57 @@ Dep_BHK(){
                 depTmp=$(echo $localDep | awk -F":" "{print \$${index}}")
                 #判断是否安装依赖包
                 $pkgcmd $depTmp > /dev/null
-                local ret="$?"
                 #没有安装依赖
-                if [ "${ret}" -ne "0"  ];then
+                if [ "$?" -ne "0"  ];then
                         failpkg="$failpkg $depTmp"
                 fi
         done
 
         if [ "X$failpkg" != "X" ];then
                 echo "Not install ${failpkg}"
+                return 2
+        fi
+
+	return 0
+}
+
+
+## TODO : 基础命令检查
+#  Out  : 0 => TPASS
+#         1 => TFAIL
+#         2 => TCONF
+CmdCheck_BHK(){
+        local cmdnum=0
+        local cmdtmp=""
+
+	# 检测命令
+	local checkcmd="which"
+
+	# 没有指定的基础命令
+        cmdnum=$(echo $localCmd | awk -F":" '{print NF}')
+        if [ "${cmdnum}" -eq "1"  ];then
+                if [ "${localCmd}" == "-" ];then
+                        return 0
+                fi
+        fi
+
+	# 检测是否提供指定命令
+        local index=0
+        local failcmd=""
+        for index in `seq 1 ${cmdnum}`
+        do
+                cmdtmp=$(echo $localCmd | awk -F":" "{print \$${index}}")
+                #判断是否存在指定命令
+                $checkcmd $cmdtmp > /dev/null
+                #没有安装依赖
+                if [ "$?" -ne "0"  ];then
+                        failcmd="$failcmd $cmdtmp"
+                fi
+        done
+
+	# 判断是否存在失败命令
+        if [ "X$failcmd" != "X" ];then
+                echo "Can't found Command . ${failcmd}"
                 return 2
         fi
 

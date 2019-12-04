@@ -4,85 +4,99 @@
 	<BenchmarkCase>
 		<CaseName>unixbench</CaseName>
 		<CaseDepend>gcc</CaseDepend>
+		<CaseCommand>gcc</CaseCommand>
 		<CasePkgName>UnixBench5.1.3-context.tgz</CasePkgName>
 		<CaseFileName>UnixBench</CaseFileName>
-	</BenchmarktCase>
+	</BenchmarkCase>
 	<BenchmarkCase>
 		<CaseName>lmbench</CaseName>
 		<CaseDepend>gcc</CaseDepend>
+		<CaseCommand>gcc</CaseCommand>
 		<CasePkgName>lmbench3-gnuos.tar.gz</CasePkgName>
 		<CaseFileName>lmbench3</CaseFileName>
-	</BenchmarktCase>
+	</BenchmarkCase>
 	<BenchmarkCase>
 		<CaseName>memtester</CaseName>
 		<CaseDepend>gcc</CaseDepend>
+		<CaseCommand>gcc</CaseCommand>
 		<CasePkgName>memtester-4.3.0.tar.gz</CasePkgName>
 		<CaseFileName>memtester-4.3.0</CaseFileName>
-	</BenchmarktCase>
+	</BenchmarkCase>
 	<BenchmarkCase>
 		<CaseName>stressapptest</CaseName>
-		<CaseDepend>gcc:gcc-c++</CaseDepend>
+		<CaseDepend>gcc</CaseDepend>
+		<CaseCommand>gcc:g++</CaseCommand>
 		<CasePkgName>stressapptest_1.0.6.orig.tar.gz</CasePkgName>
 		<CaseFileName>stressapptest-1.0.6_autoconf</CaseFileName>
-	</BenchmarktCase>
+	</BenchmarkCase>
 	<BenchmarkCase>
 		<CaseName>stream</CaseName>
 		<CaseDepend>gcc</CaseDepend>
+		<CaseCommand>gcc</CaseCommand>
 		<CasePkgName>stream.tar.gz</CasePkgName>
 		<CaseFileName>stream</CaseFileName>
-	</BenchmarktCase>
+	</BenchmarkCase>
 	<BenchmarkCase>
 		<CaseName>sysbench</CaseName>
 		<CaseDepend>gcc:automake:libtool</CaseDepend>
+		<CaseCommand>gcc</CaseCommand>
 		<CasePkgName>sysbench-1.0.17.tar.gz</CasePkgName>
 		<CaseFileName>sysbench-1.0.17</CaseFileName>
-	</BenchmarktCase>
+	</BenchmarkCase>
 	<BenchmarkCase>
 		<CaseName>hackbench</CaseName>
 		<CaseDepend>gcc:bzip2</CaseDepend>
+		<CaseCommand>gcc</CaseCommand>
 		<CasePkgName>ltp-full-20190517.tar.bz2</CasePkgName>
 		<CaseFileName>ltp-full-20190517</CaseFileName>
-	</BenchmarktCase>
+	</BenchmarkCase>
 	<BenchmarkCase>
 		<CaseName>kernbench</CaseName>
 		<CaseDepend>gcc:bzip2</CaseDepend>
+		<CaseCommand>gcc</CaseCommand>
 		<CasePkgName>ltp-full-20190517.tar.bz2</CasePkgName>
 		<CaseFileName>ltp-full-20190517</CaseFileName>
-	</BenchmarktCase>
+	</BenchmarkCase>
 	<BenchmarkCase>
 		<CaseName>iozone</CaseName>
 		<CaseDepend>gcc</CaseDepend>
+		<CaseCommand>gcc</CaseCommand>
 		<CasePkgName>iozone3_424.tgz</CasePkgName>
 		<CaseFileName>iozone3_424/src/current/</CaseFileName>
-	</BenchmarktCase>
+	</BenchmarkCase>
 	<BenchmarkCase>
 		<CaseName>bonnie</CaseName>
 		<CaseDepend>gcc</CaseDepend>
+		<CaseCommand>gcc</CaseCommand>
 		<CasePkgName>bonnie++-1.03a.tgz</CasePkgName>
 		<CaseFileName>bonnie++-1.03a</CaseFileName>
-	</BenchmarktCase>
+	</BenchmarkCase>
 	<BenchmarkCase>
 		<CaseName>fio</CaseName>
 		<CaseDepend>gcc:zlib-devel</CaseDepend>
+		<CaseCommand>gcc</CaseCommand>
 		<CasePkgName>fio-fio-3.12.tar.gz</CasePkgName>
 		<CaseFileName>fio-fio-3.12</CaseFileName>
-	</BenchmarktCase>
+	</BenchmarkCase>
 	<BenchmarkCase>
 		<CaseName>ltpInterface</CaseName>
 		<CaseDepend>gcc</CaseDepend>
+		<CaseCommand>gcc</CaseCommand>
 		<CasePkgName>ltp-full-20190517.tar.bz2</CasePkgName>
 		<CaseFileName>ltp-full-20190517</CaseFileName>
-	</BenchmarktCase>
+	</BenchmarkCase>
 	<BenchmarkCase>
 		<CaseName>x11perf</CaseName>
 		<CaseDepend>-</CaseDepend>
+		<CaseCommand>x11perf</CaseCommand>
 		<CasePkgName>-</CasePkgName>
 		<CaseFileName>-</CaseFileName>
-	</BenchmarktCase>
+	</BenchmarkCase>
 	<BenchmarkCase>
 		<CaseName>glxgears</CaseName>
 		<CaseDepend>-</CaseDepend>
+		<CaseCommand>glxgears</CaseCommand>
 		<CasePkgName>-</CasePkgName>
 		<CaseFileName>-</CaseFileName>
-	</BenchmarktCase>
+	</BenchmarkCase>
 </Benchmark>
