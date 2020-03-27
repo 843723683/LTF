@@ -36,3 +36,4 @@
 32. 解决lmbench在Ubuntu下运行报错问题。报错：source: not found，由于配置文件config-run中使用#!/bin/sh ，修改为#!/bin/dash
 33. 解决benchmark测试无法测试u系系统，将依赖关系检查修改为动态识别yum 或 dpkg
 34. 优化benchmark测试框架，全面支持u系，框架中新增指定命令测试
+35. 新增sosreport测试
