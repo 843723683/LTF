@@ -4,7 +4,8 @@
 CMD="sosreport"
 TMPFILENAME="ltfsosreport"
 TMPPATHNAME="/tmp"
-TMPSOSPATH="${TMPPATHNAME}/sosreport-${TMPFILENAME}"
+# 可能存在sosreport-localhost-${TMPFILENAME}的情况，所以加上"*"
+TMPSOSPATH="${TMPPATHNAME}/sosreport-*${TMPFILENAME}"
 ret=1
 
 echo "$0 test ${CMD}"
@@ -13,7 +14,8 @@ echo "$0 test ${CMD}"
 which ${CMD} >/dev/null 2>&1 
 [ $? -ne 0 ]&&{ echo "No command :${CMD}";exit 1; }
 
-echo "" | ${CMD} --name=${TMPFILENAME} --tmp-dir=${TMPPATHNAME}
+# echo -e  "\n", 解决sosreport报错：EOFError:EOF when reading a lin
+echo -e "\n" | ${CMD} --name=${TMPFILENAME} --tmp-dir=${TMPPATHNAME}
 [ $? -ne 0 ]&&{ echo "Failed : ${CMD} --name=${TMPFILENAME} --tmp-dir=${TMPPATHNAME}";exit 1; }
 
 # 判断文件是否存在
