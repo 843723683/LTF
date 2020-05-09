@@ -85,6 +85,7 @@ RetBrkStart(){
 	printf "%-30s" "$1"
 	
 	local logFile=$2
+	echo "" >> ${logFile}
 	echo "##  Run $1 : $(date)" >> ${logFile}
 }
 
@@ -94,7 +95,9 @@ RetBrkStart(){
 ##      : $2=>logFile：日志文件路径
 RetBrkEnd(){
 	local logFile=$2
+	echo "" >> ${logFile}
 	echo "## Finish $1 : $(date)" >> ${logFile}
+	echo "" >> ${logFile}
 }
 
 ## TODO : 写(TFAIL/TPASS/TCONF/ERROR)日志信息，统计测试项执行结果

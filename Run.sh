@@ -5,14 +5,15 @@
 ##
 RUNUSAGE(){
 	cat >&2 <<-EOF
-	 -------------------------------
-	| Usage  : ./Run [OPTION]       |
-	| OPTION :                      |
-	|    -r : Clean result dir      |
-	|    -a : Run All Testcases     |
-	|    -i : Install Test          |
-	|    -f xmlFile : XML file      |
-	 -------------------------------
+	 ---------------------------------------
+	| Usage  : ./Run [OPTION]               |
+	| OPTION :                              |
+	|    -r         : Clean result dir      |
+	|    -a         : Run All Testcases     |
+	|    -i         : Install Test          |
+	|    -s logFile : Show log File (less)  |
+	|    -f xmlFile : XML file              |
+	 ---------------------------------------
 	EOF
 }
 
@@ -241,7 +242,7 @@ main(){
 		exit 1
 	else
 		#运行指定XML测试项
-		while getopts ":f:ari" opt
+		while getopts ":f:aris:" opt
 		do
 			case $opt in
 			f)
@@ -259,6 +260,11 @@ main(){
 			i)
 			## banchmark只进行安装测试
 				AUTOTEST_INSTALL_FALG="INSTALL"
+				;;
+			s)	
+			# 可视化读取日志文件
+				cat $OPTARG | less -r	
+				exit 0
 				;;
 			*)
 				RUNUSAGE
