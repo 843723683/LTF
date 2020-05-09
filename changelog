@@ -39,3 +39,5 @@
 35. 新增sosreport测试
 36. 优化sosreport参数，指定日志生成目录
 37. 解决sosreport报错：EOFError:EOF when reading a line
+38. 优化图形显示
+39. 新增-s参数，用于展示日志结果
