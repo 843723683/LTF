@@ -176,19 +176,21 @@ RunStartTest(){
 	return $ret
 }
 
-## TODO: 解析XML文件，调用判断执行函数
-## In  : $1=>XML file name
-## OUT : 0=>Success
-##       1=>Failed
+
+## TODO: 解析XML文件，调用判断执行函数,支持":"作为分隔符
+#  In  : $1=>XML file name
+#  OUT : 0=>Success
+#       1=>Failed
 RunAutoTest(){
-	if [ ! -f "${CFG_ROOT}/$1" ];then
+        local xmlfile="$1"
+	if [ ! -f "${CFG_ROOT}/$xmlfile" ];then
 		RetBrk "ERROR" "XML File" \
-			"Can't find XML file (${CFG_ROOT}/$1)" ${LOG_FILE}
+			"Can't find XML file (${CFG_ROOT}/$xmlfile)" ${LOG_FILE}
 		return 1
 	fi
 
 	# 解析XML文件
-	local XMLFilePath="${CFG_ROOT}/$1"
+	local XMLFilePath="${CFG_ROOT}/${xmlfile}"
 	XMLParse ${XMLFilePath}
 	XMLGetItemContent CaseName    xmlCaseName
 	XMLGetItemContent CaseDir     xmlCaseDir
@@ -212,8 +214,45 @@ RunAutoTest(){
 	unset -v xmlCaseName xmlCaseDir xmlCaseScript xmlCaseRun xmlCaseNum	
 }
 
+
+## TODO: 处理-f指定多个xml测试文件，":"作为分隔符
+#  In  : $1=>XML file name
+#  OUT : 0=>Success
+#        1=>Failed
+RunMultipleAutoTest(){
+        # 获取xml文件数量
+        local xmlnum=""
+        xmlnum=$(echo $1 | awk -F":" '{print NF}')
+
+        local i=0
+        local xmlfile=""
+	local flag="pass"
+	# 依次执行不同的xml文件
+	for i in `seq 1 ${xmlnum}`
+        do
+		xmlfile=$(echo $1 | awk -F":" "{print \$${i}}")
+		if [ ! -f "${CFG_ROOT}/$xmlfile" ];then
+			RetBrk "ERROR" "XML File" \
+				"Can't find XML file (${CFG_ROOT}/$xmlfile)" ${LOG_FILE}
+			flag="fail"
+		fi
+	done
+	# xml文件错误则退出
+	if [ $flag == "fail" ];then
+		return 1
+	fi
+
+	# 依次执行不同的xml文件
+	for i in `seq 1 ${xmlnum}`
+        do
+		xmlfile=$(echo $1 | awk -F":" "{print \$${i}}")
+		RunAutoTest $xmlfile
+	done
+}
+
+
 ## TODO:Run all test(${AUTOTEST_XML})
-##
+#
 RunAllAutoTest(){
 	XMLParse ${CFG_ROOT}/${AUTOTEST_XML}
 	XMLGetItemContent GroupName     xmlGroupName
@@ -285,7 +324,7 @@ main(){
 			#初始化设置
 			RunSetup
 			# 运行指定XML测试
-			RunAutoTest $xmlFileName
+			RunMultipleAutoTest $xmlFileName
 			# 结果解析
 			RetBrkParse
 			exit 0
