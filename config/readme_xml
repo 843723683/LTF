@@ -1,0 +1,8 @@
+autoTest.xml:All-Test-Item:全量测试
+commands-all.xml:Commands:命令测试
+filesystems.xml:Filesystems:文件系统测试
+gjb.xml:GJB:GJB命令测试
+languages.xml:Languages:开发语言测试
+development.xml:Development:开发环境测试
+benchmarks.xml:Benchmarks:性能测试
+benchmarks-old.xml:Benchmarks-old:性能测试(舍弃)
