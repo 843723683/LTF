@@ -19,7 +19,11 @@ RetSetup(){
 	retTotal=0
 
 	# 开始界面
-	RetBrkUsage
+	if [ -f "$LOG_USAGE_FILE" ];then
+		RetBrkUsage | tee -a $LOG_USAGE_FILE
+	else
+		RetBrkUsage
+	fi
 	
 	return 0
 }
@@ -58,8 +62,7 @@ Test Start Time : $(date)
 }
 
 
-RetBrkParse(){
-	let retTotal=retTPASSNum+retTFAILNum+retTCONFNum
+RetBrkParseUsage(){
 	cat >&1 <<-EOF
 
 
@@ -77,12 +80,37 @@ Detailed: ${logPath}
 	EOF
 }
 
+
+RetBrkParse(){
+	let retTotal=retTPASSNum+retTFAILNum+retTCONFNum
+	if [ -f "$LOG_USAGE_FILE" ];then
+		RetBrkParseUsage | tee -a $LOG_USAGE_FILE
+	else
+		RetBrkParseUsage
+	fi
+}
+
+
+
+## TODO : 打印脚本名称 
+## In   : $1=>Item name 
+RetBrkStartUSAGE(){
+	#打印脚本名称
+	if [ -f "$LOG_USAGE_FILE" ];then
+		printf "%-30s" "$1" | tee -a $LOG_USAGE_FILE
+	else
+		printf "%-30s" "$1"
+	fi
+	
+}
+
+
 ## TODO : 写入开始时间和Item name
 ## In   : $1=>Item name 
 ##      : $2=>logFile：日志文件路径
 RetBrkStart(){
 	#打印脚本名称
-	printf "%-30s" "$1"
+	RetBrkStartUSAGE "$1"
 	
 	local logFile=$2
 	echo "" >> ${logFile}
@@ -126,6 +154,35 @@ RetBrk (){
 #------------- 内部静态函数 --------------#
 
 
+## TODO : printf函数，打印字符串
+#  In   : $1 => 打印规则
+#       : $2 => 打印字符串
+RetBrkPrint(){
+	# 打印规则
+	local rule="$1"
+	shift 1
+	# 打印字符串
+	local str=""
+	# 执行命令
+	local cmd="printf \"$rule\""
+
+	local index=0
+	# 构建命令
+	for index in `seq 1 $#`
+	do
+		eval str="\$$index"
+		cmd="$cmd \"$str\""
+	done
+	
+	if [ -f "$LOG_USAGE_FILE" ];then
+		eval $cmd | tee -a $LOG_USAGE_FILE
+	else
+		eval $cmd
+	fi
+
+}
+
+
 ## TODO : 写TFAIL和TPASS日志信息，工具测试结果统计
 ## In   : $1=>TFAIL or TPASS or TCONF
 ##        $2=>Item name 
@@ -135,17 +192,20 @@ RetBrkFailPassConf(){
 	case $1 in
 	TPASS)
 		#打印脚本执行结果
-                printf "\033[1m\033[;32m\t\t\t %-10s\033[0m\n" "$1"
+		RetBrkPrint "\033[1m\033[;32m\t\t\t %-10s\033[0m\n" "$1"
+#                printf "\033[1m\033[;32m\t\t\t %-10s\033[0m\n" "$1"
 		let retTPASSNum=retTPASSNum+1
 		;;
 	TFAIL)
 		#打印脚本执行结果
-                printf "\033[1m\033[;31m\t\t\t %-10s\033[0m\n" "$1"
+		RetBrkPrint "\033[1m\033[;31m\t\t\t %-10s\033[0m\n" "$1"
+#                printf "\033[1m\033[;31m\t\t\t %-10s\033[0m\n" "$1"
 		let retTFAILNum=retTFAILNum+1
 		;;
 	TCONF)
 		#打印脚本执行结果
-                printf "\033[1m\033[;33m\t\t\t %-10s\033[0m\n" "$1"
+		RetBrkPrint "\033[1m\033[;33m\t\t\t %-10s\033[0m\n" "$1"
+#                printf "\033[1m\033[;33m\t\t\t %-10s\033[0m\n" "$1"
 		let retTCONFNum=retTCONFNum+1
 		;;
 	esac
@@ -161,7 +221,8 @@ RetBrkErr(){
 	local logFile="$4"
 
 	#打印脚本执行结果
-        printf "%-30s\t\t\t %-10s\n" "$2" "$1"
+	RetBrkPrint "%-30s\t\t\t %-10s\n" "$2" "$1"
+#        printf "%-30s\t\t\t %-10s\n" "$2" "$1"
 
 	#统计ERROR数据
 	let retERRORNum=retERRORNum+1

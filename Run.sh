@@ -1,4 +1,17 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+# ----------------------------------------------------------------------
+# Filename  :   Run.sh
+# Version   :   1.0
+# Date      :   2020/05/22
+# Author    :   Lz
+# Email     :   lz843723683@gmail.com
+# History   :     
+#               Version 1.0, 2020/05/22
+#
+# Function  :   LTF工具驱动函数
+# ----------------------------------------------------------------------
+
 
 ## TODO : Usage
 ##
@@ -63,7 +76,12 @@ RunSetup(){
 			exit 1
                 fi
         fi
-	LOG_FILE=${LOG_PATH}/${START_TIME}.ret
+	# 报错日志存储
+	LOG_FAIL_FILE="${LOG_PATH}/ltf-fail.log"
+	# 界面日志打印
+	LOG_USAGE_FILE="${LOG_PATH}/ltf_usage"
+	# 创建界面日志文件
+	touch $LOG_USAGE_FILE
 
 	# source result.sh
 	source ${LIB_ROOT}/result.sh
@@ -185,7 +203,7 @@ RunAutoTest(){
         local xmlfile="$1"
 	if [ ! -f "${CFG_ROOT}/$xmlfile" ];then
 		RetBrk "ERROR" "XML File" \
-			"Can't find XML file (${CFG_ROOT}/$xmlfile)" ${LOG_FILE}
+			"Can't find XML file (${CFG_ROOT}/$xmlfile)" ${LOG_FAIL_FILE}
 		return 1
 	fi
 
@@ -233,7 +251,7 @@ RunMultipleAutoTest(){
 		xmlfile=$(echo $1 | awk -F":" "{print \$${i}}")
 		if [ ! -f "${CFG_ROOT}/$xmlfile" ];then
 			RetBrk "ERROR" "XML File" \
-				"Can't find XML file (${CFG_ROOT}/$xmlfile)" ${LOG_FILE}
+				"Can't find XML file (${CFG_ROOT}/$xmlfile)" ${LOG_FAIL_FILE}
 			flag="fail"
 		fi
 	done
