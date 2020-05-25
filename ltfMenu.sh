@@ -27,6 +27,8 @@ Init_LTFMenu(){
 
 	# LTF config目录
 	LTFMENU_CONFIG_ROOT="${LTFMENU_ROOT}/config"
+	# LTF xml config 目录
+	LTFMENU_XMLCONFIG_ROOT="${LTFMENU_CONFIG_ROOT}/xml"
 	
 	# xml说明文件名
 	CONFIG_XML_README="readme_xml"
@@ -69,20 +71,24 @@ ReadmeParse_LTFMenu(){
 	# xml描述文件路径	
 	local readmelogpath=""
 	local readmelog=""
+	# xml 整体路径
 	local xmlpath=""
-	for xmlpath in `find ${LTFMENU_CONFIG_ROOT} -type f | grep "\.xml$"`	
+	# 存储xml文件的最后一级目录
+	local xmldir=""
+	for xmlpath in `find ${LTFMENU_XMLCONFIG_ROOT} -type f | grep "\.xml$"`	
 	do
+		xmldir="${LTFMENU_XMLCONFIG_ROOT##*/}"
 		# 获取xml文件路径
-		testCasePathArr_menu[$num]=${xmlpath#*config/}
+		testCasePathArr_menu[$num]=${xmlpath#*${xmldir}/}
 		
 		# 判断是否存在目录标识"/"
 		echo "${testCasePathArr_menu[$num]}" | grep -q "/"
 		if [ $? -eq 0 ];then
 			# 存在目录
-			readmelogpath="${LTFMENU_CONFIG_ROOT}/${testCasePathArr_menu[$num]%/*}/${CONFIG_XML_README}"
+			readmelogpath="${LTFMENU_XMLCONFIG_ROOT}/${testCasePathArr_menu[$num]%/*}/${CONFIG_XML_README}"
 		else
 			# 不存在目录
-			readmelogpath="${LTFMENU_CONFIG_ROOT}/${CONFIG_XML_README}"
+			readmelogpath="${LTFMENU_XMLCONFIG_ROOT}/${CONFIG_XML_README}"
 		fi
 		
 		# 判断是否存在xml说明文件
@@ -258,7 +264,7 @@ EnableBenchmark_LTFMenu(){
 		for filename in `find ${benchmarkpath} -maxdepth 1 -type f`
 		do
 			# 判断是否用户选择的测试项中是否存在性能测试
-			cat ${LTFMENU_CONFIG_ROOT}/${testCasePathArr_menu[$num]} | grep -q "${filename##*/}"
+			cat ${LTFMENU_XMLCONFIG_ROOT}/${testCasePathArr_menu[$num]} | grep -q "${filename##*/}"
 			if [ $? -eq 0 ];then
 				# 存在性能测试
 				return 0
@@ -277,7 +283,7 @@ EnableBenchmark_LTFMenu(){
 #    In : 用户选择的benchmark脚本名
 SaveXml_LTFMenu(){
 	local testcase="$1"
-	local newxmlpath="${LTFMENU_CONFIG_ROOT}/${NEWXMLFILENAME_MENU}"
+	local newxmlpath="${LTFMENU_XMLCONFIG_ROOT}/${NEWXMLFILENAME_MENU}"
 
 	printf "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n" > ${newxmlpath}
 	local tmpfile=

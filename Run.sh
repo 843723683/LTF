@@ -47,6 +47,7 @@ RunSetup(){
 	export AUTOTEST_ROOT=`pwd`
 	
 	CFG_ROOT="${AUTOTEST_ROOT}/config"
+	XMLCFG_ROOT_LTF="${CFG_ROOT}/xml"
 	LIB_ROOT="${AUTOTEST_ROOT}/lib"
 	TESTCASE_ROOT="${AUTOTEST_ROOT}/testcases"
 
@@ -201,14 +202,14 @@ RunStartTest(){
 #       1=>Failed
 RunAutoTest(){
         local xmlfile="$1"
-	if [ ! -f "${CFG_ROOT}/$xmlfile" ];then
+	if [ ! -f "${XMLCFG_ROOT_LTF}/$xmlfile" ];then
 		RetBrk "ERROR" "XML File" \
-			"Can't find XML file (${CFG_ROOT}/$xmlfile)" ${LOG_FAIL_FILE}
+			"Can't find XML file (${XMLCFG_ROOT_LTF}/$xmlfile)" ${LOG_FAIL_FILE}
 		return 1
 	fi
 
 	# 解析XML文件
-	local XMLFilePath="${CFG_ROOT}/${xmlfile}"
+	local XMLFilePath="${XMLCFG_ROOT_LTF}/${xmlfile}"
 	XMLParse ${XMLFilePath}
 	XMLGetItemContent CaseName    xmlCaseName
 	XMLGetItemContent CaseDir     xmlCaseDir
@@ -249,9 +250,9 @@ RunMultipleAutoTest(){
 	for i in `seq 1 ${xmlnum}`
         do
 		xmlfile=$(echo $1 | awk -F":" "{print \$${i}}")
-		if [ ! -f "${CFG_ROOT}/$xmlfile" ];then
+		if [ ! -f "${XMLCFG_ROOT_LTF}/$xmlfile" ];then
 			RetBrk "ERROR" "XML File" \
-				"Can't find XML file (${CFG_ROOT}/$xmlfile)" ${LOG_FAIL_FILE}
+				"Can't find XML file (${XMLCFG_ROOT_LTF}/$xmlfile)" ${LOG_FAIL_FILE}
 			flag="fail"
 		fi
 	done
@@ -272,7 +273,7 @@ RunMultipleAutoTest(){
 ## TODO:Run all test(${AUTOTEST_XML})
 #
 RunAllAutoTest(){
-	XMLParse ${CFG_ROOT}/${AUTOTEST_XML}
+	XMLParse ${XMLCFG_ROOT_LTF}/${AUTOTEST_XML}
 	XMLGetItemContent GroupName     xmlGroupName
 	XMLGetItemContent GroupXMLName  xmlGroupXMLName
 	XMLGetItemContent GroupRun      xmlGroupRun
