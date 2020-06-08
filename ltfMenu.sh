@@ -41,7 +41,7 @@ Init_LTFMenu(){
 	fi
 
 	# read超时退出
-	TMOUT_LTFMENU=30
+	TMOUT_LTFMENU=120
 
 	# 测试项对应的xml文件路径
 	testCasePathArr_menu=()
@@ -75,7 +75,7 @@ ReadmeParse_LTFMenu(){
 	local xmlpath=""
 	# 存储xml文件的最后一级目录
 	local xmldir=""
-	for xmlpath in `find ${LTFMENU_XMLCONFIG_ROOT} -type f | grep "\.xml$"`	
+	for xmlpath in `find ${LTFMENU_XMLCONFIG_ROOT} -type f | sort | grep "\.xml$"`	
 	do
 		xmldir="${LTFMENU_XMLCONFIG_ROOT##*/}"
 		# 获取xml文件路径
@@ -110,7 +110,7 @@ ReadmeParse_LTFMenu(){
 		else
 		# 说明文件中不存在对应条目
 			testCaseNameArr_menu[$num]=${testCasePathArr_menu[$num]%*.xml}
-			testCaseLogArr_menu[$num]="自建文件"
+			testCaseLogArr_menu[$num]="#####"
 		fi
 
 		let num=num+1
@@ -119,21 +119,138 @@ ReadmeParse_LTFMenu(){
 
 
 ## TODO : 打印LOG 
+#     In: $1 => 右移倍数,可以不提供
 #
 LogUsage_LTFMenu(){
+	local rshift="\t\t"
+	local rshiftreal="\t"
+	if [ $# -eq 1 ];then
+		local index=0
+		for i in `seq 2 $1`
+		do
+			local rshiftreal="${rshiftreal}${rshift}"
+		done
+	fi
+
         printf " \n\
-\t\t#       #######   ######\n \
-\t\t#          #      #\n \
-\t\t#          #      #####\n \
-\t\t#          #      #\n \
-\t\t#          #      #\n \
-\t\t######     #      #\n\n"
+${rshiftreal}#       #######   ######\n \
+${rshiftreal}#          #      #\n \
+${rshiftreal}#          #      #####\n \
+${rshiftreal}#          #      #\n \
+${rshiftreal}#          #      #\n \
+${rshiftreal}######     #      #\n\n"
 }
 
 
-## TODO : 打印测试项 
+## TODO : 打印测试项(new)
 #
-TestCaseUsage_LTFMenu(){
+TestCaseUsageNew_LTFMenu(){
+	# 基础参数
+	# 一列最多15项
+	local rowmax=15
+	which stty &>/dev/null
+	if [ $? -eq 0 ];then
+		let rowmax=$(stty size | awk '{print $1}')-20
+	else
+		rowmax=15
+	fi
+
+	# 总共测试项
+	local itemnum=${#testCaseNameArr_menu[@]}
+	# 总共列数
+	let local colmax=${itemnum}/${rowmax}
+	let local colmax_remainder=${itemnum}%${rowmax}
+	if [ ${colmax_remainder} -gt 1 ];then
+		let colmax=colmax+1
+	fi
+	
+	# 基础格式
+	# 格式
+	local fmt_1="%-s"
+	local fmt_2="%s %s %s"
+	# 参数
+	local prmt_1="-------------------------------------"
+	local prmt_2="No Test-Item Description"
+	local prmt_3="-- --------- -----------"
+
+	# 打印格式
+	local fmtreal_1="${fmt_1}"
+	local fmtreal_2="${fmt_2}"
+	local prmtreal_1="${prmt_1}"
+	local prmtreal_2="${prmt_2}"
+	local prmtreal_3="${prmt_3}"
+	local prmtreal_4=""
+
+	local index=0
+	for index in $(seq 2 ${colmax})
+	do
+		fmtreal_2="$fmtreal_2 $fmt_2"
+		prmtreal_1="${prmtreal_1}${prmt_1}"
+		prmtreal_2="${prmtreal_2} ${prmt_2}"
+		prmtreal_3="${prmtreal_3} ${prmt_3}"
+	done
+
+	# 打印LOG
+	LogUsage_LTFMenu $colmax
+
+	# 打印界面
+	local ltfuserfile="/tmp/ltfuserfile"
+	[ -f "$ltfuserfile" ] && rm $ltfuserfile
+	printf "${fmtreal_1}\n" $prmtreal_1
+	printf "${fmtreal_2}\n" $prmtreal_2 > ${ltfuserfile}
+	printf "${fmtreal_2}\n" $prmtreal_3 >> ${ltfuserfile}
+
+	# 打印测试项
+	local testcasename=""
+	local num=0
+	local tmpnum=0
+	for testcasename in ${testCaseNameArr_menu[@]}
+	do
+		# 判断是否大于最大行数
+		if [ $num -ge $rowmax ];then
+			break
+		fi
+
+		for index in `seq 1 $colmax`
+		do
+			if [ $index -eq 1 ];then
+				prmtreal_4="$num ${testcasename} ${testCaseLogArr_menu[$num]}"
+			else
+				let tmpnum=num+${index}*${rowmax}-${rowmax}
+				if [ $tmpnum -ge $itemnum ];then
+					continue
+				fi
+				prmtreal_4="$prmtreal_4 $tmpnum ${testCaseNameArr_menu[$tmpnum]} ${testCaseLogArr_menu[$tmpnum]}"
+			fi
+		done
+
+		printf "${fmtreal_2}\n" ${prmtreal_4} >> ${ltfuserfile}
+		let num=num+1
+	done
+
+	# 打印排序测试项
+	column -t ${ltfuserfile}
+	[ -f "$ltfuserfile" ] && rm $ltfuserfile
+
+	local rshirft="\t\t"
+	local rshirftreal=""
+	for index in `seq 2 $colmax`
+	do
+		rshirftreal="${rshirftreal}${rshirft}"
+	done
+
+	# 选择benchmarks	
+	printf "\n${rshirftreal}%-2s : %-20s %-20s\n" "s" "Select Benchmark" "自定义性能工具"
+
+	# 退出界面
+	printf "${rshirftreal}%-2s : %-20s %-20s\n" "q" "Quit" "退出"
+	printf "${fmtreal_1}\n" $prmtreal_1
+}
+
+
+## TODO : 打印测试项(old)
+#
+TestCaseUsageOld_LTFMenu(){
 	local testcasename=""
 	local num=0
 
@@ -162,11 +279,16 @@ Usage_LTFMenu(){
 	# 清屏
 	clear
 
-	# 打印LOG
-	LogUsage_LTFMenu
-
 	# 打印测试项
-	TestCaseUsage_LTFMenu
+	which column &>/dev/null
+	if [ $? -eq 0 ];then
+		TestCaseUsageNew_LTFMenu
+	else
+		# 打印LOG
+		LogUsage_LTFMenu
+
+		TestCaseUsageOld_LTFMenu
+	fi
 }
 
 
