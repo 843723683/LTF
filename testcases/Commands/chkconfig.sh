@@ -9,6 +9,6 @@ echo "$0 test ${CMD}"
 which ${CMD} >/dev/null 2>&1 
 [ $? -ne 0 ]&&{ echo "No command :${CMD}";exit 1; }
 
-chkconfig --list network 2>&1 | egrep -q "3:on|3:开" >/dev/null 2>&1
+chkconfig --list network 2>&1 | egrep -q "3:on|3:开|3:启用" >/dev/null 2>&1
 
 exit $?
