@@ -52,6 +52,7 @@ Runlevel        : $GSI_RUNLEVEL
 Language        : $GSI_LANGUAGE
 Enforce         : $GSI_ENFORCE
 ShellEnv        : $GSI_SHELLENV
+ShLink          : $GSI_SHLINK
 Test Start Time : $(date)
 	EOF
 	

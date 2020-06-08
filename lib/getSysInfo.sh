@@ -77,13 +77,28 @@ getInfoShellEnv_GSI(){
 	# shell env
 	GSI_SHELLENV="Unknow"	
 
+	# 保存打印
+	local tmplog="$(echo $SHELL)"
+        if [ "Z$tmplog" == "Z" ];then
+		return 1
+	else
+                GSI_SHELLENV="$tmplog"
+        fi
+}
+
+
+## TODO:获取shell链接地址
+getInfoShLink_GSI(){
+	# shell link 
+	GSI_SHLINK="Unknow"	
+
 	which file &>/dev/null
 	[ $? -ne 0 ] && return 1
 
         which sh &>/dev/null
         if [ $? -eq 0 ];then
                 local tmpcmd="$(which sh)"
-                GSI_SHELLENV="$(file ${tmpcmd} |awk -F ': ' '{print $2}' )"
+                GSI_SHLINK="$(file ${tmpcmd} |awk -F ': ' '{print $2}' )"
         fi
 }
 
@@ -104,11 +119,13 @@ printSysInfo_GSI(){
 	echo "GSI_SHELLENV = $GSI_SHELLENV"
 }
 
+
 getInfoHostName_GSI
 getInfoOS_GSI
 getInfoRunlevel_GSI
 getInfoLanguage_GSI
 getInfoEnforce_GSI
 getInfoShellEnv_GSI
+getInfoShLink_GSI
 
 #printSysInfo_GSI
