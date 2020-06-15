@@ -45,3 +45,4 @@
 41. 保留界面打印日志，文件名为ltf_usage
 42. 新增LTF shell 交互界面
 43. 修改xml配置文件存放目录(config/xml)
+44. 新增语言测试 clisp

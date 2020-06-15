@@ -73,4 +73,10 @@
 		<CaseScript>javascript.sh</CaseScript>
 		<CaseRun>True</CaseRun>
 	</TestCase>
+	<TestCase>
+		<CaseName>clisp</CaseName>
+		<CaseDir>Languages</CaseDir>
+		<CaseScript>clisp.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
 </TestGroup>
