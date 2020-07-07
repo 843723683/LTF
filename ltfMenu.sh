@@ -228,8 +228,21 @@ TestCaseUsageNew_LTFMenu(){
 		let num=num+1
 	done
 
-	# 打印排序测试项
-	column -t ${ltfuserfile}
+	# 判断当前语言环境
+	local origlang=$(printenv LANG)
+	local newlang="en_US.utf8"
+	if [ "Z${origlang}" == "ZC" ];then
+		LANG=${newlang}
+
+		# 打印排序测试项
+		column -t ${ltfuserfile}
+		
+		LANG=${origlang}
+	else
+		# 打印排序测试项
+		column -t ${ltfuserfile}
+	fi
+
 	[ -f "$ltfuserfile" ] && rm $ltfuserfile
 
 	local rshirft="\t\t"
