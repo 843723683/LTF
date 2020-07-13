@@ -3,7 +3,7 @@
 <Benchmark>
 	<BenchmarkCase>
 		<CaseName>unixbench</CaseName>
-		<CaseDepend>gcc</CaseDepend>
+		<CaseDepend>gcc:perl-Time-HiRes</CaseDepend>
 		<CaseCommand>gcc</CaseCommand>
 		<CasePkgName>UnixBench5.1.3-context.tgz</CasePkgName>
 		<CaseFileName>UnixBench</CaseFileName>
