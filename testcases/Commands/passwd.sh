@@ -17,4 +17,4 @@ echo passtest | passwd --stdin passtest &>/dev/null
 ret=$?
 userdel -rf passtest &>/dev/null
 
-exit $?
+exit $ret
