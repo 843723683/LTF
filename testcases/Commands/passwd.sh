@@ -12,7 +12,7 @@ which ${CMD} >/dev/null 2>&1
 
 userdel -rf passtest &>/dev/null
 useradd passtest  &>/dev/null
-echo passtest | passwd --stdin passtest &>/dev/null
+echo dzzf.147 | passwd --stdin passtest &>/dev/null
 
 ret=$?
 userdel -rf passtest &>/dev/null
