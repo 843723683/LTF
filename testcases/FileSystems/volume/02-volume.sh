@@ -202,7 +202,7 @@ Volume02Clean(){
 	# 取消挂载
 	mount | grep -q "${lvMountDir}"
 	if [ $? -eq 0 ];then
-		umount ${lvMountDir}
+		umount /dev/${vgName}/${lvName}
 	fi
 
 	# 删除逻辑卷
@@ -223,7 +223,7 @@ Volume02Clean(){
 	for pvdev in ${pvDevList[*]}
 	do
 		pvdisplay | grep -q  ${pvdev}
-    	if [ $? -eq 0 ];then
+	    	if [ $? -eq 0 ];then
 			pvremove ${pvdev}
 		fi
 	done

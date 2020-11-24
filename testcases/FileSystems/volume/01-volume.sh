@@ -143,7 +143,7 @@ Volume01Test(){
 ##
 Volume01Clean(){
 	# 取消挂载
-	mount | grep -q "/dev/${vgName}/${lvName}"
+	mount | grep -q "${lvMountDir}"
 	if [ $? -eq 0 ];then
 		umount /dev/${vgName}/${lvName}
 	fi
