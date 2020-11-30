@@ -14,3 +14,5 @@
 三. lmbench
 	问题：lmbench不支持aarch64体系架构
 	解决：下载最新gnu-os进行替换,http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD
+	问题：lmbench不支持rhel8
+	解决：https://github.com/zoybai/lmbench/commit/a4f3246e8d8ac9df70591e8680fe8591135da492。修改src/build和src/disk.c,并且同时支持rhel8和rhel7
