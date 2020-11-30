@@ -12,7 +12,7 @@
 		<CaseName>lmbench</CaseName>
 		<CaseDepend>gcc</CaseDepend>
 		<CaseCommand>gcc</CaseCommand>
-		<CasePkgName>lmbench3-gnuos.tar.gz</CasePkgName>
+		<CasePkgName>lmbench3-gnuos-rhel8.tar.gz</CasePkgName>
 		<CaseFileName>lmbench3</CaseFileName>
 	</BenchmarkCase>
 	<BenchmarkCase>
