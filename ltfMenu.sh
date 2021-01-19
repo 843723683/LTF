@@ -495,7 +495,7 @@ SelectBenchmark_LTFMenu(){
 	local benchmarkfilearr=()
 	local filename=""
 	local num=0
-	for filename in `find ${benchmarkpath} -maxdepth 1 -type f`
+	for filename in `find ${benchmarkpath} -maxdepth 1 -executable -type f`
 	do
 		benchmarkfilearr[$num]="${filename##*/}"
 		printf "\t%-2s:\t%-20s\n" "$num" "${benchmarkfilearr[$num]}"
