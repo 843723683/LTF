@@ -495,8 +495,15 @@ GetCpuNum_BHK(){
         local cpunum=$(cat /proc/cpuinfo | grep "processor" | wc -l)
         [ $? -ne 0 ] && { echo "[ FAIL ] : Get cpu num failed";return 1; }
 
+	if [ ${cpunum} -eq 0 ];then
+		cpunum=$(lscpu | grep "CPU(s):" | awk '{print $2}')
+	fi
+
         # 判断 $cpunum 是否为空 
         [ "X$cpunum" == "X" ] && { echo "[ FAIL ] : Get CPU(s) is NULL";return 1; }
+
+	# 判断是否为0
+	[ ${cpunum} -eq 0 ] && { echo "[ FAIL ] : Get cpu is 0";return 1; }
 
         # 判断 $cpunum 是否为数字 
         echo ${cpunum} | grep -q '[^0-9]'
