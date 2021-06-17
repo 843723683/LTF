@@ -7,7 +7,7 @@ echo "$0 test ${CMD}"
 
 #判断命令是否存在
 which ${CMD} >/dev/null 2>&1 
-[ $? -ne 0 ]&&{ echo "No command :${CMD}";exit 1; }
+[ $? -ne 0 ]&&{ echo "No command :${CMD}";exit 2; }
 
 chkconfig --list network 2>&1 | egrep -q "3:on|3:开|3:启用" >/dev/null 2>&1
 

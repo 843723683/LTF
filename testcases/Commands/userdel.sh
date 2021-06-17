@@ -57,7 +57,7 @@ Command_Function(){
 	#删除测试用户并判断是否删除成功
 	useradd $TESTUSER &>/dev/null
 	userdel $TESTUSER &>/dev/null
-	[ $? -ne 0 ] && { echo "ERROR:COMMAND FUNCTION CAN'T USE!";exit $RET; }
+	[ $? -ne 0 ] && { echo "ERROR:COMMAND FUNCTION CAN'T USE!";exit 2; }
 	#添加测试用户并使用参数删除，判断是否执行成功
 	useradd $TESTUSER &>/dev/null
 	userdel -rf $TESTUSER &>/dev/null

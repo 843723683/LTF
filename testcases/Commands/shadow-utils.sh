@@ -6,7 +6,7 @@ USERNAME="usertest"
 echo "$0 test ${CMD}"
 
 retFunc(){
-	[ $1 -ne 0 ]&& { userdel -rf $usertest;exit $1; }	
+	[ $1 -ne 0 ]&& { userdel -rf $usertest;exit $2; }	
 }
 
 useraddFunc(){

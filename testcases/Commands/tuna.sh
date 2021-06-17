@@ -43,7 +43,7 @@ Command_isExist(){
         for command in "$@"
         do
                 which $command >/dev/null 2>&1
-                [ $? -ne 0 ] && { echo "ERROR:Command $command not exist!";exit $RET; }
+                [ $? -ne 0 ] && { echo "ERROR:Command $command not exist!";exit 2; }
         done
 }
 

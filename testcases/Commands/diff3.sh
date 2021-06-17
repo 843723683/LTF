@@ -10,7 +10,7 @@ echo "$0 test ${CMD}"
 
 #判断命令是否存在
 which ${CMD} >/dev/null 2>&1 
-[ $? -ne 0 ]&&{ echo "No command :${CMD}";exit 1; }
+[ $? -ne 0 ]&&{ echo "No command :${CMD}";exit 2; }
 
 cat > ${TESTFILE}a <<EOF
 Check files are the same
