@@ -38,19 +38,25 @@
 		<CaseRun>True</CaseRun>
 	</TestCase>
 	<TestCase>
+		<CaseName>mdadm</CaseName>
+		<CaseDir>FileSystems</CaseDir>
+		<CaseScript>filesystem.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+	<TestCase>
 		<CaseName>iso9660</CaseName>
 		<CaseDir>FileSystems</CaseDir>
 		<CaseScript>filesystem.sh</CaseScript>
 		<CaseRun>True</CaseRun>
 	</TestCase>
 	<TestCase>
-		<CaseName>volume</CaseName>
+		<CaseName>file</CaseName>
 		<CaseDir>FileSystems</CaseDir>
 		<CaseScript>filesystem.sh</CaseScript>
 		<CaseRun>True</CaseRun>
 	</TestCase>
 	<TestCase>
-		<CaseName>file</CaseName>
+		<CaseName>volume</CaseName>
 		<CaseDir>FileSystems</CaseDir>
 		<CaseScript>filesystem.sh</CaseScript>
 		<CaseRun>True</CaseRun>
