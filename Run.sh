@@ -67,6 +67,9 @@ RunSetup(){
 	# source xmlParse.sh
 	source ${LIB_ROOT}/xmlParse.sh
 
+	# source loglevelecho.sh
+	source ${LIB_ROOT}/loglevelecho.sh
+
 	# 创建日志文件和目录
 	export LOG_PATH=${LOG_ROOT}/${START_TIME}	
         if [ ! -d "${LOG_PATH}" ];then
