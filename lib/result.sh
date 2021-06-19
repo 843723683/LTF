@@ -69,9 +69,10 @@ RetBrkParseUsage(){
 
 --------------------
 Total Tests: ${retTotal}
-Total TPASS: ${retTPASSNum}
-Total TFAIL: ${retTFAILNum}
-Total TCONF: ${retTCONFNum}
+      TPASS: ${retTPASSNum}
+      TFAIL: ${retTFAILNum}
+      TCONF: ${retTCONFNum}
+
 Total ERROR: ${retERRORNum}
 --------------------
 
@@ -222,7 +223,7 @@ RetBrkErr(){
 	local logFile="$4"
 
 	#打印脚本执行结果
-	RetBrkPrint "%-30s\t\t\t %-10s\n" "$2" "$1"
+	RetBrkPrint "\t\t\t %-10s\n" "$1"
 #        printf "%-30s\t\t\t %-10s\n" "$2" "$1"
 
 	#统计ERROR数据

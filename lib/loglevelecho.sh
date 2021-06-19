@@ -3,6 +3,11 @@
 
 ################################################################
 
+readonly TPASS=0
+readonly TFAIL=1
+readonly TCONF=2
+readonly ERROR=3
+
 ## TODO : 日志级别输出函数
 #   In  : $1 => 日志级别
 #         $2 => 颜色
@@ -15,8 +20,8 @@ Log_LLE(){
 	local logstr="$3"
 
 	# 当前日志级别
-	LOGLEVEL_LLE="debug"
-	#LOGLEVEL_LLE="release"
+#	LOGLEVEL_LLE="debug"
+	LOGLEVEL_LLE="release"
 
 	# 结束颜色
 	local ENDCOLOR_LLE="\033[0m"
@@ -37,6 +42,9 @@ Log_LLE(){
 		echo -e "$color $logstr $ENDCOLOR_LLE"		
 	;;
 	TFAIL)
+		echo -e "$color $logstr $ENDCOLOR_LLE"		
+	;;
+	ERROR)
 		echo -e "$color $logstr $ENDCOLOR_LLE"		
 	;;
 	esac
@@ -65,7 +73,7 @@ Info_LLE(){
 	local logstr="$1"
 
 	if [ "Z${logstr}" != "Z"  ];then
-		Log_LLE "INFO"	"NONE " "[ INFO ]: ${logstr}"
+		Log_LLE "INFO"	"NONE " "${logstr}"
 #		Log_LLE "INFO"	"NONE " "[ INFO ][`date +'%F %H:%M:%S'`]: ${logstr}"
 	fi
 }
@@ -113,9 +121,30 @@ TFail_LLE(){
 }
 
 
+## TODO : Error级别输出函数,默认颜色为 红色
+#   In  : $1 => 打印字符串
+Error_LLE(){
+	local logstr="$1"
+
+	local RED_LLE="\033[31m"
+
+	if [ "Z${logstr}" != "Z"  ];then
+		Log_LLE "ERROR"	"${RED_LLE}" "[ ERROR]: ${logstr}"
+	fi
+}
+
+
+# 外部变量
+export TPASS
+export TFAIL
+export TCONF
+export ERROR 
+
 export -f Log_LLE
+
 export -f Debug_LLE
 export -f Info_LLE
+export -f Error_LLE 
 export -f TPass_LLE
 export -f TFail_LLE
 export -f TConf_LLE

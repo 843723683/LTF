@@ -45,10 +45,13 @@ RunSetup(){
 	# cd tools path,export tool path
 	cd $(dirname $0)
 	export AUTOTEST_ROOT=`pwd`
+	# 库文件目录
+	export LIB_ROOT="${AUTOTEST_ROOT}/lib"
+	# 临时目录，用于测试过程中使用
+	export TMP_ROOT_LTF="/var/tmp"
 	
 	CFG_ROOT="${AUTOTEST_ROOT}/config"
 	XMLCFG_ROOT_LTF="${CFG_ROOT}/xml"
-	LIB_ROOT="${AUTOTEST_ROOT}/lib"
 	TESTCASE_ROOT="${AUTOTEST_ROOT}/testcases"
 
 	LOG_ROOT="${AUTOTEST_ROOT}/output"
@@ -61,14 +64,14 @@ RunSetup(){
 	# Get architecture
 	export AUTOTEST_ARCH=`${LIB_ROOT}/gnu-os`
 	
+	# source loglevelecho.sh
+	source ${LIB_ROOT}/loglevelecho.sh
+
 	# Get Sysinfo
 	source ${LIB_ROOT}/getSysInfo.sh
 
 	# source xmlParse.sh
 	source ${LIB_ROOT}/xmlParse.sh
-
-	# source loglevelecho.sh
-	source ${LIB_ROOT}/loglevelecho.sh
 
 	# 创建日志文件和目录
 	export LOG_PATH=${LOG_ROOT}/${START_TIME}	
@@ -124,10 +127,12 @@ RunClean(){
 ##          3-> No Run
 RunRetParse(){
 	local ret=$1
-	if [ "${ret}" -eq "0" ];then
+	if [ "${ret}" -eq "${TPASS}" ];then
 		RetBrk "TPASS" "$caseName"
-	elif [ "${ret}" -eq "1" ];then
+	elif [ "${ret}" -eq "${TFAIL}" ];then
 		RetBrk "TFAIL" "$caseName"
+	elif [ "${ret}" -eq "${ERROR}" ];then
+		RetBrk "ERROR" "$caseName"
 	else
 		RetBrk "TCONF" "$caseName"
 	fi
