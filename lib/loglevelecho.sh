@@ -147,16 +147,16 @@ OverallLog_LLE(){
 
 	if [ $ret -eq ${TPASS} ];then
 		local GREEN_LLE="\033[32m"
-		Log_LLE "TPASS"	"${GREEN_LLE}" "[ Test PASS ]: ${logstr}"
+		Log_LLE "TPASS"	"${GREEN_LLE}" "\t${logstr} [ Test PASS ]"
 	elif [ $ret -eq ${TFAIL} ];then
 		local RED_LLE="\033[31m"
-		Log_LLE "TFAIL"	"${RED_LLE}" "[ Test FAIL ]: ${logstr}"
+		Log_LLE "TFAIL"	"${RED_LLE}" "\t\t${logstr} [ Test FAIL ]"
 	elif [ $ret -eq ${TCONF} ];then
 		local YELLOW_LLE="\033[33m"
-		Log_LLE "TCONF"	"${YELLOW_LLE}" "[ Test CONF ]: ${logstr}"
+		Log_LLE "TCONF"	"${YELLOW_LLE}" "\t\t${logstr} [ Test CONF ]"
 	else
 		local RED_LLE="\033[31m"
-		Log_LLE "ERROR"	"${RED_LLE}" "[ Test ERROR ]: ${logstr}"
+		Log_LLE "ERROR"	"${RED_LLE}" "\t\t${logstr} [ Test ERROR ]"
 	fi
 }
 

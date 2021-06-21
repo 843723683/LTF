@@ -109,7 +109,7 @@ Run_SCRT(){
 			ret=$?
 			Info_LLE "\t\tFinish Test FileSystem : ${testdir}-${testfile#*/} "
 		else
-			TConf_LLE "${testfile#*/} : No executable permissions"
+			OverallLog_LLE "${TCONF}" "${testfile#*/} : No executable permissions"
 			continue
 		fi
 
