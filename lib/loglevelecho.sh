@@ -87,7 +87,7 @@ TPass_LLE(){
 	local GREEN_LLE="\033[32m"
 
 	if [ "Z${logstr}" != "Z"  ];then
-		Log_LLE "TPASS"	"${GREEN_LLE}" "[ TPASS ]: ${logstr}"
+		Log_LLE "TPASS"	"${GREEN_LLE}" "[pass]: ${logstr}"
 #		Log_LLE "TPASS"	"${GREEN_LLE}" "[ TPASS ][`date +'%F %H:%M:%S'`]: ${logstr}"
 	fi
 }
@@ -101,7 +101,7 @@ TConf_LLE(){
 	local YELLOW_LLE="\033[33m"
 
 	if [ "Z${logstr}" != "Z"  ];then
-		Log_LLE "TCONF"	"${YELLOW_LLE}" "[ TCONF ]: ${logstr}"
+		Log_LLE "TCONF"	"${YELLOW_LLE}" "[conf]: ${logstr}"
 #		Log_LLE "TCONF"	"${YELLOW_LLE}" "[ TCONF ][`date +'%F %H:%M:%S'`]: ${logstr}"
 	fi
 }
@@ -115,7 +115,7 @@ TFail_LLE(){
 	local RED_LLE="\033[31m"
 
 	if [ "Z${logstr}" != "Z"  ];then
-		Log_LLE "TFAIL"	"${RED_LLE}" "[ TFAIL ]: ${logstr}"
+		Log_LLE "TFAIL"	"${RED_LLE}" "[fail]: ${logstr}"
 #		Log_LLE "TFAIL"	"${RED_LLE}" "[ TFAIL ][`date +'%F %H:%M:%S'`]: ${logstr}"
 	fi
 }
@@ -129,7 +129,34 @@ Error_LLE(){
 	local RED_LLE="\033[31m"
 
 	if [ "Z${logstr}" != "Z"  ];then
-		Log_LLE "ERROR"	"${RED_LLE}" "[ ERROR]: ${logstr}"
+		Log_LLE "ERROR"	"${RED_LLE}" "[error]: ${logstr}"
+	fi
+}
+
+
+## TODO : 整体结果日志，主要用于测试文件对错输出
+#   In  : $1 => TPASS,TFAIL,TCONF,ERROR
+#         $2 => 打印字符串
+OverallLog_LLE(){
+	local ret=$1
+	local logstr=$2
+
+	if [ "Z${logstr}" == "Z"  ];then
+		return ${TPASS}
+	fi
+
+	if [ $ret -eq ${TPASS} ];then
+		local GREEN_LLE="\033[32m"
+		Log_LLE "TPASS"	"${GREEN_LLE}" "[ Test PASS ]: ${logstr}"
+	elif [ $ret -eq ${TFAIL} ];then
+		local RED_LLE="\033[31m"
+		Log_LLE "TFAIL"	"${RED_LLE}" "[ Test FAIL ]: ${logstr}"
+	elif [ $ret -eq ${TCONF} ];then
+		local YELLOW_LLE="\033[33m"
+		Log_LLE "TCONF"	"${YELLOW_LLE}" "[ Test CONF ]: ${logstr}"
+	else
+		local RED_LLE="\033[31m"
+		Log_LLE "ERROR"	"${RED_LLE}" "[ Test ERROR ]: ${logstr}"
 	fi
 }
 
@@ -148,6 +175,7 @@ export -f Error_LLE
 export -f TPass_LLE
 export -f TFail_LLE
 export -f TConf_LLE
+export -f OverallLog_LLE 
 
 # Debug-LLE "hello debug"
 # TPass-LLE "hello info"

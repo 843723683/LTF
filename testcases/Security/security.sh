@@ -114,16 +114,8 @@ Run_SCRT(){
 		fi
 
 		# 判断结果
-		if [ $ret -eq ${TPASS} ];then
-			TPass_LLE "${testfile#*/}"
-		elif [ $ret -eq ${TFAIL} ];then
-			TFail_LLE "${testfile#*/}"
-			break
-		elif [ $ret -eq ${ERROR} ];then
-			Error_LLE"${testfile#*/}"
-			break
-		else
-			TConf_LLE "${testfile#*/}"
+		OverallLog_LLE "$ret" "${testfile#*/}" 
+		if [ $ret -ne ${TPASS} ];then
 			break
 		fi
 	done
