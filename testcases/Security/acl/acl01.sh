@@ -57,35 +57,35 @@ Acl01Init(){
 Acl01test1(){
 	# 赋予读写执行权限
 	chmod a+wrx ${testFile_acl01}
-	TestRetParse_LTFLIB "chmod a+wrx ${testFile_acl01}" "True"
+	CommRetParse_LTFLIB "chmod a+wrx ${testFile_acl01}" "True"
 	
 	# 写
 	echo "echo helloworld" > ${testFile_acl01}
-	TestRetParse_LTFLIB "echo \"echo helloworld\" > ${testFile_acl01}" "True"
+	CommRetParse_LTFLIB "echo \"echo helloworld\" > ${testFile_acl01}" "True"
 	# 读
 	cat "${testFile_acl01}" > /dev/null
-	TestRetParse_LTFLIB "cat ${testFile_acl01}" "True"
+	CommRetParse_LTFLIB "cat ${testFile_acl01}" "True"
 	# 执行
 	bash ${testFile_acl01} | grep -q "helloworld"
-	TestRetParse_LTFLIB "bash ${testFile_acl01}" "True"
+	CommRetParse_LTFLIB "bash ${testFile_acl01}" "True"
 	
 	# 去除读写执行权限
 	chmod a-wrx ${testFile_acl01}
-	TestRetParse_LTFLIB "chmod a-wrx ${testFile_acl01}" "True"
+	CommRetParse_LTFLIB "chmod a-wrx ${testFile_acl01}" "True"
 
 	# 写
 	echo "echo helloworld" > ${testFile_acl01}
-	TestRetParse_LTFLIB "echo \"echo helloworld\" > ${testFile_acl01}" "True"
+	CommRetParse_LTFLIB "echo \"echo helloworld\" > ${testFile_acl01}" "True"
 	# 读
 	cat "${testFile_acl01}" > /dev/null
-	TestRetParse_LTFLIB "cat ${testFile_acl01}" "True"
+	CommRetParse_LTFLIB "cat ${testFile_acl01}" "True"
 	# 执行
 	bash ${testFile_acl01} | grep -q "helloworld"
-	TestRetParse_LTFLIB "bash ${testFile_acl01}" "True"
+	CommRetParse_LTFLIB "bash ${testFile_acl01}" "True"
 	
 	# 目录
 	chmod a+wrx ${testDir_acl01}
-	TestRetParse_LTFLIB "chmod a+wrx ${testDir_acl01}" "True"
+	CommRetParse_LTFLIB "chmod a+wrx ${testDir_acl01}" "True"
 	
 	return $TPASS
 }

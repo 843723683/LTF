@@ -176,9 +176,67 @@ Clean_LTFLIB(){
 }
 
 
-## TODO: 测试解析函数返回值,当不为"False"时则退出(为空也退出)
+## TODO: 解析 执行命令返回值，用于处理外部执行命令，0->成功，其他->失败。与TestRetParse_LTFLIB不同在于只判断对错。
 #  In  : $1 => log
-#        $2 => 是否退出测试，False->不退出,其他->退出.默认退出程序
+#        $2 => 是否退出测试，False->不退出,其他->退出。默认为空退出程序
+#        $3 => 结果是否反转测试,yes->反转,no->不反转,默认为no不反转.(TPASS->TFAIL ,TFAIL-TPASS)
+CommRetParse_LTFLIB(){
+	# 必须第一位
+	local ret=$?
+
+	local logstr=""
+	local exitflag="true"
+	local reverse="no"
+
+	if [ $# -eq 0 ];then
+		true
+	elif [ $# -eq 1 ];then
+		logstr="$1"
+	elif [ $# -eq 2 ];then
+		logstr="$1"
+		exitflag="$2"
+	elif [ $# -eq 3 ];then
+		logstr="$1"
+		exitflag="$2"
+		reverse="$3"
+	else
+		Error_LLE "TestRetParse_LTFLIB :invalid option -- $*($#)"
+		# 退出
+		Exit_LTFLIB ${ERROR}
+	fi
+
+	if [ "Z${reverse}" == "Zyes" -a "Z${ret}" == "Z0" ];then
+		ret=${TFAIL}
+	elif [ "Z${reverse}" == "Zyes" -a "Z${ret}" != "Z0" ];then
+		ret=${TPASS}
+	elif [ "Z${reverse}" != "Zyes" -a "Z${ret}" == "Z0" ];then
+		ret=${TPASS}
+	else
+		ret=${TFAIL}
+	fi
+
+	if [ $ret -eq ${TPASS} ];then
+		# 成功
+		TPass_LLE "${logstr}"
+		return ${TPASS}
+	else
+		RetFlag_LTFLIB=${TFAIL}		
+		# 失败
+		TFail_LLE "${logstr}"
+	fi
+	
+	if [ "Z${exitflag}" == "ZFalse"  ];then
+		# 继续执行
+		return ${ret}
+	else
+		# 退出
+		Exit_LTFLIB ${ret}
+	fi
+}
+
+## TODO: 解析 函数返回值,用于处理内部函数或命令，$?只能是LTF中注册状态${TPASS}等。
+#  In  : $1 => log
+#        $2 => 是否退出测试，False->不退出,其他->退出.默认为空退出程序
 #        $3 => 结果是否反转测试,yes->反转,no->不反转,默认为no不反转.(TPASS->TFAIL ,TFAIL-TPASS)
 TestRetParse_LTFLIB(){
 	# 必须第一位
@@ -219,12 +277,16 @@ TestRetParse_LTFLIB(){
 		RetFlag_LTFLIB=${TFAIL}		
 		# 失败
 		TFail_LLE "${logstr}"
-	else
+	elif [ $ret -eq ${TCONF} ];then
 		if [ "Z${RetFlag_LTFLIB}" != "Z${TFAIL}" ];then
 			RetFlag_LTFLIB=${TCONF}
 		fi
 		# 阻塞
 		TConf_LLE "${logstr}"
+	else
+		Error_LLE "异常状态:ret=$ret,${logstr}"
+		# 退出
+		Exit_LTFLIB ${ERROR}
 	fi
 	
 	if [ "Z${exitflag}" == "ZFalse"  ];then
@@ -265,6 +327,7 @@ export -f USAGE_LTFLIB
 export -f SetFuncOnCtrlC_LTFLIB
 export -f OutputRet_LTFLIB
 export -f TestRetParse_LTFLIB
+export -f CommRetParse_LTFLIB
 export -f Exit_LTFLIB
 
 export -f OnCtrlC_LTFLIB

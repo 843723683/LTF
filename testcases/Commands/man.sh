@@ -42,7 +42,7 @@ Clean(){
 ## TODO : 测试用例
 test1(){
 	man ls > /dev/null
-	TestRetParse_LTFLIB "man ls"
+	CommRetParse_LTFLIB "man ls"
 }
 
 ## TODO : 测试用例集

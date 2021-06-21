@@ -131,10 +131,10 @@ RunRetParse(){
 		RetBrk "TPASS" "$caseName"
 	elif [ "${ret}" -eq "${TFAIL}" ];then
 		RetBrk "TFAIL" "$caseName"
-	elif [ "${ret}" -eq "${ERROR}" ];then
-		RetBrk "ERROR" "$caseName"
-	else
+	elif [ "${ret}" -eq "${TCONF}" ];then
 		RetBrk "TCONF" "$caseName"
+	else
+		RetBrk "ERROR" "$caseName"
 	fi
 
 }

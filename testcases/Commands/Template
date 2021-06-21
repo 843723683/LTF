@@ -42,7 +42,7 @@ Clean(){
 ## TODO : 测试用例
 test1(){
 	Template
-	TestRetParse_LTFLIB "Template" "true" "yes"
+	CommRetParse_LTFLIB "Template" "true" "yes"
 }
 
 ## TODO : 测试用例集
