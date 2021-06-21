@@ -106,7 +106,7 @@ Init_NEW_LTFLIB(){
 Init_LTFLIB(){
 	# 判断root用户
 	if [ `id -u` -ne 0 ];then
-		Tconf_LLE "Must use root"
+		TConf_LLE "Must use root"
 		exit ${TCONF}
 	fi
 
@@ -168,7 +168,7 @@ Exit_LTFLIB(){
 Clean_LTFLIB(){
 	# 判断是否指定清除操作
 	if [ "Z${regClnFunc}" == "Z" ];then
-		Tconf_LLE "未指定清除函数"
+		TConf_LLE "未指定清除函数"
 	else
 		# 执行清除函数
 		eval ${regClnFunc}		
@@ -178,13 +178,15 @@ Clean_LTFLIB(){
 
 ## TODO: 测试解析函数返回值,当不为"False"时则退出(为空也退出)
 #  In  : $1 => log
-#        $2 => 是否退出测试，False为不退出
+#        $2 => 是否退出测试，False->不退出,其他->退出.默认退出程序
+#        $3 => 结果是否反转测试,yes->反转,no->不反转,默认为no不反转.(TPASS->TFAIL ,TFAIL-TPASS)
 TestRetParse_LTFLIB(){
 	# 必须第一位
 	local ret=$?
 
 	local logstr=""
-	local flag=""
+	local exitflag="true"
+	local reverse="no"
 
 	if [ $# -eq 0 ];then
 		true
@@ -192,30 +194,40 @@ TestRetParse_LTFLIB(){
 		logstr="$1"
 	elif [ $# -eq 2 ];then
 		logstr="$1"
-		flag="$2"
+		exitflag="$2"
+	elif [ $# -eq 3 ];then
+		logstr="$1"
+		exitflag="$2"
+		reverse="$3"
 	else
 		Error_LLE "TestRetParse_LTFLIB :invalid option -- $*($#)"
 		# 退出
 		Exit_LTFLIB ${ERROR}
 	fi
 
-	if [ $ret -eq 0 ];then
+	if [ "Z${reverse}" == "Zyes" -a "Z${ret}" == "Z${TPASS}" ];then
+		ret=${TFAIL}
+	elif [ "Z${reverse}" == "Zyes" -a "Z${ret}" == "Z${TFAIL}" ];then
+		ret=${TPASS}
+	fi
+
+	if [ $ret -eq ${TPASS} ];then
 		# 成功
 		TPass_LLE "${logstr}"
 		return ${TPASS}
-	elif [ $ret -eq 1 ];then
+	elif [ $ret -eq ${TFAIL} ];then
 		RetFlag_LTFLIB=${TFAIL}		
 		# 失败
 		TFail_LLE "${logstr}"
 	else
-		if [ ${RetFlag_LTFLIB} != ${TFAIL} ];then
+		if [ "Z${RetFlag_LTFLIB}" != "Z${TFAIL}" ];then
 			RetFlag_LTFLIB=${TCONF}
 		fi
 		# 阻塞
 		TConf_LLE "${logstr}"
 	fi
 	
-	if [ "Z${flag}" == "ZFalse"  ];then
+	if [ "Z${exitflag}" == "ZFalse"  ];then
 		# 继续执行
 		return ${ret}
 	else
