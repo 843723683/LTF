@@ -155,15 +155,18 @@ Run(){
 	# 日志文件
 	local logFile=${LOG_PATH}/$(basename ${caseDir}).ret
 	
-	local ret=0	
+	local ret=${TPASS}
 
-	RetBrkStart "`basename $caseDir`-$caseName" ${logFile}
 	# 第一个参数：${caseDir}/${CaseName}。第二个参数：是否只进行安装测试。
-	bash ${caseDir}/${caseScript} "${caseDir}/${caseName}" "${AUTOTEST_INSTALL_FALG}" >> ${logFile} 2>&1
-	ret="$?"
-	RunRetParse $ret
+        if [ -x "${caseDir}/${caseScript}" ];then
+		RetBrkStart "`basename $caseDir`-$caseName" ${logFile}
 
-	RetBrkEnd "`basename $caseDir`-$caseName" ${logFile}
+		bash ${caseDir}/${caseScript} "${caseDir}/${caseName}" "${AUTOTEST_INSTALL_FALG}" >> ${logFile} 2>&1
+		ret="$?"
+		RunRetParse $ret
+
+		RetBrkEnd "`basename $caseDir`-$caseName" ${logFile}
+	fi
 	
 	return $ret
 }
@@ -190,7 +193,7 @@ RunStartTest(){
 		local i=0
                 for i in ${allCaseName}
                 do
-                        Run "${i%%.sh}" "$caseDir" "$i"
+			Run "${i%%.sh}" "$caseDir" "$i"
                 done
 	else 
 		## XML 中caseRun 设置为 False
