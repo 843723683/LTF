@@ -60,20 +60,6 @@ Init_SCRT(){
 		return $TCONF
 	fi
 
-	# 创建临时文件目录
-	if [ -d "${TESTDIR_SCRT}" ];then
-		rm -rf ${TESTDIR_SCRT}
-		mkdir -p ${TESTDIR_SCRT}
-	else
-		mkdir -p ${TESTDIR_SCRT}
-	fi
-	
-	# 判断是否创建成功
-	if [ ! -d ${TESTDIR_SCRT} ];then
-		TConf_LLE "mkdir ${TESTDIR_SCRT}"
-		return $TCONF
-	fi
-
 	return ${TPASS}
 }
 
@@ -100,10 +86,6 @@ Run_SCRT(){
 		# 不识别指定文件
 		[[ "$testfile" =~ "readme"|"swp" ]] && continue
 		if [ -x "$testfile" ];then
-			# 清空临时文件目录
-			rm -rf ${TESTDIR_SCRT}/*
-			Debug_LLE "rm -rf ${TESTDIR_SCRT}/*"
-
 			Info_LLE "\t\tStart  Test FileSystem : ${testdir}-${testfile#*/} "
 			bash $testfile
 			ret=$?
@@ -126,11 +108,7 @@ Run_SCRT(){
 
 ## TODO : 垃圾回收
 Clean_SCRT(){
-	# 删除临时文件目录
-	Debug_LLE "rm -rf ${TESTDIR_SCRT}"
-	rm -rf ${TESTDIR_SCRT}
-
-	return $?
+	true
 }
 
 

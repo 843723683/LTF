@@ -15,37 +15,20 @@
 #             2 => TCONF
 # ----------------------------------------------------------------------
 
-
-## TODO : 搭建运行环境
-Acl01Setup(){
-	# 加载库函数
-	local libfile="${LIB_ROOT}/ltfLib.sh"
-	if [ -f "${libfile}" ];then
-		source ${libfile}
-	else
-		TConf_LLE "Can't found file(${libfile}) !"
-		exit ${TCONF}
-	fi
-		
-	# 注册函数
-	RegFunc_LTFLIB "Acl01Init" "Acl01RunAll" "Acl01Clean"
-
-	return ${TPASS}	
-}
-
+set -u
 
 ## TODO : 个性化,初始化
 #   Out : 0=>TPASS
 #         1=>TFAIL
 #         2=>TCONF
-Acl01Init(){
+Init(){
 	# 创建临时目录
-	testDir_acl01="${TESTDIR_SCRT}/diracl01"
+	testDir_acl01="${TmpTestDir_LTFLIB}/diracl01"
 	mkdir ${testDir_acl01}
 	[ ! -d "${testDir_acl01}" ] && return $TCONF
 
 	# 创建临时文件
-	testFile_acl01="${TESTDIR_SCRT}/fileacl01"
+	testFile_acl01="${TmpTestDir_LTFLIB}/fileacl01"
 	touch ${testFile_acl01}
 	[ ! -f "${testFile_acl01}" ] && return $TCONF
 
@@ -54,7 +37,7 @@ Acl01Init(){
 
 
 ## TODO : 测试文件，chmod设置读写执行
-Acl01test1(){
+test1(){
 	# 赋予读写执行权限
 	chmod a+wrx ${testFile_acl01}
 	CommRetParse_LTFLIB "chmod a+wrx ${testFile_acl01}" "True"
@@ -95,8 +78,8 @@ Acl01test1(){
 #   Out : 0=>TPASS
 #         1=>TFAIL
 #         2=>TCONF
-Acl01RunAll(){
-	Acl01test1
+RunAll(){
+	test1
 	TestRetParse_LTFLIB
 
 	return $TPASS
@@ -107,18 +90,37 @@ Acl01RunAll(){
 #   Out : 0=>TPASS
 #         1=>TFAIL
 #         2=>TCONF
-Acl01Clean(){
+Clean(){
 	Debug_LLE "rm -rf ${testDir_acl01} ${testFile_acl01}"
 	rm -rf ${testDir_acl01} ${testFile_acl01}
 
 	return $TPASS
 }
 
+#------------------------------------#
+
+## TODO : 搭建运行环境
+Setup(){
+	# 加载库函数
+	local libfile="${LIB_ROOT}/ltfLib.sh"
+	if [ -f "${libfile}" ];then
+		source ${libfile}
+	else
+                TConf_LLE "Can't found file(${libfile}) !"
+                exit ${TCONF}
+	fi
+		
+	# 注册函数
+	RegFunc_LTFLIB "Init" "RunAll" "Clean"
+
+	return ${TPASS}	
+}
+
 
 ## TODO : 主函数
-Acl01Main(){
+Main(){
 	# 设置
-	Acl01Setup
+	Setup
 	TestRetParse_LTFLIB
 
 	# 调用主函数
@@ -127,5 +129,5 @@ Acl01Main(){
 }
 
 
-Acl01Main $@
+Main $@
 Exit_LTFLIB $?

@@ -80,6 +80,15 @@ Init_NEW_LTFLIB(){
 		exit ${TCONF}
 	fi
 
+	# 创建临时测试目录
+	local testfile=$(basename ${0})
+	TmpTestDir_LTFLIB="${TMP_ROOT_LTF}/ltf_${testfile%%.sh}"
+	if [ -d  ${TmpTestDir_LTFLIB} ];then
+		rm -rf ${TmpTestDir_LTFLIB}
+	fi
+	mkdir -p ${TmpTestDir_LTFLIB}
+	export TmpTestDir_LTFLIB
+
 	# 信号捕获ctrl+c
 	trap 'OnCtrlC_LTFLIB' INT
 
@@ -118,6 +127,24 @@ Init_LTFLIB(){
 	
 	# 结果判断
 	RetFlag_LTFLIB=${TPASS}
+}
+
+
+## TODO: 清除操作
+#
+Clean_LTFLIB(){
+	# 判断是否指定清除操作
+	if [ "Z${regClnFunc}" == "Z" ];then
+		TConf_LLE "未指定清除函数"
+	else
+		# 执行清除函数
+		eval ${regClnFunc}		
+	fi
+	
+	# 删除临时目录
+	if [ -d  ${TmpTestDir_LTFLIB} ];then
+		rm -rf ${TmpTestDir_LTFLIB}
+	fi
 }
 
 
@@ -160,19 +187,6 @@ Exit_LTFLIB(){
 	fi
 
 	exit ${TPASS}
-}
-
-
-## TODO: 清除操作
-#
-Clean_LTFLIB(){
-	# 判断是否指定清除操作
-	if [ "Z${regClnFunc}" == "Z" ];then
-		TConf_LLE "未指定清除函数"
-	else
-		# 执行清除函数
-		eval ${regClnFunc}		
-	fi
 }
 
 
