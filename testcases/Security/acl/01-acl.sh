@@ -1,0 +1,145 @@
+#!/usr/bin/env bash
+
+# ----------------------------------------------------------------------
+# Filename:   01-acl.sh
+# Version:    1.0
+# Date:       2019/12/10
+# Author:     Lz
+# Email:      lz843723683@163.com
+# History：     
+#             Version 1.0, 2019/10/12
+# Function:   acl - 01 设置和查看文件、目录设置访问权限
+# Out:        
+#             0 => TPASS
+#             1 => TFAIL
+#             2 => TCONF
+# ----------------------------------------------------------------------
+
+set -u
+
+TITLE="访问控制测试 - 自主访问控制授权机制测试"
+
+## TODO : 个性化,初始化
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+Init(){
+	USAGE_LTFLIB "${TITLE}"
+
+	# 创建临时目录
+	testDir_acl01="${TmpTestDir_LTFLIB}/diracl01"
+	mkdir ${testDir_acl01}
+	[ ! -d "${testDir_acl01}" ] && return $TCONF
+
+	# 创建临时文件
+	testFile_acl01="${TmpTestDir_LTFLIB}/fileacl01"
+	touch ${testFile_acl01}
+	[ ! -f "${testFile_acl01}" ] && return $TCONF
+
+	# 测试用户
+	testuser='nobody'
+	cat /etc/passwd | grep "$testuser" > /dev/null
+	[ $? -ne 0 ] && { Error_LLE "未知的用户名${testuser}";exit ${ERROR}; }
+
+	return $TPASS
+}
+
+
+## TODO : 清理函数
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+Clean(){
+	Debug_LLE "rm -rf ${testDir_acl01} ${testFile_acl01}"
+	rm -rf ${testDir_acl01} ${testFile_acl01}
+
+	return $TPASS
+}
+
+
+## TODO : 测试文件和文件夹默认权限
+test1(){
+	ls -al ${testFile_acl01} | grep "rw-r--r--"
+	CommRetParse_LTFLIB "ls -al ${testFile_acl01} | grep \"rw-r--r--\""
+
+	ls -ald ${testDir_acl01} | grep "rwxr-xr-x"
+	CommRetParse_LTFLIB "ls -ald ${testDir_acl01} | grep \"rwxr-xr-x\""
+}
+
+
+## TODO : 测试设置文件和文件夹
+test2(){
+	chmod 777 ${testFile_acl01} ${testDir_acl01}
+	CommRetParse_LTFLIB "chmod 777 ${testFile_acl01} ${testDir_acl01}"
+
+	ls -al ${testFile_acl01} | grep "rwxrwxrwx"
+	CommRetParse_LTFLIB "ls -al ${testFile_acl01} | grep \"rwxrwxrwx\""
+
+	ls -ald ${testDir_acl01} | grep "rwxrwxrwx"
+	CommRetParse_LTFLIB "ls -ald ${testDir_acl01} | grep \"rwxrwxrwx\""
+}
+
+
+## TODO : 
+test3(){
+	getfacl -p ${testFile_acl01} ${testDir_acl01}
+	CommRetParse_LTFLIB "getfacl -p ${testFile_acl01} ${testDir_acl01}"
+	
+	setfacl -m u:${testuser}:--- ${testFile_acl01} ${testDir_acl01}
+	CommRetParse_LTFLIB "setfacl -m u:${testuser}:--- ${testFile_acl01} ${testDir_acl01}"
+
+	getfacl -p ${testFile_acl01} | grep "user:${testuser}:---"
+	CommRetParse_LTFLIB "getfacl -p ${testFile_acl01} | grep \"user:${testuser}:---\""
+
+	getfacl -p ${testDir_acl01} | grep "user:${testuser}:---"
+	CommRetParse_LTFLIB "getfacl -p ${testDir_acl01} | grep \"user:${testuser}:---\""
+}
+
+
+## TODO : 运行测试集
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+RunAll(){
+	test1
+	test2
+	test3
+
+	return $TPASS
+}
+
+
+#------------------------------------#
+
+## TODO : 搭建运行环境
+Setup(){
+	# 加载库函数
+	local libfile="${LIB_ROOT}/ltfLib.sh"
+	if [ -f "${libfile}" ];then
+		source ${libfile}
+	else
+                TConf_LLE "Can't found file(${libfile}) !"
+                exit ${TCONF}
+	fi
+		
+	# 注册函数
+	RegFunc_LTFLIB "Init" "RunAll" "Clean"
+
+	return ${TPASS}	
+}
+
+
+## TODO : 主函数
+Main(){
+	# 设置
+	Setup
+	TestRetParse_LTFLIB
+
+	# 调用主函数
+	Main_LTFLIB
+	TestRetParse_LTFLIB
+}
+
+
+Main $@
+Exit_LTFLIB $?
