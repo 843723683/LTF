@@ -18,6 +18,22 @@ USAGE_LTFLIB(){
 }
 
 
+## TODO : 环境检测,用户探测当前环境中特殊设置
+EnvTest_LTFLIB(){
+	source "${LIB_UTILS}"
+
+	# 打印标题
+	if [ "Z${Tile_Env_LTFLIB}" != "Z" -a "Z${Tile_Env_LTFLIB}" != "Z " ];then
+		USAGE_LTFLIB "${Tile_Env_LTFLIB}"
+	fi
+
+	# 针对Commands测试
+	if [ "Z${CmdsExist_Env_LTFLIB}" != "Z" -a "Z${CmdsExist_Env_LTFLIB}" != "Z " ];then
+		Command_isExist_utils ${CmdsExist_Env_LTFLIB}
+		TestRetParse_LTFLIB
+	fi
+}
+
 ## TODO : 注册函数，用于注册：Init,Run,Clean 函数
 #    $1 : Init函数名,用于初始化调用
 #    $2 : Run函数名，测试用例集调用
@@ -39,6 +55,14 @@ RegFunc_LTFLIB(){
 
 ## TODO : 测试主函数
 Main_LTFLIB(){
+	# 环境检测
+	EnvTest_LTFLIB
+	TestRetParse_LTFLIB
+
+	# 注册函数
+	RegFunc_LTFLIB "TestInit" "Testsuite" "TestClean"
+	TestRetParse_LTFLIB
+
 	# 初始化
 	Init_NEW_LTFLIB
 	TestRetParse_LTFLIB
@@ -49,6 +73,9 @@ Main_LTFLIB(){
 
 	# 垃圾回收
 	# Clean_LTFLIB
+
+	# 执行退出
+	Exit_LTFLIB 
 }
 
 

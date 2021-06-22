@@ -45,8 +45,14 @@ RunSetup(){
 	# cd tools path,export tool path
 	cd $(dirname $0)
 	export AUTOTEST_ROOT=`pwd`
-	# 库文件目录
+	
+	## 库文件
+	# 库文件根目录
 	export LIB_ROOT="${AUTOTEST_ROOT}/lib"
+	# ltflib.sh库文件
+	export LIB_LTFLIB="${LIB_ROOT}/ltfLib.sh"
+	# utils.sh库文件
+	export LIB_UTILS="${LIB_ROOT}/utils.sh"
 	# 临时目录，用于测试过程中使用
 	export TMP_ROOT_LTF="/var/tmp"
 	

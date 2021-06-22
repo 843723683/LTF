@@ -15,17 +15,14 @@
 #             2 => TCONF
 # ----------------------------------------------------------------------
 
-set -u
 
-TITLE="访问控制测试 - 自主访问控制授权机制测试"
+Tile_Env_LTFLIB="访问控制测试 - 自主访问控制授权机制测试"
 
 ## TODO : 个性化,初始化
 #   Out : 0=>TPASS
 #         1=>TFAIL
 #         2=>TCONF
-Init(){
-	USAGE_LTFLIB "${TITLE}"
-
+TestInit(){
 	# 创建临时目录
 	testDir_acl01="${TmpTestDir_LTFLIB}/diracl01"
 	mkdir ${testDir_acl01}
@@ -49,7 +46,7 @@ Init(){
 #   Out : 0=>TPASS
 #         1=>TFAIL
 #         2=>TCONF
-Clean(){
+TestClean(){
 	Debug_LLE "rm -rf ${testDir_acl01} ${testFile_acl01}"
 	rm -rf ${testDir_acl01} ${testFile_acl01}
 
@@ -58,7 +55,7 @@ Clean(){
 
 
 ## TODO : 测试文件和文件夹默认权限
-test1(){
+testcase_1(){
 	ls -al ${testFile_acl01} | grep "rw-r--r--"
 	CommRetParse_LTFLIB "ls -al ${testFile_acl01} | grep \"rw-r--r--\""
 
@@ -68,7 +65,7 @@ test1(){
 
 
 ## TODO : 测试设置文件和文件夹
-test2(){
+testcase_2(){
 	chmod 777 ${testFile_acl01} ${testDir_acl01}
 	CommRetParse_LTFLIB "chmod 777 ${testFile_acl01} ${testDir_acl01}"
 
@@ -81,7 +78,7 @@ test2(){
 
 
 ## TODO : 
-test3(){
+testcase_3(){
 	getfacl -p ${testFile_acl01} ${testDir_acl01}
 	CommRetParse_LTFLIB "getfacl -p ${testFile_acl01} ${testDir_acl01}"
 	
@@ -100,46 +97,16 @@ test3(){
 #   Out : 0=>TPASS
 #         1=>TFAIL
 #         2=>TCONF
-RunAll(){
-	test1
-	test2
-	test3
+Testsuite(){
+	testcase_1
+	testcase_2
+	testcase_3
 
 	return $TPASS
 }
 
 
-#------------------------------------#
+#----------------------------------------------#
 
-## TODO : 搭建运行环境
-Setup(){
-	# 加载库函数
-	local libfile="${LIB_ROOT}/ltfLib.sh"
-	if [ -f "${libfile}" ];then
-		source ${libfile}
-	else
-                TConf_LLE "Can't found file(${libfile}) !"
-                exit ${TCONF}
-	fi
-		
-	# 注册函数
-	RegFunc_LTFLIB "Init" "RunAll" "Clean"
-
-	return ${TPASS}	
-}
-
-
-## TODO : 主函数
-Main(){
-	# 设置
-	Setup
-	TestRetParse_LTFLIB
-
-	# 调用主函数
-	Main_LTFLIB
-	TestRetParse_LTFLIB
-}
-
-
-Main $@
-Exit_LTFLIB $?
+source "${LIB_LTFLIB}"
+Main_LTFLIB $@

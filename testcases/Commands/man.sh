@@ -15,18 +15,16 @@
 #             2 => TCONF
 # ----------------------------------------------------------------------
 
-#测试的命令
-CMD="man"
-#测试中使用的命令
-CMD_IMPORTANT="ls"
+# 本次测试涉及的命令
+CmdsExist_Env_LTFLIB="man ls"
 
 
 ## TODO : 个性化,初始化
 #   Out : 0=>TPASS
 #         1=>TFAIL
 #         2=>TCONF
-Init(){
-	return $TPASS
+TestInit(){
+	true
 }
 
 
@@ -34,13 +32,13 @@ Init(){
 #   Out : 0=>TPASS
 #         1=>TFAIL
 #         2=>TCONF
-Clean(){
-	return $TPASS
+TestClean(){
+	true
 }
 
 
 ## TODO : 测试用例
-test1(){
+testcase_1(){
 	man ls > /dev/null
 	CommRetParse_LTFLIB "man ls"
 }
@@ -49,64 +47,14 @@ test1(){
 #   Out : 0=>TPASS
 #         1=>TFAIL
 #         2=>TCONF
-RunAll(){
-	test1
+Testsuite(){
+	testcase_1
 
 	return $TPASS
 }
 
-#--------------------------------------------#
 
-## TODO : 搭建运行环境
-Register(){
-	# 加载库函数
-	local libfile="${LIB_ROOT}/ltfLib.sh"
-	if [ -f "${libfile}" ];then
-		source ${libfile}
-	else
-		TConf_LLE "Can't found file(${libfile}) !"
-		exit ${TCONF}
-	fi
+#----------------------------------------------#
 
-	# 注册函数
-	RegFunc_LTFLIB "Init" "RunAll" "Clean"
-
-	# 判断命令是否存在
-	Command_isExist	"${CMD}" ${CMD_IMPORTANT}
-	TestRetParse_LTFLIB
-
-	return ${TPASS}	
-}
-
-
-## TODO： 判断命令是否存在
-#   in ： $1 => 测试命令
-#         $2 => 会用到的命令
-#   Out： 0 => TPASS
-#         1 => TFAIL
-Command_isExist(){
-        local command=""
-        for command in "$@"
-        do
-                which $command >/dev/null 2>&1
-                [ $? -ne 0 ] && { TConf_LLE "Command $command not exist!";return ${TCONF}; }
-        done
-
-	return ${TPASS}
-}
-
-
-## TODO : 主函数
-Main(){
-	# 设置
-	Register
-	TestRetParse_LTFLIB
-
-	# 调用主函数
-	Main_LTFLIB
-	TestRetParse_LTFLIB
-}
-
-
-Main $@
-Exit_LTFLIB $?
+source "${LIB_LTFLIB}"
+Main_LTFLIB $@
