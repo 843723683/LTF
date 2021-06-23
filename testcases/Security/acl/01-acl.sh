@@ -22,20 +22,21 @@ Title_Env_LTFLIB="访问控制测试 - 自主访问控制授权机制测试"
 #   Out : 0=>TPASS
 #         1=>TFAIL
 #         2=>TCONF
-TestInit(){
+TestInit_LTFLIB(){
 	# 创建临时目录
 	testDir_acl01="${TmpTestDir_LTFLIB}/diracl01"
 	mkdir ${testDir_acl01}
-	[ ! -d "${testDir_acl01}" ] && return $TCONF
+	CommRetParse_FailDiy_LTFLIB ${ERROR} "创建目录失败${testDir_acl01}"
 
 	# 创建临时文件
 	testFile_acl01="${TmpTestDir_LTFLIB}/fileacl01"
 	touch ${testFile_acl01}
-	[ ! -f "${testFile_acl01}" ] && return $TCONF
+	CommRetParse_FailDiy_LTFLIB ${ERROR} "创建文件失败${testFile_acl01}"
 
 	# 测试用户
 	testuser='nobody'
 	cat /etc/passwd | grep "$testuser" > /dev/null
+	CommRetParse_FailDiy_LTFLIB ${ERROR} "未知的用户名${testuser}"
 	[ $? -ne 0 ] && { OutputRet_LTFLIB ${ERROR};TestRetParse_LTFLIB "未知的用户名${testuser}"; }
 
 	return $TPASS
@@ -46,7 +47,7 @@ TestInit(){
 #   Out : 0=>TPASS
 #         1=>TFAIL
 #         2=>TCONF
-TestClean(){
+TestClean_LTFLIB(){
 	Debug_LLE "rm -rf ${testDir_acl01} ${testFile_acl01}"
 	rm -rf ${testDir_acl01} ${testFile_acl01}
 
@@ -97,7 +98,7 @@ testcase_3(){
 #   Out : 0=>TPASS
 #         1=>TFAIL
 #         2=>TCONF
-Testsuite(){
+Testsuite_LTFLIB(){
 	testcase_1
 	testcase_2
 	testcase_3

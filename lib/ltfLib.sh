@@ -41,13 +41,13 @@ EnvTest_LTFLIB(){
 RegFunc_LTFLIB(){
         # 判断是否提供三个函数
         if [ $# -ne "3" ];then
-                TConf_LLE "RegisterFunc_SCRT 参数传递错误"
+                TConf_LLE "RegisterFunc_LTFLIB 参数传递错误"
                 return $TCONF;
         fi
 
-        readonly regInitFunc="$1"
-        readonly regRunFunc="$2"
-        readonly regClnFunc="$3"
+        readonly regInitFunc_ltflib="$1"
+        readonly regRunFunc_ltflib="$2"
+        readonly regClnFunc_ltflib="$3"
 
         return $TPASS;
 }
@@ -60,7 +60,7 @@ Main_LTFLIB(){
 	TestRetParse_LTFLIB
 
 	# 注册函数
-	RegFunc_LTFLIB "TestInit" "Testsuite" "TestClean"
+	RegFunc_LTFLIB "TestInit_LTFLIB" "Testsuite_LTFLIB" "TestClean_LTFLIB"
 	TestRetParse_LTFLIB
 
 	# 初始化
@@ -85,12 +85,12 @@ Main_LTFLIB(){
 #         2=>TCONF
 Run_LTFLIB(){
         # 判断是否指定测试用例集
-        if [ "Z${regRunFunc}" == "Z" ];then
+        if [ "Z${regRunFunc_ltflib}" == "Z" ];then
                 TConf_LLE "未指定测试用例集"
 		return $TCONF
         else
                 # 执行运行测试用例集
-                eval ${regRunFunc}
+                eval ${regRunFunc_ltflib}
 		return $?
         fi
 }
@@ -123,12 +123,12 @@ Init_NEW_LTFLIB(){
 	RetFlag_LTFLIB=${TPASS}
 
         # 判断是否指定初始化函数
-        if [ "Z${regInitFunc}" == "Z" ];then
+        if [ "Z${regInitFunc_ltflib}" == "Z" ];then
                 TConf_LLE "未指定初始化函数"
 		return $TCONF
         else
                 # 执行初始化函数
-                eval ${regInitFunc}
+                eval ${regInitFunc_ltflib}
 		return $?
         fi
 }
@@ -147,7 +147,7 @@ Init_LTFLIB(){
 	fi
 
 	# 定义清除函数
-	regClnFunc=""
+	regClnFunc_ltflib=""
 
 	# 信号捕获ctrl+c
 	trap 'OnCtrlC_LTFLIB' INT
@@ -161,11 +161,11 @@ Init_LTFLIB(){
 #
 Clean_LTFLIB(){
 	# 判断是否指定清除操作
-	if [ "Z${regClnFunc}" == "Z" ];then
+	if [ "Z${regClnFunc_ltflib}" == "Z" ];then
 		TConf_LLE "未指定清除函数"
 	else
 		# 执行清除函数
-		eval ${regClnFunc}		
+		eval ${regClnFunc_ltflib}		
 	fi
 	
 	# 删除临时目录
@@ -178,7 +178,7 @@ Clean_LTFLIB(){
 ## TODO : 测试前的初始化 
 #     In: $1 => 清除函数名
 SetFuncOnCtrlC_LTFLIB(){
-	regClnFunc="$1"
+	regClnFunc_ltflib="$1"
 }
 
 
@@ -198,7 +198,7 @@ OnCtrlC_LTFLIB(){
 ## TODO: 终止退出函数
 #    In: $1 => 调用脚本结果值
 Exit_LTFLIB(){
-	local retflag=${RetFlag_LTFLIB}
+	local retflag_ltflib=${RetFlag_LTFLIB}
 	# 结果标示复位
 	RetFlag_LTFLIB=${TPASS}
 
@@ -209,8 +209,8 @@ Exit_LTFLIB(){
 		exit ${1}
 	fi
 	
-	if [ ${retflag} != ${TPASS} ];then
-		exit ${retflag}
+	if [ ${retflag_ltflib} != ${TPASS} ];then
+		exit ${retflag_ltflib}
 	fi
 
 	exit ${TPASS}
@@ -223,28 +223,28 @@ Exit_LTFLIB(){
 #        $3 => 是否退出测试，False->不退出,其他->退出。默认为true退出程序
 CommRetParse_FailDiy_LTFLIB(){
 	# 必须第一行
-	local ret=$?
+	local ret_ltflib=$?
 	
-	local diy=""
-	local logstr=""
-	local exitflag="true"
+	local diy_ltflib=""
+	local logstr_ltflib=""
+	local exitflag_ltflib="true"
 	if [ $# -eq 1 ];then
-		diy=$1	
+		diy_ltflib=$1	
 	elif [ $# -eq 2 ];then
-		diy=$1
-		logstr=$2
+		diy_ltflib=$1
+		logstr_ltflib=$2
 	elif [ $# -eq 3 ];then
-		diy=$1
-		logstr=$2
-		exitflag=$3
+		diy_ltflib=$1
+		logstr_ltflib=$2
+		exitflag_ltflib=$3
 	else
 		OutputRet_LTFLIB ${ERROR}
 		TestRetParse_LTFLIB "FailToOther_LTFLIB参数错误:$@"
 	fi
 
-	if [ ${ret} -ne 0 ];then
-		OutputRet_LTFLIB ${diy}
-		TestRetParse_LTFLIB "${logstr}" "${exitflag}"
+	if [ ${ret_ltflib} -ne 0 ];then
+		OutputRet_LTFLIB ${diy_ltflib}
+		TestRetParse_LTFLIB "${logstr_ltflib}" "${exitflag_ltflib}"
 	fi
 }
 
@@ -255,55 +255,55 @@ CommRetParse_FailDiy_LTFLIB(){
 #        $3 => 结果是否反转测试,yes->反转,no->不反转,默认为no不反转.(TPASS->TFAIL ,TFAIL-TPASS)
 CommRetParse_LTFLIB(){
 	# 必须第一位
-	local ret=$?
+	local ret_ltflib=$?
 
-	local logstr=""
-	local exitflag="true"
-	local reverse="no"
+	local logstr_ltflib=""
+	local exitflag_ltflib="true"
+	local reverse_ltflib="no"
 
 	if [ $# -eq 0 ];then
 		true
 	elif [ $# -eq 1 ];then
-		logstr="$1"
+		logstr_ltflib="$1"
 	elif [ $# -eq 2 ];then
-		logstr="$1"
-		exitflag="$2"
+		logstr_ltflib="$1"
+		exitflag_ltflib="$2"
 	elif [ $# -eq 3 ];then
-		logstr="$1"
-		exitflag="$2"
-		reverse="$3"
+		logstr_ltflib="$1"
+		exitflag_ltflib="$2"
+		reverse_ltflib="$3"
 	else
 		Error_LLE "TestRetParse_LTFLIB :invalid option -- $*($#)"
 		# 退出
 		Exit_LTFLIB ${ERROR}
 	fi
 
-	if [ "Z${reverse}" == "Zyes" -a "Z${ret}" == "Z0" ];then
-		ret=${TFAIL}
-	elif [ "Z${reverse}" == "Zyes" -a "Z${ret}" != "Z0" ];then
-		ret=${TPASS}
-	elif [ "Z${reverse}" != "Zyes" -a "Z${ret}" == "Z0" ];then
-		ret=${TPASS}
+	if [ "Z${reverse_ltflib}" == "Zyes" -a "Z${ret_ltflib}" == "Z0" ];then
+		ret_ltflib=${TFAIL}
+	elif [ "Z${reverse_ltflib}" == "Zyes" -a "Z${ret_ltflib}" != "Z0" ];then
+		ret_ltflib=${TPASS}
+	elif [ "Z${reverse_ltflib}" != "Zyes" -a "Z${ret_ltflib}" == "Z0" ];then
+		ret_ltflib=${TPASS}
 	else
-		ret=${TFAIL}
+		ret_ltflib=${TFAIL}
 	fi
 
-	if [ $ret -eq ${TPASS} ];then
+	if [ $ret_ltflib -eq ${TPASS} ];then
 		# 成功
-		TPass_LLE "${logstr}"
+		TPass_LLE "${logstr_ltflib}"
 		return ${TPASS}
 	else
 		RetFlag_LTFLIB=${TFAIL}		
 		# 失败
-		TFail_LLE "${logstr}"
+		TFail_LLE "${logstr_ltflib}"
 	fi
 	
-	if [ "Z${exitflag}" == "ZFalse"  ];then
+	if [ "Z${exitflag_ltflib}" == "ZFalse"  ];then
 		# 继续执行
-		return ${ret}
+		return ${ret_ltflib}
 	else
 		# 退出
-		Exit_LTFLIB ${ret}
+		Exit_LTFLIB ${ret_ltflib}
 	fi
 }
 
@@ -313,61 +313,61 @@ CommRetParse_LTFLIB(){
 #        $3 => 结果是否反转测试,yes->反转,no->不反转,默认为no不反转.(TPASS->TFAIL ,TFAIL-TPASS)
 TestRetParse_LTFLIB(){
 	# 必须第一位
-	local ret=$?
+	local ret_ltflib=$?
 
-	local logstr=""
-	local exitflag="true"
-	local reverse="no"
+	local logstr_ltflib=""
+	local exitflag_ltflib="true"
+	local reverse_ltflib="no"
 
 	if [ $# -eq 0 ];then
 		true
 	elif [ $# -eq 1 ];then
-		logstr="$1"
+		logstr_ltflib="$1"
 	elif [ $# -eq 2 ];then
-		logstr="$1"
-		exitflag="$2"
+		logstr_ltflib="$1"
+		exitflag_ltflib="$2"
 	elif [ $# -eq 3 ];then
-		logstr="$1"
-		exitflag="$2"
-		reverse="$3"
+		logstr_ltflib="$1"
+		exitflag_ltflib="$2"
+		reverse_ltflib="$3"
 	else
 		Error_LLE "TestRetParse_LTFLIB :invalid option -- $*($#)"
 		# 退出
 		Exit_LTFLIB ${ERROR}
 	fi
 
-	if [ "Z${reverse}" == "Zyes" -a "Z${ret}" == "Z${TPASS}" ];then
-		ret=${TFAIL}
-	elif [ "Z${reverse}" == "Zyes" -a "Z${ret}" == "Z${TFAIL}" ];then
-		ret=${TPASS}
+	if [ "Z${reverse_ltflib}" == "Zyes" -a "Z${ret_ltflib}" == "Z${TPASS}" ];then
+		ret_ltflib=${TFAIL}
+	elif [ "Z${reverse_ltflib}" == "Zyes" -a "Z${ret_ltflib}" == "Z${TFAIL}" ];then
+		ret_ltflib=${TPASS}
 	fi
 
-	if [ $ret -eq ${TPASS} ];then
+	if [ $ret_ltflib -eq ${TPASS} ];then
 		# 成功
-		TPass_LLE "${logstr}"
+		TPass_LLE "${logstr_ltflib}"
 		return ${TPASS}
-	elif [ $ret -eq ${TFAIL} ];then
+	elif [ $ret_ltflib -eq ${TFAIL} ];then
 		RetFlag_LTFLIB=${TFAIL}		
 		# 失败
-		TFail_LLE "${logstr}"
-	elif [ $ret -eq ${TCONF} ];then
+		TFail_LLE "${logstr_ltflib}"
+	elif [ $ret_ltflib -eq ${TCONF} ];then
 		if [ "Z${RetFlag_LTFLIB}" != "Z${TFAIL}" ];then
 			RetFlag_LTFLIB=${TCONF}
 		fi
 		# 阻塞
-		TConf_LLE "${logstr}"
+		TConf_LLE "${logstr_ltflib}"
 	else
-		Error_LLE "异常状态:ret=$ret,${logstr}"
+		Error_LLE "异常状态:ret=$ret_ltflib,${logstr_ltflib}"
 		# 退出
 		Exit_LTFLIB ${ERROR}
 	fi
 	
-	if [ "Z${exitflag}" == "ZFalse"  ];then
+	if [ "Z${exitflag_ltflib}" == "ZFalse"  ];then
 		# 继续执行
-		return ${ret}
+		return ${ret_ltflib}
 	else
 		# 退出
-		Exit_LTFLIB ${ret}
+		Exit_LTFLIB ${ret_ltflib}
 	fi
 }
 
@@ -380,13 +380,13 @@ TestRetParse_LTFLIB(){
 #	$TFAIL
 #	$TCONF
 OutputRet_LTFLIB(){
-	local flag=$1
+	local flag_ltflib=$1
 
-	if [ $flag -eq ${TPASS} ];then
+	if [ $flag_ltflib -eq ${TPASS} ];then
 		return ${TPASS}
-	elif [ $flag -eq ${TFAIL} ];then
+	elif [ $flag_ltflib -eq ${TFAIL} ];then
 		return ${TFAIL}
-	elif [ $flag -eq ${TCONF} ];then
+	elif [ $flag_ltflib -eq ${TCONF} ];then
 		return ${TCONF}
 	else
 		return ${ERROR}

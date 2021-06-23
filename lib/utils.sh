@@ -18,11 +18,11 @@
 #   Out： 0 => TPASS
 #         1 => TFAIL
 Command_isExist_utils(){
-        local command=""
-        for command in "$@"
+        local command_util=""
+        for command_util in "$@"
         do
-                which $command >/dev/null 2>&1
-                [ $? -ne 0 ] && { TConf_LLE "Command $command not exist!";return ${TCONF}; }
+                which $command_util >/dev/null 2>&1
+                [ $? -ne 0 ] && { TConf_LLE "Command $command_util not exist!";return ${TCONF}; }
         done
 
 	return ${TPASS}

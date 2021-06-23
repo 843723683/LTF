@@ -15,9 +15,9 @@ readonly ERROR=3
 #   Out : 0 => Success
 Log_LLE(){
 	[ $# -ne 3 ] && return 1
-	local infolevel=$1
-	local color=$2
-	local logstr="$3"
+	local infolevel_lle=$1
+	local color_lle=$2
+	local logstr_lle="$3"
 
 	# 当前日志级别
 #	LOGLEVEL_LLE="debug"
@@ -26,26 +26,26 @@ Log_LLE(){
 	# 结束颜色
 	local ENDCOLOR_LLE="\033[0m"
 
-	case $infolevel in
+	case $infolevel_lle in
 	DEBUG)
 		if [ "$LOGLEVEL_LLE" == "debug" ];then
-			echo -e "$color $logstr $ENDCOLOR_LLE"		
+			echo -e "$color_lle $logstr_lle $ENDCOLOR_LLE"		
 		fi
 	;;
 	INFO)
-		echo -e " $logstr"
+		echo -e " $logstr_lle"
 	;;
 	TPASS)
-		echo -e "$color $logstr $ENDCOLOR_LLE"		
+		echo -e "$color_lle $logstr_lle $ENDCOLOR_LLE"		
 	;;
 	TCONF)
-		echo -e "$color $logstr $ENDCOLOR_LLE"		
+		echo -e "$color_lle $logstr_lle $ENDCOLOR_LLE"		
 	;;
 	TFAIL)
-		echo -e "$color $logstr $ENDCOLOR_LLE"		
+		echo -e "$color_lle $logstr_lle $ENDCOLOR_LLE"		
 	;;
 	ERROR)
-		echo -e "$color $logstr $ENDCOLOR_LLE"		
+		echo -e "$color_lle $logstr_lle $ENDCOLOR_LLE"		
 	;;
 	esac
 	
@@ -56,13 +56,13 @@ Log_LLE(){
 ## TODO : Debug级别输出函数,默认颜色为 蓝色
 #   In  : $1 => 打印字符串
 Debug_LLE(){
-	local logstr="$1"
+	local logstr_lle="$1"
 
 	local BLUE_LLE="\033[34m"
 
-	if [ "Z${logstr}" != "Z"  ];then
-		Log_LLE "DEBUG"	"${BLUE_LLE}" "[ DEBUG ][$(basename $0)]: ${logstr}"
-#		Log_LLE "DEBUG"	"${BLUE_LLE}" "[ DEBUG ][$(basename $0)][`date +'%F %H:%M:%S'`]: ${logstr}"
+	if [ "Z${logstr_lle}" != "Z"  ];then
+		Log_LLE "DEBUG"	"${BLUE_LLE}" "[ DEBUG ][$(basename $0)]: ${logstr_lle}"
+#		Log_LLE "DEBUG"	"${BLUE_LLE}" "[ DEBUG ][$(basename $0)][`date +'%F %H:%M:%S'`]: ${logstr_lle}"
 	fi
 }
 
@@ -70,11 +70,11 @@ Debug_LLE(){
 ## TODO : Info级别输出函数,默认无颜色
 #   In  : $1 => 打印字符串
 Info_LLE(){
-	local logstr="$1"
+	local logstr_lle="$1"
 
-	if [ "Z${logstr}" != "Z"  ];then
-		Log_LLE "INFO"	"NONE " "${logstr}"
-#		Log_LLE "INFO"	"NONE " "[ INFO ][`date +'%F %H:%M:%S'`]: ${logstr}"
+	if [ "Z${logstr_lle}" != "Z"  ];then
+		Log_LLE "INFO"	"NONE " "${logstr_lle}"
+#		Log_LLE "INFO"	"NONE " "[ INFO ][`date +'%F %H:%M:%S'`]: ${logstr_lle}"
 	fi
 }
 
@@ -82,13 +82,13 @@ Info_LLE(){
 ## TODO : TPASS 级别输出函数,默认颜色为 绿色
 #   In  : $1 => 打印字符串
 TPass_LLE(){
-	local logstr="$1"
+	local logstr_lle="$1"
 
 	local GREEN_LLE="\033[32m"
 
-	if [ "Z${logstr}" != "Z"  ];then
-		Log_LLE "TPASS"	"${GREEN_LLE}" "[pass]: ${logstr}"
-#		Log_LLE "TPASS"	"${GREEN_LLE}" "[ TPASS ][`date +'%F %H:%M:%S'`]: ${logstr}"
+	if [ "Z${logstr_lle}" != "Z"  ];then
+		Log_LLE "TPASS"	"${GREEN_LLE}" "[pass]: ${logstr_lle}"
+#		Log_LLE "TPASS"	"${GREEN_LLE}" "[ TPASS ][`date +'%F %H:%M:%S'`]: ${logstr_lle}"
 	fi
 }
 
@@ -96,13 +96,13 @@ TPass_LLE(){
 ## TODO : TCONF 级别输出函数,默认颜色为 黄色
 ##  In  : $1 => 打印字符串
 TConf_LLE(){
-	local logstr="$1"
+	local logstr_lle="$1"
 
 	local YELLOW_LLE="\033[33m"
 
-	if [ "Z${logstr}" != "Z"  ];then
-		Log_LLE "TCONF"	"${YELLOW_LLE}" "[conf]: ${logstr}"
-#		Log_LLE "TCONF"	"${YELLOW_LLE}" "[ TCONF ][`date +'%F %H:%M:%S'`]: ${logstr}"
+	if [ "Z${logstr_lle}" != "Z"  ];then
+		Log_LLE "TCONF"	"${YELLOW_LLE}" "[conf]: ${logstr_lle}"
+#		Log_LLE "TCONF"	"${YELLOW_LLE}" "[ TCONF ][`date +'%F %H:%M:%S'`]: ${logstr_lle}"
 	fi
 }
 
@@ -110,13 +110,13 @@ TConf_LLE(){
 ## TODO : TFAIL级别输出函数,默认颜色为 红色
 #   In  : $1 => 打印字符串
 TFail_LLE(){
-	local logstr="$1"
+	local logstr_lle="$1"
 
 	local RED_LLE="\033[31m"
 
-	if [ "Z${logstr}" != "Z"  ];then
-		Log_LLE "TFAIL"	"${RED_LLE}" "[fail]: ${logstr}"
-#		Log_LLE "TFAIL"	"${RED_LLE}" "[ TFAIL ][`date +'%F %H:%M:%S'`]: ${logstr}"
+	if [ "Z${logstr_lle}" != "Z"  ];then
+		Log_LLE "TFAIL"	"${RED_LLE}" "[fail]: ${logstr_lle}"
+#		Log_LLE "TFAIL"	"${RED_LLE}" "[ TFAIL ][`date +'%F %H:%M:%S'`]: ${logstr_lle}"
 	fi
 }
 
@@ -124,12 +124,12 @@ TFail_LLE(){
 ## TODO : Error级别输出函数,默认颜色为 红色
 #   In  : $1 => 打印字符串
 Error_LLE(){
-	local logstr="$1"
+	local logstr_lle="$1"
 
 	local RED_LLE="\033[31m"
 
-	if [ "Z${logstr}" != "Z"  ];then
-		Log_LLE "ERROR"	"${RED_LLE}" "[error]: ${logstr}"
+	if [ "Z${logstr_lle}" != "Z"  ];then
+		Log_LLE "ERROR"	"${RED_LLE}" "[error]: ${logstr_lle}"
 	fi
 }
 
@@ -138,25 +138,25 @@ Error_LLE(){
 #   In  : $1 => TPASS,TFAIL,TCONF,ERROR
 #         $2 => 打印字符串
 OverallLog_LLE(){
-	local ret=$1
-	local logstr=$2
+	local ret_lle=$1
+	local logstr_lle=$2
 
-	if [ "Z${logstr}" == "Z"  ];then
-		return ${ret}
+	if [ "Z${logstr_lle}" == "Z"  ];then
+		return ${ret_lle}
 	fi
 
-	if [ $ret -eq ${TPASS} ];then
+	if [ $ret_lle -eq ${TPASS} ];then
 		local GREEN_LLE="\033[32m"
-		Log_LLE "TPASS"	"${GREEN_LLE}" "\t\t${logstr} [ Test PASS ]"
-	elif [ $ret -eq ${TFAIL} ];then
+		Log_LLE "TPASS"	"${GREEN_LLE}" "\t\t${logstr_lle} [ Test PASS ]"
+	elif [ $ret_lle -eq ${TFAIL} ];then
 		local RED_LLE="\033[31m"
-		Log_LLE "TFAIL"	"${RED_LLE}" "\t\t${logstr} [ Test FAIL ]"
-	elif [ $ret -eq ${TCONF} ];then
+		Log_LLE "TFAIL"	"${RED_LLE}" "\t\t${logstr_lle} [ Test FAIL ]"
+	elif [ $ret_lle -eq ${TCONF} ];then
 		local YELLOW_LLE="\033[33m"
-		Log_LLE "TCONF"	"${YELLOW_LLE}" "\t\t${logstr} [ Test CONF ]"
+		Log_LLE "TCONF"	"${YELLOW_LLE}" "\t\t${logstr_lle} [ Test CONF ]"
 	else
 		local RED_LLE="\033[31m"
-		Log_LLE "ERROR"	"${RED_LLE}" "\t\t${logstr} [ Test ERROR ]"
+		Log_LLE "ERROR"	"${RED_LLE}" "\t\t${logstr_lle} [ Test ERROR ]"
 	fi
 }
 

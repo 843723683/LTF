@@ -26,7 +26,7 @@ CmdsExist_Env_LTFLIB="readlink"
 #   Out : 0=>TPASS
 #         1=>TFAIL
 #         2=>TCONF
-TestInit(){
+TestInit_LTFLIB(){
 	testfile="${TmpTestDir_LTFLIB}/testfile"
 	touch ${testfile}
 	CommRetParse_FailDiy_LTFLIB ${ERROR} "创建文件失败${testfile}"
@@ -43,7 +43,7 @@ TestInit(){
 #   Out : 0=>TPASS
 #         1=>TFAIL
 #         2=>TCONF
-TestClean(){
+TestClean_LTFLIB(){
 	rm -rf ${testfile} ${linkfile}
 
 	return $TPASS		
@@ -62,7 +62,7 @@ testcase_1(){
 #   Out : 0=>TPASS
 #         1=>TFAIL
 #         2=>TCONF
-Testsuite(){
+Testsuite_LTFLIB(){
 	testcase_1
 
 	return $TPASS

@@ -15,6 +15,9 @@
 #             2 => TCONF
 # ----------------------------------------------------------------------
 
+# 测试主题
+Title_Env_LTFLIB="pathchk 功能测试"
+
 # 本次测试涉及的命令
 CmdsExist_Env_LTFLIB="pathchk"
 
@@ -23,7 +26,7 @@ CmdsExist_Env_LTFLIB="pathchk"
 #   Out : 0=>TPASS
 #         1=>TFAIL
 #         2=>TCONF
-TestInit(){
+TestInit_LTFLIB(){
 	true
 }
 
@@ -32,7 +35,7 @@ TestInit(){
 #   Out : 0=>TPASS
 #         1=>TFAIL
 #         2=>TCONF
-TestClean(){
+TestClean_LTFLIB(){
 	true
 }
 
@@ -62,7 +65,7 @@ testcase_3(){
 #   Out : 0=>TPASS
 #         1=>TFAIL
 #         2=>TCONF
-Testsuite(){
+Testsuite_LTFLIB(){
 	testcase_1
 
 	testcase_2
