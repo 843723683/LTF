@@ -142,7 +142,7 @@ OverallLog_LLE(){
 	local logstr=$2
 
 	if [ "Z${logstr}" == "Z"  ];then
-		return ${TPASS}
+		return ${ret}
 	fi
 
 	if [ $ret -eq ${TPASS} ];then
