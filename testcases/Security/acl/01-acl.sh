@@ -36,7 +36,7 @@ TestInit(){
 	# 测试用户
 	testuser='nobody'
 	cat /etc/passwd | grep "$testuser" > /dev/null
-	[ $? -ne 0 ] && { Error_LLE "未知的用户名${testuser}";exit ${ERROR}; }
+	[ $? -ne 0 ] && { OutputRet_LTFLIB ${ERROR};TestRetParse_LTFLIB "未知的用户名${testuser}"; }
 
 	return $TPASS
 }

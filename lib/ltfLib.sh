@@ -107,6 +107,9 @@ Init_NEW_LTFLIB(){
 		exit ${TCONF}
 	fi
 
+	# 信号捕获ctrl+c
+	trap 'OnCtrlC_LTFLIB' INT
+
 	# 创建临时测试目录
 	local testfile=$(basename ${0})
 	TmpTestDir_LTFLIB="${TMP_ROOT_LTF}/ltf_${testfile%%.sh}"
@@ -115,9 +118,6 @@ Init_NEW_LTFLIB(){
 	fi
 	mkdir -p ${TmpTestDir_LTFLIB}
 	export TmpTestDir_LTFLIB
-
-	# 信号捕获ctrl+c
-	trap 'OnCtrlC_LTFLIB' INT
 
 	# 结果判断
 	RetFlag_LTFLIB=${TPASS}
@@ -354,8 +354,10 @@ OutputRet_LTFLIB(){
 		return ${TPASS}
 	elif [ $flag -eq ${TFAIL} ];then
 		return ${TFAIL}
-	else
+	elif [ $flag -eq ${TCONF} ];then
 		return ${TCONF}
+	else
+		return ${ERROR}
 	fi
 }
 

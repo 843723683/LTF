@@ -43,19 +43,20 @@ TestInit(){
 	[ ! -f "${testFile_acl02}" ] && return $TCONF
 
 	testuser='ltfacl2'
-	userpasswd='Lz717.12#$'
+	userpasswd='olleH717.12.#$'
 	userip="localhost"
 	# 测试用户
 	useradd $testuser >/dev/null
-	[ $? -ne 0 ] && { Error_LLE "useradd ${testuser}";exit ${ERROR}; }
+	[ $? -ne 0 ] && { OutputRet_LTFLIB ${ERROR};TestRetParse_LTFLIB "useradd ${testuser}"; }
 	
 	# 设置密码
 	echo ${userpasswd} | passwd --stdin ${testuser} >/dev/null
-	[ $? -ne 0 ] && { Error_LLE "echo ${userpasswd} | passwd --stdin ${testuser}";exit ${ERROR}; }
+	[ $? -ne 0 ] && { OutputRet_LTFLIB ${ERROR};TestRetParse_LTFLIB "echo ${userpasswd} | passwd --stdin ${testuser}"; }
 
 	# 配置免密登录
 	SshAuto_OneConfig_LTFLIB "${userip}" "${testuser}" "${userpasswd}"
 	TestRetParse_LTFLIB "配置免密登录"
+
 
 	return $TPASS
 }
