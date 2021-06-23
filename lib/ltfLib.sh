@@ -23,8 +23,8 @@ EnvTest_LTFLIB(){
 	source "${LIB_UTILS}"
 
 	# 打印标题
-	if [ "Z${Tile_Env_LTFLIB}" != "Z" -a "Z${Tile_Env_LTFLIB}" != "Z " ];then
-		USAGE_LTFLIB "${Tile_Env_LTFLIB}"
+	if [ "Z${Title_Env_LTFLIB}" != "Z" -a "Z${Title_Env_LTFLIB}" != "Z " ];then
+		USAGE_LTFLIB "${Title_Env_LTFLIB}"
 	fi
 
 	# 针对Commands测试
