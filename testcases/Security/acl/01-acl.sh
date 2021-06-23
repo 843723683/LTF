@@ -37,7 +37,6 @@ TestInit_LTFLIB(){
 	testuser='nobody'
 	cat /etc/passwd | grep "$testuser" > /dev/null
 	CommRetParse_FailDiy_LTFLIB ${ERROR} "未知的用户名${testuser}"
-	[ $? -ne 0 ] && { OutputRet_LTFLIB ${ERROR};TestRetParse_LTFLIB "未知的用户名${testuser}"; }
 
 	return $TPASS
 }
