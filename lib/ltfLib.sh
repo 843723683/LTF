@@ -111,8 +111,8 @@ Init_NEW_LTFLIB(){
 	trap 'OnCtrlC_LTFLIB' INT
 
 	# 创建临时测试目录
-	local testfile=$(basename ${0})
-	TmpTestDir_LTFLIB="${TMP_ROOT_LTF}/ltf_${testfile%%.sh}"
+	local testfile_ltflib=$(basename ${0})
+	TmpTestDir_LTFLIB="${TMP_ROOT_LTF}/ltf_${testfile_ltflib%%.sh}"
 	if [ -d  ${TmpTestDir_LTFLIB} ];then
 		rm -rf ${TmpTestDir_LTFLIB}
 	fi
@@ -217,9 +217,41 @@ Exit_LTFLIB(){
 }
 
 
+## TODO: 解析 执行命令返回值，用于处理外部执行命令。如果结果非0则转化为其他断言状态
+#  In  : $1 => 转化后的状态(ERROR、TCONF等) 
+#        $2 => log日志
+#        $3 => 是否退出测试，False->不退出,其他->退出。默认为true退出程序
+CommRetParse_FailDiy_LTFLIB(){
+	# 必须第一行
+	local ret=$?
+	
+	local diy=""
+	local logstr=""
+	local exitflag="true"
+	if [ $# -eq 1 ];then
+		diy=$1	
+	elif [ $# -eq 2 ];then
+		diy=$1
+		logstr=$2
+	elif [ $# -eq 3 ];then
+		diy=$1
+		logstr=$2
+		exitflag=$3
+	else
+		OutputRet_LTFLIB ${ERROR}
+		TestRetParse_LTFLIB "FailToOther_LTFLIB参数错误:$@"
+	fi
+
+	if [ ${ret} -ne 0 ];then
+		OutputRet_LTFLIB ${diy}
+		TestRetParse_LTFLIB "${logstr}" "${exitflag}"
+	fi
+}
+
+
 ## TODO: 解析 执行命令返回值，用于处理外部执行命令，0->成功，其他->失败。与TestRetParse_LTFLIB不同在于只判断对错。
 #  In  : $1 => log
-#        $2 => 是否退出测试，False->不退出,其他->退出。默认为空退出程序
+#        $2 => 是否退出测试，False->不退出,其他->退出。默认为true退出程序
 #        $3 => 结果是否反转测试,yes->反转,no->不反转,默认为no不反转.(TPASS->TFAIL ,TFAIL-TPASS)
 CommRetParse_LTFLIB(){
 	# 必须第一位
@@ -277,7 +309,7 @@ CommRetParse_LTFLIB(){
 
 ## TODO: 解析 函数返回值,用于处理内部函数或命令，$?只能是LTF中注册状态${TPASS}等。
 #  In  : $1 => log
-#        $2 => 是否退出测试，False->不退出,其他->退出.默认为空退出程序
+#        $2 => 是否退出测试，False->不退出,其他->退出.默认为true退出程序
 #        $3 => 结果是否反转测试,yes->反转,no->不反转,默认为no不反转.(TPASS->TFAIL ,TFAIL-TPASS)
 TestRetParse_LTFLIB(){
 	# 必须第一位
