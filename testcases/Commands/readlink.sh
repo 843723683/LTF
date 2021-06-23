@@ -16,10 +16,10 @@
 # ----------------------------------------------------------------------
 
 # 测试主题
-Title_Env_LTFLIB="测试模板"
+Title_Env_LTFLIB="readlink 功能测试"
 
 # 本次测试涉及的命令
-CmdsExist_Env_LTFLIB="Template"
+CmdsExist_Env_LTFLIB="readlink"
 
 
 ## TODO : 个性化,初始化
@@ -27,7 +27,15 @@ CmdsExist_Env_LTFLIB="Template"
 #         1=>TFAIL
 #         2=>TCONF
 TestInit(){
-	return ${TPASS}
+	testfile="${TmpTestDir_LTFLIB}/testfile"
+	touch ${testfile}
+	CommRetParse_FailDiy_LTFLIB ${ERROR} "创建文件失败${testfile}"
+
+	linkfile="${TmpTestDir_LTFLIB}/linkfile"
+	ln -s ${testfile} ${linkfile} 
+	CommRetParse_FailDiy_LTFLIB ${ERROR} "ln -s /var/tmp/foo /var/tmp/readlink-test"
+
+	return $TPASS		
 }
 
 
@@ -36,14 +44,18 @@ TestInit(){
 #         1=>TFAIL
 #         2=>TCONF
 TestClean(){
-	return ${TPASS}
+	rm -rf ${testfile} ${linkfile}
+
+	return $TPASS		
 }
 
 
 ## TODO : 测试用例
 testcase_1(){
-	Template
-	CommRetParse_LTFLIB "Template" "true" "yes"
+	readlink ${linkfile} | grep ${testfile} > /dev/null
+	CommRetParse_LTFLIB "readlink ${linkfile} | grep ${testfile}"
+	
+	return $TPASS
 }
 
 ## TODO : 测试用例集
