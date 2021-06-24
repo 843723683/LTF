@@ -86,10 +86,10 @@ Run_SCRT(){
 		# 不识别指定文件
 		[[ "$testfile" =~ "readme"|"swp" ]] && continue
 		if [ -x "$testfile" ];then
-			Info_LLE "\t\tStart  Test FileSystem : ${testdir}-${testfile#*/} "
+#			Info_LLE "\t\tStart  Test FileSystem : ${testdir}-${testfile#*/} "
 			bash $testfile
 			ret=$?
-			Info_LLE "\t\tFinish Test FileSystem : ${testdir}-${testfile#*/} "
+#			Info_LLE "\t\tFinish Test FileSystem : ${testdir}-${testfile#*/} "
 		else
 			OverallLog_LLE "${TCONF}" "${testfile#*/} : No executable permissions"
 			continue

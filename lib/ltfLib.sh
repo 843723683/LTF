@@ -14,7 +14,10 @@
 ## TODO: 用户界面
 #    In: $1 => 字符串文字
 USAGE_LTFLIB(){
-	printf "#  \033[1m\033[;35m %s \033[0m\n\n" "$1"
+	local tmpsign_ltflib="###############################################"
+	printf "\033[1m\033[;35m%s \033[0m\n" "${tmpsign_ltflib}"
+	printf "\033[1m\033[;35m#  %s \033[0m\n" "$1"
+	printf "\033[1m\033[;35m%s \033[0m\n\n" "${tmpsign_ltflib}"
 }
 
 

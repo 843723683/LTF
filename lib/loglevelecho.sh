@@ -29,23 +29,23 @@ Log_LLE(){
 	case $infolevel_lle in
 	DEBUG)
 		if [ "$LOGLEVEL_LLE" == "debug" ];then
-			echo -e "$color_lle $logstr_lle $ENDCOLOR_LLE"		
+			echo -e "${color_lle}${logstr_lle} $ENDCOLOR_LLE"
 		fi
 	;;
 	INFO)
-		echo -e " $logstr_lle"
+		echo -e "${logstr_lle}"
 	;;
 	TPASS)
-		echo -e "$color_lle $logstr_lle $ENDCOLOR_LLE"		
+		echo -e "${color_lle}${logstr_lle} $ENDCOLOR_LLE"
 	;;
 	TCONF)
-		echo -e "$color_lle $logstr_lle $ENDCOLOR_LLE"		
+		echo -e "${color_lle}${logstr_lle} $ENDCOLOR_LLE"
 	;;
 	TFAIL)
-		echo -e "$color_lle $logstr_lle $ENDCOLOR_LLE"		
+		echo -e "${color_lle}${logstr_lle} $ENDCOLOR_LLE"
 	;;
 	ERROR)
-		echo -e "$color_lle $logstr_lle $ENDCOLOR_LLE"		
+		echo -e "${color_lle}${logstr_lle} $ENDCOLOR_LLE"
 	;;
 	esac
 	
