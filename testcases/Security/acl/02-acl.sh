@@ -18,6 +18,12 @@
 
 Title_Env_LTFLIB="访问控制测试 - 自主访问控制有效性测试"
 
+testuser1_acl2="ltfacl2"
+passwd1_acl2="olleH717.12.#$"
+userip_acl2="localhost"
+AddUserNames_LTFLIB="${testuser1_acl2}"
+AddUserPasswds_LTFLIB="${passwd1_acl2}"
+
 ## TODO : 个性化,初始化
 #   Out : 0=>TPASS
 #         1=>TFAIL
@@ -42,21 +48,9 @@ TestInit_LTFLIB(){
 	echo "Hello LTF" > ${testFile_acl02}
 	CommRetParse_FailDiy_LTFLIB ${ERROR} "创建文件失败${testFile_acl02}"
 
-	testuser='ltfacl2'
-	userpasswd='olleH717.12.#$'
-	userip="localhost"
-	# 测试用户
-	useradd $testuser >/dev/null
-	CommRetParse_FailDiy_LTFLIB ${ERROR} "useradd ${testuser}"
-	
-	# 设置密码
-	echo ${userpasswd} | passwd --stdin ${testuser} >/dev/null
-	CommRetParse_FailDiy_LTFLIB ${ERROR} "echo ${userpasswd} | passwd --stdin ${testuser}"
-
 	# 配置免密登录
-	SshAuto_OneConfig_LTFLIB "${userip}" "${testuser}" "${userpasswd}"
-	TestRetParse_LTFLIB "配置免密登录"
-
+	SshAuto_OneConfig_LTFLIB "${userip_acl2}" "${testuser1_acl2}" "${passwd1_acl2}"
+	TestRetParse_LTFLIB "配置免密登录" "True" "no" "yes"
 
 	return $TPASS
 }
@@ -69,8 +63,6 @@ TestInit_LTFLIB(){
 TestClean_LTFLIB(){
 	Debug_LLE "rm -rf ${testDir_acl02} ${testFile_acl02}"
 	rm -rf ${testDir_acl02} ${testFile_acl02}
-
-	userdel -rf $testuser
 
 	return $TPASS
 }
@@ -86,7 +78,7 @@ Local_Ord_Command(){
 		TestRetParse_LTFLIB "NoAllowedCommand_SOPORD 参数错误"
         fi                                                                                     
                                                                                                
-        SshAuto_Command_LTFLIB "${userip}" "${testuser}" "$1" "$2" "$3"              
+        SshAuto_Command_LTFLIB "${userip_acl2}" "${testuser1_acl2}" "$1" "$2" "$3"              
         return $?                                                                              
 }
 
@@ -116,8 +108,8 @@ testcase_2(){
 
 ## TODO : 测试设置文件和文件夹
 testcase_3(){
-	setfacl -m u:${testuser}:rwx ${testFile_acl02} ${testDir_acl02}
-	CommRetParse_LTFLIB "setfacl -m u:${testuser}:rwx ${testFile_acl02} ${testDir_acl02}"
+	setfacl -m u:${testuser1_acl2}:rwx ${testFile_acl02} ${testDir_acl02}
+	CommRetParse_LTFLIB "setfacl -m u:${testuser1_acl2}:rwx ${testFile_acl02} ${testDir_acl02}"
 
 	Local_Ord_Command "cat ${testFile_acl02}" "no" "no"
 	TestRetParse_LTFLIB "可以查看文件 ${testFile_acl02}" "False"

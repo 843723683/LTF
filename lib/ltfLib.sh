@@ -19,18 +19,40 @@ USAGE_LTFLIB(){
 
 
 ## TODO : 环境检测,用户探测当前环境中特殊设置
+#	 标题变量:Title_Env_LTFLIB
+#	 命令判断变量:CmdsExist_Env_LTFLIB
+#	 新增用户变量:AddUserNames_LTFLIB
+#	 新增用户密码:AddUserPasswds_LTFLIB
 EnvTest_LTFLIB(){
 	source "${LIB_UTILS}"
+
 
 	# 打印标题
 	if [ "Z${Title_Env_LTFLIB}" != "Z" -a "Z${Title_Env_LTFLIB}" != "Z " ];then
 		USAGE_LTFLIB "${Title_Env_LTFLIB}"
 	fi
 
-	# 针对Commands测试
+	# 判断命令是否存在
 	if [ "Z${CmdsExist_Env_LTFLIB}" != "Z" -a "Z${CmdsExist_Env_LTFLIB}" != "Z " ];then
 		Command_isExist_utils ${CmdsExist_Env_LTFLIB}
 		TestRetParse_LTFLIB
+	fi
+
+	# 判断是否需要新建用户
+	if [ "Z${AddUserNames_LTFLIB}" != "Z" -a "Z${AddUserNames_LTFLIB}" != "Z " ];then
+		local user_ltflib=""
+		for user_ltflib in ${AddUserNames_LTFLIB[@]} 
+		do
+		        useradd ${user_ltflib}>/dev/null
+        		CommRetParse_FailDiy_LTFLIB ${ERROR} "useradd ${user_ltflib}"
+			if [ "Z${AddUserPasswds_LTFLIB}" != "Z" -a "Z${AddUserPasswds_LTFLIB}" != "Z " ];then
+			        # 设置密码
+				local passwd_ltflib=${AddUserPasswds_LTFLIB[0]}
+				unset AddUserPasswds_LTFLIB[0]
+			        echo ${passwd_ltflib} | passwd --stdin ${user_ltflib} >/dev/null
+			        CommRetParse_FailDiy_LTFLIB ${ERROR} "echo ${passwd_ltflib} | passwd --stdin ${user_ltflib}"
+			fi
+		done
 	fi
 }
 
@@ -172,6 +194,18 @@ Clean_LTFLIB(){
 	if [ -d  ${TmpTestDir_LTFLIB} ];then
 		rm -rf ${TmpTestDir_LTFLIB}
 	fi
+
+	# 删除用户
+	if [ "Z${AddUserNames_LTFLIB}" != "Z" -a "Z${AddUserNames_LTFLIB}" != "Z " ];then
+		local user_ltflib=""
+		for user_ltflib in ${AddUserNames_LTFLIB[@]} 
+		do
+			cat /etc/passwd | grep ${user_ltflib} > /dev/null
+			if [ $? -eq 0 ];then
+		        	userdel -rf  ${user_ltflib}>/dev/null
+			fi
+		done
+	fi
 }
 
 
@@ -311,6 +345,7 @@ CommRetParse_LTFLIB(){
 #  In  : $1 => log
 #        $2 => 是否退出测试，False->不退出,其他->退出.默认为true退出程序
 #        $3 => 结果是否反转测试,yes->反转,no->不反转,默认为no不反转.(TPASS->TFAIL ,TFAIL-TPASS)
+#        $4 => 是否静默输出 yes -> 静默 no -> 打印输出.默认为no
 TestRetParse_LTFLIB(){
 	# 必须第一位
 	local ret_ltflib=$?
@@ -318,6 +353,7 @@ TestRetParse_LTFLIB(){
 	local logstr_ltflib=""
 	local exitflag_ltflib="true"
 	local reverse_ltflib="no"
+	local quiet_ltflib="no"
 
 	if [ $# -eq 0 ];then
 		true
@@ -330,6 +366,11 @@ TestRetParse_LTFLIB(){
 		logstr_ltflib="$1"
 		exitflag_ltflib="$2"
 		reverse_ltflib="$3"
+	elif [ $# -eq 4 ];then
+		logstr_ltflib="$1"
+		exitflag_ltflib="$2"
+		reverse_ltflib="$3"
+		quiet_ltflib="$4"
 	else
 		Error_LLE "TestRetParse_LTFLIB :invalid option -- $*($#)"
 		# 退出
@@ -344,7 +385,9 @@ TestRetParse_LTFLIB(){
 
 	if [ $ret_ltflib -eq ${TPASS} ];then
 		# 成功
-		TPass_LLE "${logstr_ltflib}"
+		if [ "Z${quiet_ltflib}" != "Zyes" ];then
+			TPass_LLE "${logstr_ltflib}"
+		fi
 		return ${TPASS}
 	elif [ $ret_ltflib -eq ${TFAIL} ];then
 		RetFlag_LTFLIB=${TFAIL}		
