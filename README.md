@@ -7,15 +7,7 @@ https://github.com/843723683/LTF
 
 1. To run these tests on your local machine :
 
-./Run.sh -a
-
-2. Run only performance tests (config/*.xml) :
-
-./Run.sh -f benchmark.xml
-
-3. Only perform the installation test. Only for performance testing. Avoid architecture, cpu and other abnormal interrupt tests
-
-./Run.sh -f benchmark.xml -i
+sudo ./ltfMenu.sh
 
 二. Writing tests
 
