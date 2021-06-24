@@ -114,9 +114,9 @@ RetBrkStart(){
 	#打印脚本名称
 	RetBrkStartUSAGE "$1"
 	
-	local logFile=$2
-	echo "" >> ${logFile}
-	echo "##  Run $1 : $(date)" >> ${logFile}
+	local logFile_ret=$2
+	echo "" >> ${logFile_ret}
+	echo "##  Run $1 : $(date)" >> ${logFile_ret}
 }
 
 
@@ -124,10 +124,10 @@ RetBrkStart(){
 ## In   : $1=>Item name 
 ##      : $2=>logFile：日志文件路径
 RetBrkEnd(){
-	local logFile=$2
-	echo "" >> ${logFile}
-	echo "## Finish $1 : $(date)" >> ${logFile}
-	echo "" >> ${logFile}
+	local logFile_ret=$2
+	echo "" >> ${logFile_ret}
+	echo "## Finish $1 : $(date)" >> ${logFile_ret}
+	echo "" >> ${logFile_ret}
 }
 
 ## TODO : 写(TFAIL/TPASS/TCONF/ERROR)日志信息，统计测试项执行结果
@@ -161,25 +161,25 @@ RetBrk (){
 #       : $2 => 打印字符串
 RetBrkPrint(){
 	# 打印规则
-	local rule="$1"
+	local rule_ret="$1"
 	shift 1
 	# 打印字符串
-	local str=""
+	local str_ret=""
 	# 执行命令
-	local cmd="printf \"$rule\""
+	local cmd_ret="printf \"$rule_ret\""
 
-	local index=0
+	local index_ret=0
 	# 构建命令
-	for index in `seq 1 $#`
+	for index_ret in `seq 1 $#`
 	do
-		eval str="\$$index"
-		cmd="$cmd \"$str\""
+		eval str_ret="\$$index_ret"
+		cmd_ret="$cmd_ret \"$str_ret\""
 	done
 	
 	if [ -f "$LOG_USAGE_FILE" ];then
-		eval $cmd | tee -a $LOG_USAGE_FILE
+		eval $cmd_ret | tee -a $LOG_USAGE_FILE
 	else
-		eval $cmd
+		eval $cmd_ret
 	fi
 
 }
@@ -220,7 +220,7 @@ RetBrkFailPassConf(){
 ##        $3=>Write to log file info
 ##        $4=>logFile：日志文件路径
 RetBrkErr(){
-	local logFile="$4"
+	local logFile_ret="$4"
 
 	#打印脚本执行结果
 	RetBrkPrint "\t\t\t %-10s\n" "$1"
@@ -230,8 +230,8 @@ RetBrkErr(){
 	let retERRORNum=retERRORNum+1
 
 	if [ "$#" -eq "4" ];then
-		echo "$(date)" >> $logFile
-		echo "$1 : $3" >> $logFile
+		echo "$(date)" >> $logFile_ret
+		echo "$1 : $3" >> $logFile_ret
 	fi
 }
 

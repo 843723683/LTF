@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<TestGroup>
+	<TestCase>
+		<CaseName>acl</CaseName>
+		<CaseDir>Security</CaseDir>
+		<CaseScript>security.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
+</TestGroup>

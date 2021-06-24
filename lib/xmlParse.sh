@@ -6,15 +6,15 @@
 ##
 
 XMLParse(){
-	itemName=($(sed -n 's/.*<\/\(.*\)>/\1/p' $1 | sort | uniq))
-	itemNum=${#itemName[*]}
+	itemName_xml=($(sed -n 's/.*<\/\(.*\)>/\1/p' $1 | sort | uniq))
+	itemNum_xml=${#itemName_xml[*]}
 		
 	# 数组边界
-	local border=$((${itemNum}-1))
-	local index=0
-	for index in `seq 0 ${border}`
+	local border_xml=$((${itemNum_xml}-1))
+	local index_xml=0
+	for index_xml in `seq 0 ${border_xml}`
 	do
-		eval ${itemName[${index}]}="($(sed -n 's/.*>\(.*\)<\/'${itemName[${index}]}'>/\1/p' $1))"
+		eval ${itemName_xml[${index_xml}]}="($(sed -n 's/.*>\(.*\)<\/'${itemName_xml[${index_xml}]}'>/\1/p' $1))"
 	done
 
 }
@@ -36,13 +36,13 @@ XMLGetItemNum(){
 }
 
 XMLUnsetup(){
-	local border=$((${itemNum}-1))
-	local index=0
-	for index in `seq 0 ${border}`
+	local border_xml=$((${itemNum_xml}-1))
+	local index_xml=0
+	for index_xml in `seq 0 ${border_xml}`
 	do
-		unset -v ${itemName[${index}]}
+		unset -v ${itemName_xml[${index_xml}]}
 	done
 
-	unset -v itemNum
-	unset -v itemName
+	unset -v itemNum_xml
+	unset -v itemName_xml
 }
