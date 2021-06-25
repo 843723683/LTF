@@ -67,16 +67,17 @@ TestClean_LTFLIB(){
 	return $TPASS
 }
 
-                                                                                               
+
 ## TODO  : 本地(localhost)用户(普通用户)执行命令        
 #    In  : $1 => 执行命令                                                                     
 #          $2 => 是否静默输出 yes -> 静默 no -> 打印输出 
 Local_Ord_Command(){                                                                     
-        if [ $# -ne 3 ];then                                                                   
+        if [ $# -ne 3 ];then
 		OutputRet_LTFLIB ${ERROR}
 		TestRetParse_LTFLIB "NoAllowedCommand_SOPORD 参数错误"
         fi
-	SshAuto_Command_LTFLIB "${userip_acl3}" "${testuser1_acl3}" "$1" "$2" "$3"              
+	SshAuto_Command_LTFLIB "${userip_acl3}" "${testuser1_acl3}" "$1" "$2" "$3"
+ 
         return $? 
 }
 

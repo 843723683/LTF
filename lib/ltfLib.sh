@@ -43,18 +43,31 @@ EnvTest_LTFLIB(){
 
 	# 判断是否需要新建用户
 	if [ "Z${AddUserNames_LTFLIB}" != "Z" -a "Z${AddUserNames_LTFLIB}" != "Z " ];then
+
+		# 密码字符串转化为数组
+		local passwdArr_ltflib=()
+		if [ "Z${AddUserPasswds_LTFLIB}" != "Z" -a "Z${AddUserPasswds_LTFLIB}" != "Z " ];then
+			local i_ltflib=""
+			for i_ltflib in ${AddUserPasswds_LTFLIB}
+			do
+				passwdArr_ltflib[${#passwdArr_ltflib[@]}]=${i_ltflib}
+			done
+		fi 
+
 		local user_ltflib=""
+		local count_ltflib=0
 		for user_ltflib in ${AddUserNames_LTFLIB[@]} 
 		do
 		        useradd ${user_ltflib}>/dev/null
         		CommRetParse_FailDiy_LTFLIB ${ERROR} "useradd ${user_ltflib}"
-			if [ "Z${AddUserPasswds_LTFLIB}" != "Z" -a "Z${AddUserPasswds_LTFLIB}" != "Z " ];then
+			if [ "${#passwdArr_ltflib[@]}" -ne 0 ];then
 			        # 设置密码
-				local passwd_ltflib=${AddUserPasswds_LTFLIB[0]}
-				unset AddUserPasswds_LTFLIB[0]
+				local passwd_ltflib=${passwdArr_ltflib[${count_ltflib}]}
+				unset passwdArr_ltflib[${count_ltflib}]
 			        echo ${passwd_ltflib} | passwd --stdin ${user_ltflib} >/dev/null
 			        CommRetParse_FailDiy_LTFLIB ${ERROR} "echo ${passwd_ltflib} | passwd --stdin ${user_ltflib}"
 			fi
+			let count_ltflib=count_ltflib+1
 		done
 	fi
 }
