@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
 # ----------------------------------------------------------------------
-# Filename:   Template 
+# Filename:   lzop 
 # Version:    1.0
-# Date:       2021/06/20
+# Date:       2021/06/27
 # Author:     Lz
 # Email:      lz843723683@gmail.com
 # History：     
-#             Version 1.0, 2021/06/20
-# Function:   Template 功能验证
+#             Version 1.0, 2021/06/27
+# Function:   lzop 功能验证
 # Out:        
 #             0 => TPASS
 #             1 => TFAIL
@@ -16,10 +16,10 @@
 # ----------------------------------------------------------------------
 
 # 测试主题
-Title_Env_LTFLIB="readlink 功能测试"
+Title_Env_LTFLIB="lzop 功能测试"
 
 # 本次测试涉及的命令
-CmdsExist_Env_LTFLIB="readlink"
+CmdsExist_Env_LTFLIB="lzop rm grep"
 
 
 ## TODO : 个性化,初始化
@@ -27,10 +27,14 @@ CmdsExist_Env_LTFLIB="readlink"
 #         1=>TFAIL
 #         2=>TCONF
 TestInit_LTFLIB(){
-	testfile="${TmpTestDir_LTFLIB}/testfile"
-	linkfile="${TmpTestDir_LTFLIB}/linkfile"
+	file1_lzop="${TmpTestDir_LTFLIB}/file1_lzop.txt"
+	file2_lzop="${TmpTestDir_LTFLIB}/file2_lzop.lzo"
+	
+	strlog_lzop="Hello LTF LZOP"
+	echo "${strlog_lzop}" > ${file1_lzop}
+	CommRetParse_FailDiy_LTFLIB "${ERROR}" "创建 ${file1_lzop} 失败"
 
-	return $TPASS		
+	return ${TPASS}
 }
 
 
@@ -39,24 +43,25 @@ TestInit_LTFLIB(){
 #         1=>TFAIL
 #         2=>TCONF
 TestClean_LTFLIB(){
-	rm -rf ${testfile} ${linkfile}
+	rm ${file1_lzop} ${file2_lzop}
 
-	return $TPASS		
+	return ${TPASS}
 }
 
 
 ## TODO : 测试用例
 testcase_1(){
-	touch ${testfile}
-	CommRetParse_LTFLIB "创建文件 ${testfile}"
+	lzop -9 ${file1_lzop} -o ${file2_lzop}
+	CommRetParse_LTFLIB "lzop -9 ${file1_lzop} -o ${file2_lzop}"
 
-	ln -s ${testfile} ${linkfile} 
-	CommRetParse_LTFLIB "ln -s ${testfile} ${linkfile}"
+	rm ${file1_lzop}
+	CommRetParse_LTFLIB "rm ${file1_lzop}"
 
-	readlink ${linkfile} | grep ${testfile}
-	CommRetParse_LTFLIB "readlink ${linkfile} | grep ${testfile}"
-	
-	return $TPASS
+	lzop -d ${file2_lzop} -o ${file1_lzop}
+	CommRetParse_LTFLIB "lzop -9 ${file1_lzop} -o ${file2_lzop}"
+
+	grep -nur "${strlog_lzop}" ${file1_lzop}
+	CommRetParse_LTFLIB "grep -nur "${strlog_lzop}" file1_lzop"
 }
 
 ## TODO : 测试用例集

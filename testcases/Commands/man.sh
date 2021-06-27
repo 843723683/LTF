@@ -19,7 +19,7 @@
 Title_Env_LTFLIB="man 功能测试"
 
 # 本次测试涉及的命令
-CmdsExist_Env_LTFLIB="man ls"
+CmdsExist_Env_LTFLIB="man ls head"
 
 
 ## TODO : 个性化,初始化
@@ -42,8 +42,13 @@ TestClean_LTFLIB(){
 
 ## TODO : 测试用例
 testcase_1(){
-	man ls > /dev/null
-	CommRetParse_LTFLIB "man ls"
+	man ls | head -n 5 
+	CommRetParse_LTFLIB "man ls | head -n 5"
+}
+
+testcase_2(){
+	man head | head -n 5 
+	CommRetParse_LTFLIB "man head | head -n 5"
 }
 
 ## TODO : 测试用例集
@@ -52,6 +57,7 @@ testcase_1(){
 #         2=>TCONF
 Testsuite_LTFLIB(){
 	testcase_1
+	testcase_2
 
 	return $TPASS
 }

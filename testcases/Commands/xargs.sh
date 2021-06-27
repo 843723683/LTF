@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
 # ----------------------------------------------------------------------
-# Filename:   Template 
+# Filename:   xargs 
 # Version:    1.0
-# Date:       2021/06/20
+# Date:       2021/06/26
 # Author:     Lz
 # Email:      lz843723683@gmail.com
 # History：     
-#             Version 1.0, 2021/06/20
+#             Version 1.0, 2021/06/26
 # Function:   Template 功能验证
 # Out:        
 #             0 => TPASS
@@ -16,10 +16,10 @@
 # ----------------------------------------------------------------------
 
 # 测试主题
-Title_Env_LTFLIB="readlink 功能测试"
+Title_Env_LTFLIB="xargs 功能测试"
 
 # 本次测试涉及的命令
-CmdsExist_Env_LTFLIB="readlink"
+CmdsExist_Env_LTFLIB="xargs find"
 
 
 ## TODO : 个性化,初始化
@@ -27,10 +27,7 @@ CmdsExist_Env_LTFLIB="readlink"
 #         1=>TFAIL
 #         2=>TCONF
 TestInit_LTFLIB(){
-	testfile="${TmpTestDir_LTFLIB}/testfile"
-	linkfile="${TmpTestDir_LTFLIB}/linkfile"
-
-	return $TPASS		
+	return ${TPASS}
 }
 
 
@@ -39,24 +36,20 @@ TestInit_LTFLIB(){
 #         1=>TFAIL
 #         2=>TCONF
 TestClean_LTFLIB(){
-	rm -rf ${testfile} ${linkfile}
-
-	return $TPASS		
+	return ${TPASS}
 }
 
 
 ## TODO : 测试用例
 testcase_1(){
-	touch ${testfile}
-	CommRetParse_LTFLIB "创建文件 ${testfile}"
+	find ${TmpTestDir_LTFLIB} | xargs ls -d 
+	CommRetParse_LTFLIB "find ${TmpTestDir_LTFLIB} | xargs ls -d "
+}
 
-	ln -s ${testfile} ${linkfile} 
-	CommRetParse_LTFLIB "ln -s ${testfile} ${linkfile}"
-
-	readlink ${linkfile} | grep ${testfile}
-	CommRetParse_LTFLIB "readlink ${linkfile} | grep ${testfile}"
-	
-	return $TPASS
+## TODO : 测试用例
+testcase_2(){
+	find ${TmpTestDir_LTFLIB} -print0 | xargs -0 ls -d 
+	CommRetParse_LTFLIB "find ${TmpTestDir_LTFLIB} -print0 | xargs -0 ls -d "
 }
 
 ## TODO : 测试用例集
@@ -65,6 +58,7 @@ testcase_1(){
 #         2=>TCONF
 Testsuite_LTFLIB(){
 	testcase_1
+	testcase_2
 
 	return $TPASS
 }
