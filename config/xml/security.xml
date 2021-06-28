@@ -7,4 +7,10 @@
 		<CaseScript>security.sh</CaseScript>
 		<CaseRun>True</CaseRun>
 	</TestCase>
+	<TestCase>
+		<CaseName>pam</CaseName>
+		<CaseDir>Security</CaseDir>
+		<CaseScript>security.sh</CaseScript>
+		<CaseRun>True</CaseRun>
+	</TestCase>
 </TestGroup>
