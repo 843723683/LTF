@@ -42,12 +42,12 @@ TestClean_LTFLIB(){
 
 ## TODO : 测试用例
 testcase_1(){
-	man ls | head -n 5 
+	man ls > /dev/null 
 	CommRetParse_LTFLIB "man ls | head -n 5"
 }
 
 testcase_2(){
-	man head | head -n 5 
+	man head  > /dev/null
 	CommRetParse_LTFLIB "man head | head -n 5"
 }
 
