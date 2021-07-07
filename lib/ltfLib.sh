@@ -102,7 +102,7 @@ Main_LTFLIB(){
 	TestRetParse_LTFLIB
 
 	# 初始化
-	Init_NEW_LTFLIB
+	Init_LTFLIB
 	TestRetParse_LTFLIB
 
 	# 运行测试用例集
@@ -134,11 +134,11 @@ Run_LTFLIB(){
 }
 
 
-## TODO : 新版初始化
+## TODO : 测试前的初始化
 #   Out : 0=>TPASS
 #         1=>TFAIL
 #         2=>TCONF
-Init_NEW_LTFLIB(){
+Init_LTFLIB(){
 	# 判断root用户
 #	if [ `id -u` -ne 0 ];then
 #		TConf_LEE "Must use root ！"
@@ -170,29 +170,6 @@ Init_NEW_LTFLIB(){
                 eval ${regInitFunc_ltflib}
 		return $?
         fi
-}
-
-
-## TODO : 测试前的初始化，老版初始化函数，兼容SOP相关脚本
-#    Out: 
-#         0=> TPASS
-#         1=> TFAIL
-#         other=> TCONF
-Init_LTFLIB(){
-	# 判断root用户
-#	if [ `id -u` -ne 0 ];then
-#		TConf_LLE "Must use root"
-#		exit ${TCONF}
-#	fi
-
-	# 定义清除函数
-	regClnFunc_ltflib=""
-
-	# 信号捕获ctrl+c
-	trap 'OnCtrlC_LTFLIB' INT
-	
-	# 结果判断
-	RetFlag_LTFLIB=${TPASS}
 }
 
 
