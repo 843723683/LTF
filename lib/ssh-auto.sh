@@ -44,6 +44,41 @@ SshAuto_Global_LTFLIB(){
 }
 
 
+## TODO  : 设置默认远程ip和用户名，与SshAuto_CmdDef_LTFLIB配合使用
+#    In  : $1 => 默认远程ip
+#          $2 => 默认远程用户名
+SshAuto_SetIpUser_LTFLIB(){
+	if [ $# -ne 2 ];then
+		echo "SshAuto_SetIpUser_LTFLIB 参数错误"
+		return $TFAIL
+	fi
+	
+	SshAuto_DefIP=$1
+	SshAuto_DefUser=$2
+	return $?
+}
+
+
+## TODO  : 使用默认IP($SshAuto_DefIP)和默认用户($SshAuto_DefUser)执行命令，与SshAuto_SetIpUser_LTFLIB配合使用
+#    In  : $1 => 执行命令
+#          $2 => 是否静默输出 yes -> 静默 no -> 打印输出
+#          $3 => 结果是否反转
+SshAuto_CmdDef_LTFLIB(){
+	if [ "Z${SshAuto_DefIP}" == "Z" -o "Z${SshAuto_DefUser}" == "Z" ];then
+		echo "尚未设置远程ip和远程用户名"
+		return $TFAIL
+	fi
+
+	if [ $# -ne 3 ];then
+		echo "SshAuto_CmdDef_LTFLIB 参数错误"
+		return $TFAIL
+	fi
+
+	SshAuto_Command_LTFLIB "${SshAuto_DefIP}" "${SshAuto_DefUser}" "$1" "$2" "$3"
+	return $?
+}
+
+
 ## TODO  : 本地(localhost)用户(audadm)执行命令
 #    In  : $1 => 执行命令
 #          $2 => 是否静默输出 yes -> 静默 no -> 打印输出
@@ -436,13 +471,13 @@ SshAuto_RetParse_LTFLIB(){
         fi
 }
 
-export SSHAUTO_ORDINARYSTR
-
-export -f SshAuto_Command_LTFLIB
-export -f SshAuto_CmdLocalSys_LTFLIB
-export -f SshAuto_CmdLocalSec_LTFLIB
-export -f SshAuto_CmdLocalAud_LTFLIB
-
-export -f SshAuto_OneConfig_LTFLIB
-export -f SshAuto_Judge_LTFLIB
-export -f SshAuto_JudgeOrdinary_LTFLIB
+#export SSHAUTO_ORDINARYSTR
+#
+#export -f SshAuto_Command_LTFLIB
+#export -f SshAuto_CmdLocalSys_LTFLIB
+#export -f SshAuto_CmdLocalSec_LTFLIB
+#export -f SshAuto_CmdLocalAud_LTFLIB
+#
+#export -f SshAuto_OneConfig_LTFLIB
+#export -f SshAuto_Judge_LTFLIB
+#export -f SshAuto_JudgeOrdinary_LTFLIB

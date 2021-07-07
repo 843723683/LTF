@@ -161,6 +161,37 @@ OverallLog_LLE(){
 }
 
 
+## TODO : 根据$1和$2的值 返回断言标志，与OverallLog_LLE中保持一致
+#         返回优先级 TFAIL > TCONF > ERROR >  TPASS
+#   In  : $1 => 0～127
+#         $2 => 第二个值，可以为空
+Parse_RetToFlag_LLE(){
+	local flag1_lle=""
+	local flag2_lle=""
+	if [ $# -eq 1 ];then
+		flag1_lle=$1
+		flag2_lle=${TPASS}
+	elif [ $# -eq 2 ];then
+		flag1_lle=$1
+		flag2_lle=$2
+	else
+		return ${ERROR}
+	fi
+
+	if [ ${flag1_lle} -eq ${TFAIL} -o ${flag2_lle} -eq ${TFAIL} ];then
+		return ${TFAIL}	
+	elif [ ${flag1_lle} -eq ${TCONF} -o ${flag2_lle} -eq ${TCONF} ];then
+		return ${TCONF}
+	elif [ ${flag1_lle} -eq ${ERROR} -o ${flag2_lle} -eq ${ERROR} ];then
+		return ${ERROR}
+	elif [ ${flag1_lle} -eq ${TPASS} -a ${flag2_lle} -eq ${TPASS} ];then
+		return ${TPASS}
+        else
+		return ${ERROR}
+        fi
+}
+
+
 # 外部变量
 export TPASS
 export TFAIL
@@ -176,6 +207,7 @@ export -f TPass_LLE
 export -f TFail_LLE
 export -f TConf_LLE
 export -f OverallLog_LLE 
+export -f Parse_RetToFlag_LLE
 
 # Debug-LLE "hello debug"
 # TPass-LLE "hello info"

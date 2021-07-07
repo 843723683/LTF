@@ -58,14 +58,14 @@ EnvTest_LTFLIB(){
 		local count_ltflib=0
 		for user_ltflib in ${AddUserNames_LTFLIB[@]} 
 		do
-		        useradd ${user_ltflib}>/dev/null
-        		CommRetParse_FailDiy_LTFLIB ${ERROR} "useradd ${user_ltflib}"
+		        sudo useradd ${user_ltflib}>/dev/null
+        		CommRetParse_FailDiy_LTFLIB ${ERROR} "sudo useradd ${user_ltflib}"
 			if [ "${#passwdArr_ltflib[@]}" -ne 0 ];then
 			        # 设置密码
 				local passwd_ltflib=${passwdArr_ltflib[${count_ltflib}]}
 				unset passwdArr_ltflib[${count_ltflib}]
-			        echo ${passwd_ltflib} | passwd --stdin ${user_ltflib} >/dev/null
-			        CommRetParse_FailDiy_LTFLIB ${ERROR} "echo ${passwd_ltflib} | passwd --stdin ${user_ltflib}"
+			        echo ${passwd_ltflib} | sudo passwd --stdin ${user_ltflib} >/dev/null
+			        CommRetParse_FailDiy_LTFLIB ${ERROR} "echo ${passwd_ltflib} | sudo passwd --stdin ${user_ltflib}"
 			fi
 			let count_ltflib=count_ltflib+1
 		done
@@ -140,10 +140,10 @@ Run_LTFLIB(){
 #         2=>TCONF
 Init_NEW_LTFLIB(){
 	# 判断root用户
-	if [ `id -u` -ne 0 ];then
-		TConf_LEE "Must use root ！"
-		exit ${TCONF}
-	fi
+#	if [ `id -u` -ne 0 ];then
+#		TConf_LEE "Must use root ！"
+#		exit ${TCONF}
+#	fi
 
 	# 信号捕获ctrl+c
 	trap 'OnCtrlC_LTFLIB' INT
@@ -155,6 +155,7 @@ Init_NEW_LTFLIB(){
 		rm -rf ${TmpTestDir_LTFLIB}
 	fi
 	mkdir -p ${TmpTestDir_LTFLIB}
+	chmod 777 ${TmpTestDir_LTFLIB}
 	export TmpTestDir_LTFLIB
 
 	# 结果判断
@@ -179,10 +180,10 @@ Init_NEW_LTFLIB(){
 #         other=> TCONF
 Init_LTFLIB(){
 	# 判断root用户
-	if [ `id -u` -ne 0 ];then
-		TConf_LLE "Must use root"
-		exit ${TCONF}
-	fi
+#	if [ `id -u` -ne 0 ];then
+#		TConf_LLE "Must use root"
+#		exit ${TCONF}
+#	fi
 
 	# 定义清除函数
 	regClnFunc_ltflib=""
@@ -216,9 +217,9 @@ Clean_LTFLIB(){
 		local user_ltflib=""
 		for user_ltflib in ${AddUserNames_LTFLIB[@]} 
 		do
-			cat /etc/passwd | grep ${user_ltflib} > /dev/null
+			sudo cat /etc/passwd | grep ${user_ltflib} > /dev/null
 			if [ $? -eq 0 ];then
-		        	userdel -rf  ${user_ltflib}>/dev/null
+		        	sudo userdel -rf  ${user_ltflib}>/dev/null
 			fi
 		done
 	fi
