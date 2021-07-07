@@ -27,7 +27,7 @@ cd ${TEST_FILE%/*}
 
 ${CMD_COMPILE} ${TEST_FILE##*/}
 ret=$?
-${CMD_RUN} ${TEST_EXE} | grep -q "helloworld"
+${CMD_RUN} -classpath . ${TEST_EXE} | grep -q "helloworld"
 ret=$?
 
 rm ${TEST_FILE%.*}*
