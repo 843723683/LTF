@@ -22,11 +22,11 @@ USAGE_LTFLIB(){
 
 
 ## TODO : 环境检测,用户探测当前环境中特殊设置
-#	 标题变量:Title_Env_LTFLIB
-#	 source头文件:HeadFile_Source_LTFLIB
-#	 命令判断变量:CmdsExist_Env_LTFLIB
-#	 新增用户变量:AddUserNames_LTFLIB
-#	 新增用户密码:AddUserPasswds_LTFLIB
+#	 标题变量    : Title_Env_LTFLIB
+#	 source头文件: HeadFile_Source_LTFLIB
+#	 命令判断变量: CmdsExist_Env_LTFLIB
+#	 新增用户变量: AddUserNames_LTFLIB
+#	 新增用户密码: AddUserPasswds_LTFLIB
 EnvTest_LTFLIB(){
 	source "${LIB_UTILS}"
 
@@ -113,10 +113,6 @@ RegFunc_LTFLIB(){
 
 ## TODO : 测试主函数
 Main_LTFLIB(){
-	# 环境检测
-	EnvTest_LTFLIB
-	TestRetParse_LTFLIB
-
 	# 注册函数
 	RegFunc_LTFLIB "TestInit_LTFLIB" "Testsuite_LTFLIB" "TestClean_LTFLIB"
 	TestRetParse_LTFLIB
@@ -179,6 +175,10 @@ Init_LTFLIB(){
 
 	# 结果判断
 	RetFlag_LTFLIB=${TPASS}
+
+	# 环境检测
+	EnvTest_LTFLIB
+	TestRetParse_LTFLIB
 
         # 判断是否指定初始化函数
         if [ "Z${regInitFunc_ltflib}" == "Z" ];then

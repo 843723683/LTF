@@ -56,10 +56,12 @@ TestClean_LTFLIB(){
 
 ## TODO : 测试文件和文件夹默认权限
 testcase_1(){
-	ls -al ${testFile_acl01} | grep "rw-r--r--"
+	ls -al ${testFile_acl01}
+	ls -al ${testFile_acl01} | grep -q "rw-r--r--"
 	CommRetParse_LTFLIB "ls -al ${testFile_acl01} | grep \"rw-r--r--\""
 
-	ls -ald ${testDir_acl01} | grep "rwxr-xr-x"
+	ls -ald ${testDir_acl01}
+	ls -ald ${testDir_acl01} | grep -q "rwxr-xr-x"
 	CommRetParse_LTFLIB "ls -ald ${testDir_acl01} | grep \"rwxr-xr-x\""
 }
 
