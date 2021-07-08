@@ -33,27 +33,6 @@ Init_SCRT(){
 	# Security 绝对路径
 	ROOTPATH_SCRT="$(pwd)"
 	
-	# 加载config配置文件
-	local tmpcfg="${ROOTPATH_SCRT}/config/security.cfg"
-	if [ -f "${tmpcfg}" ];then
-                source ${tmpcfg}
-        else
-                echo "${tmpcfg}: Can't found file !"
-                return 2
-        fi
-
-#	# Security lib库文件 绝对路径
-#	export LIBROOT_SCRT="${ROOTPATH_SCRT}/${LIBNAME_SCRT}"
-
-	# 加载log文件
-#	local tmplog="${LIBROOT_SCRT}/loglevelecho.sh"
-#	if [ -f "${tmplog}" ];then
-#		source ${tmplog}
-#	else
-#		echo "${tmplog}: Can't found file !"
-#		return $TCONF
-#	fi
-
 	# 判断测试目录有效性
 	if [ ! -d "${testdir}" ];then
 		TConf_LLE "Can't find testcases (${testdir})"
