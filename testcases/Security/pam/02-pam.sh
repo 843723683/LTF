@@ -18,6 +18,8 @@
 
 Title_Env_LTFLIB="身份鉴别测试 - 鉴别信息安全性测试" 
 
+HeadFile_Source_LTFLIB="${LIB_SSHAUTO}"
+
 testuser1_pam02="ltfpam02"
 passwd1_pam02="olleH717.12.#$"
 userip_pam02="localhost"
@@ -29,15 +31,6 @@ AddUserPasswds_LTFLIB="${passwd1_pam02}"
 #         1=>TFAIL
 #         2=>TCONF
 TestInit_LTFLIB(){
-        # 判断是否存在免密登录库
-        local sshautofile="${LIB_ROOT}/ssh-auto.sh"
-        if [ -f "$sshautofile" ];then
-                source $sshautofile
-        else
-                Error_LLE "$sshautofile : Can't found file !"
-                return $ERROR
-        fi
-
 	# 配置免密登录
 	SshAuto_OneConfig_LTFLIB "${userip_pam02}" "${testuser1_pam02}" "${passwd1_pam02}"
 	TestRetParse_LTFLIB "配置免密登录" "True" "no" "yes"

@@ -18,6 +18,8 @@
 
 Title_Env_LTFLIB="访问控制测试 - 自主访问控制有效性测试"
 
+HeadFile_Source_LTFLIB="${LIB_SSHAUTO}"
+
 testuser1_acl2="ltfacl2"
 passwd1_acl2="olleH717.12.#$"
 userip_acl2="localhost"
@@ -29,15 +31,6 @@ AddUserPasswds_LTFLIB="${passwd1_acl2}"
 #         1=>TFAIL
 #         2=>TCONF
 TestInit_LTFLIB(){
-        # 判断是否存在免密登录库
-        local sshautofile="${LIB_ROOT}/ssh-auto.sh"
-        if [ -f "$sshautofile" ];then
-                source $sshautofile
-        else
-                Error_LLE "$sshautofile : Can't found file !"
-                return $ERROR
-        fi
-
 	# 创建临时目录
 	testDir_acl02="${TmpTestDir_LTFLIB}/diracl02"
 	mkdir ${testDir_acl02}

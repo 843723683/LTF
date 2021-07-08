@@ -18,6 +18,8 @@
 
 Title_Env_LTFLIB="身份鉴别测试 - 禁止普通用户切换超级用户" 
 
+HeadFile_Source_LTFLIB="${LIB_SSHAUTO}"
+
 testuser1_pam03="ltfpam03"
 passwd1_pam03="olleH717.12.#$"
 userip_pam03="localhost"
@@ -29,15 +31,6 @@ AddUserPasswds_LTFLIB="${passwd1_pam03}"
 #         1=>TFAIL
 #         2=>TCONF
 TestInit_LTFLIB(){
-        # 判断是否存在免密登录库
-        local sshautofile="${LIB_ROOT}/ssh-auto.sh"
-        if [ -f "$sshautofile" ];then
-                source $sshautofile
-        else
-                Error_LLE "$sshautofile : Can't found file !"
-                return $ERROR
-        fi
-
 	# 配置免密登录
 	SshAuto_OneConfig_LTFLIB "${userip_pam03}" "${testuser1_pam03}" "${passwd1_pam03}"
 	TestRetParse_LTFLIB "配置免密登录" "True" "no" "yes"
