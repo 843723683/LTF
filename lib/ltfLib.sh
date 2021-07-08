@@ -23,18 +23,31 @@ USAGE_LTFLIB(){
 
 ## TODO : 环境检测,用户探测当前环境中特殊设置
 #	 标题变量:Title_Env_LTFLIB
+#	 source头文件:HeadFile_Source_LTFLIB
 #	 命令判断变量:CmdsExist_Env_LTFLIB
 #	 新增用户变量:AddUserNames_LTFLIB
 #	 新增用户密码:AddUserPasswds_LTFLIB
 EnvTest_LTFLIB(){
 	source "${LIB_UTILS}"
 
-
 	# 打印标题
 	if [ "Z${Title_Env_LTFLIB}" != "Z" -a "Z${Title_Env_LTFLIB}" != "Z " ];then
 		USAGE_LTFLIB "${Title_Env_LTFLIB}"
 	fi
 
+	if [ "Z${HeadFile_Source_LTFLIB}" != "Z" -a "Z${HeadFile_Source_LTFLIB}" != "Z " ];then
+		for i_ltflib in ${HeadFile_Source_LTFLIB[@]}
+		do
+			if [ -f "${i_ltflib}" ];then
+				source ${i_ltflib}
+			else
+				Error_LLE "${i_ltflib}: Can't found file !"
+				OutputRet_LTFLIB ${ERROR}
+				TestRetParse_LTFLIB
+			fi
+		done
+	fi
+	
 	# 判断命令是否存在
 	if [ "Z${CmdsExist_Env_LTFLIB}" != "Z" -a "Z${CmdsExist_Env_LTFLIB}" != "Z " ];then
 		Command_isExist_utils ${CmdsExist_Env_LTFLIB}
@@ -43,7 +56,6 @@ EnvTest_LTFLIB(){
 
 	# 判断是否需要新建用户
 	if [ "Z${AddUserNames_LTFLIB}" != "Z" -a "Z${AddUserNames_LTFLIB}" != "Z " ];then
-
 		# 密码字符串转化为数组
 		local passwdArr_ltflib=()
 		if [ "Z${AddUserPasswds_LTFLIB}" != "Z" -a "Z${AddUserPasswds_LTFLIB}" != "Z " ];then
@@ -58,14 +70,22 @@ EnvTest_LTFLIB(){
 		local count_ltflib=0
 		for user_ltflib in ${AddUserNames_LTFLIB[@]} 
 		do
-		        sudo useradd ${user_ltflib}>/dev/null
-        		CommRetParse_FailDiy_LTFLIB ${ERROR} "sudo useradd ${user_ltflib}"
+			useradd ${user_ltflib} &> /dev/null
+			if [ $? -ne 0 ];then
+				Debug_LLE "使用sudo useradd"
+		        	sudo useradd ${user_ltflib}>/dev/null
+	        		CommRetParse_FailDiy_LTFLIB ${ERROR} "sudo useradd ${user_ltflib}"
+			fi
 			if [ "${#passwdArr_ltflib[@]}" -ne 0 ];then
 			        # 设置密码
 				local passwd_ltflib=${passwdArr_ltflib[${count_ltflib}]}
 				unset passwdArr_ltflib[${count_ltflib}]
-			        echo ${passwd_ltflib} | sudo passwd --stdin ${user_ltflib} >/dev/null
-			        CommRetParse_FailDiy_LTFLIB ${ERROR} "echo ${passwd_ltflib} | sudo passwd --stdin ${user_ltflib}"
+			        echo ${passwd_ltflib} | passwd --stdin ${user_ltflib} &>/dev/null
+				if [ $? -ne 0 ];then
+					Debug_LLE "使用sudo passwd"
+			        	echo ${passwd_ltflib} | sudo passwd --stdin ${user_ltflib} >/dev/null
+				        CommRetParse_FailDiy_LTFLIB ${ERROR} "echo ${passwd_ltflib} | sudo passwd --stdin ${user_ltflib}"
+				fi
 			fi
 			let count_ltflib=count_ltflib+1
 		done
@@ -156,7 +176,6 @@ Init_LTFLIB(){
 	fi
 	mkdir -p ${TmpTestDir_LTFLIB}
 	chmod 777 ${TmpTestDir_LTFLIB}
-	export TmpTestDir_LTFLIB
 
 	# 结果判断
 	RetFlag_LTFLIB=${TPASS}
@@ -196,17 +215,14 @@ Clean_LTFLIB(){
 		do
 			sudo cat /etc/passwd | grep ${user_ltflib} > /dev/null
 			if [ $? -eq 0 ];then
-		        	sudo userdel -rf  ${user_ltflib}>/dev/null
+		        	userdel -rf  ${user_ltflib} &>/dev/null
+				if [ $? -ne 0 ];then
+					Debug_LLE "使用sudo userdel"
+		        		sudo userdel -rf  ${user_ltflib}>/dev/null
+				fi
 			fi
 		done
 	fi
-}
-
-
-## TODO : 测试前的初始化 
-#     In: $1 => 清除函数名
-SetFuncOnCtrlC_LTFLIB(){
-	regClnFunc_ltflib="$1"
 }
 
 
@@ -419,28 +435,6 @@ TestRetParse_LTFLIB(){
 OutputRet_LTFLIB(){
 	local flag_ltflib=$1
 
-	if [ $flag_ltflib -eq ${TPASS} ];then
-		return ${TPASS}
-	elif [ $flag_ltflib -eq ${TFAIL} ];then
-		return ${TFAIL}
-	elif [ $flag_ltflib -eq ${TCONF} ];then
-		return ${TCONF}
-	else
-		return ${ERROR}
-	fi
+	RetToFlag_LLE ${flag_ltflib}
+	return $?
 }
-
-
-#######################################################
-
-# 外部函数
-export -f Init_LTFLIB
-export -f USAGE_LTFLIB
-export -f SetFuncOnCtrlC_LTFLIB
-export -f OutputRet_LTFLIB
-export -f TestRetParse_LTFLIB
-export -f CommRetParse_LTFLIB
-export -f Exit_LTFLIB
-
-export -f OnCtrlC_LTFLIB
-export -f Clean_LTFLIB

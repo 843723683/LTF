@@ -51,6 +51,8 @@ RunSetup(){
 	export LIB_ROOT="${AUTOTEST_ROOT}/lib"
 	# ltflib.sh库文件
 	export LIB_LTFLIB="${LIB_ROOT}/ltfLib.sh"
+	# ssh-auto.sh库文件
+	export LIB_SSHAUTO="${LIB_ROOT}/ssh-auto.sh"
 	# utils.sh库文件
 	export LIB_UTILS="${LIB_ROOT}/utils.sh"
 	# 临时目录，用于测试过程中使用

@@ -165,7 +165,7 @@ OverallLog_LLE(){
 #         返回优先级 TFAIL > TCONF > ERROR >  TPASS
 #   In  : $1 => 0～127
 #         $2 => 第二个值，可以为空
-Parse_RetToFlag_LLE(){
+RetToFlag_LLE(){
 	local flag1_lle=""
 	local flag2_lle=""
 	if [ $# -eq 1 ];then
@@ -207,7 +207,7 @@ export -f TPass_LLE
 export -f TFail_LLE
 export -f TConf_LLE
 export -f OverallLog_LLE 
-export -f Parse_RetToFlag_LLE
+export -f RetToFlag_LLE
 
 # Debug-LLE "hello debug"
 # TPass-LLE "hello info"
