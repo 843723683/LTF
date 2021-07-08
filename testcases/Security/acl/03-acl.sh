@@ -45,6 +45,9 @@ TestInit_LTFLIB(){
 	SshAuto_OneConfig_LTFLIB "${userip_acl3}" "${testuser1_acl3}" "${passwd1_acl3}"
 	TestRetParse_LTFLIB "配置免密登录" "True" "no" "yes"
 
+        SshAuto_SetIpUser_LTFLIB "${userip_acl3}" "${testuser1_acl3}"
+        TestRetParse_LTFLIB "设置默认IP和用户名" "True" "no" "yes"
+
 	return $TPASS
 }
 
@@ -61,37 +64,23 @@ TestClean_LTFLIB(){
 }
 
 
-## TODO  : 本地(localhost)用户(普通用户)执行命令        
-#    In  : $1 => 执行命令                                                                     
-#          $2 => 是否静默输出 yes -> 静默 no -> 打印输出 
-Local_Ord_Command(){                                                                     
-        if [ $# -ne 3 ];then
-		OutputRet_LTFLIB ${ERROR}
-		TestRetParse_LTFLIB "NoAllowedCommand_SOPORD 参数错误"
-        fi
-	SshAuto_Command_LTFLIB "${userip_acl3}" "${testuser1_acl3}" "$1" "$2" "$3"
- 
-        return $? 
-}
-
-
 ## TODO : 测试文件和文件夹默认权限
 testcase_1(){
 	setfacl -m u:${testuser1_acl3}:--- ${testFile_acl03} ${testDir_acl03}
 	CommRetParse_LTFLIB "setfacl -m u:${testuser1_acl3}:rwx ${testFile_acl03} ${testDir_acl03}"
 
-	Local_Ord_Command "echo \"echo hello\" > ${testFile_acl03}" "no" "yes"
+	SshAuto_CmdDef_LTFLIB "echo \"echo hello\" > ${testFile_acl03}" "no" "yes"
 	TestRetParse_LTFLIB "无权限写文件 ${testFile_acl03}" "False"
-	Local_Ord_Command "cat ${testFile_acl03}" "no" "yes"
+	SshAuto_CmdDef_LTFLIB "cat ${testFile_acl03}" "no" "yes"
 	TestRetParse_LTFLIB "无权限查看文件 ${testFile_acl03}" "False"
-	Local_Ord_Command "bash ${testFile_acl03}" "no" "yes"
+	SshAuto_CmdDef_LTFLIB "bash ${testFile_acl03}" "no" "yes"
 	TestRetParse_LTFLIB "无权限执行文件 ${testFile_acl03}" "False"
 
-	Local_Ord_Command "cd ${testDir_acl03}" "no" "yes"
+	SshAuto_CmdDef_LTFLIB "cd ${testDir_acl03}" "no" "yes"
 	TestRetParse_LTFLIB "无权限进入目录 ${testFile_acl03}" "False"
-	Local_Ord_Command "touch ${testDir_acl03}/testfile" "no" "yes"
+	SshAuto_CmdDef_LTFLIB "touch ${testDir_acl03}/testfile" "no" "yes"
 	TestRetParse_LTFLIB "无权限向目录 ${testFile_acl03} 中创建文件" "False"
-	Local_Ord_Command "ls ${testDir_acl03}" "no" "yes"
+	SshAuto_CmdDef_LTFLIB "ls ${testDir_acl03}" "no" "yes"
 	TestRetParse_LTFLIB "无权限查看目录内容 ${testFile_acl03}" "False"
 }
 
@@ -101,18 +90,18 @@ testcase_2(){
 	setfacl -m u:${testuser1_acl3}:rwx ${testFile_acl03} ${testDir_acl03}
 	CommRetParse_LTFLIB "setfacl -m u:${testuser1_acl3}:rwx ${testFile_acl03} ${testDir_acl03}"
 
-	Local_Ord_Command "echo \"echo hello\"> ${testFile_acl03}" "no" "no"
+	SshAuto_CmdDef_LTFLIB "echo \"echo hello\"> ${testFile_acl03}" "no" "no"
 	TestRetParse_LTFLIB "可以写文件 ${testFile_acl03}" "False"
-	Local_Ord_Command "cat ${testFile_acl03}" "no" "no"
+	SshAuto_CmdDef_LTFLIB "cat ${testFile_acl03}" "no" "no"
 	TestRetParse_LTFLIB "可以查看文件 ${testFile_acl03}" "False"
-	Local_Ord_Command "bash ${testFile_acl03}" "no" "no"
+	SshAuto_CmdDef_LTFLIB "bash ${testFile_acl03}" "no" "no"
 	TestRetParse_LTFLIB "可以执行文件 ${testFile_acl03}" "False"
 
-	Local_Ord_Command "cd ${testDir_acl03}" "no" "no"
+	SshAuto_CmdDef_LTFLIB "cd ${testDir_acl03}" "no" "no"
 	TestRetParse_LTFLIB "可以进入目录 ${testFile_acl03}" "False"
-	Local_Ord_Command "touch ${testDir_acl03}/testfile" "no" "no"
+	SshAuto_CmdDef_LTFLIB "touch ${testDir_acl03}/testfile" "no" "no"
 	TestRetParse_LTFLIB "可以向目录 ${testFile_acl03} 中创建文件" "False"
-	Local_Ord_Command "ls ${testDir_acl03}" "no" "no"
+	SshAuto_CmdDef_LTFLIB "ls ${testDir_acl03}" "no" "no"
 	TestRetParse_LTFLIB "可以查看目录内容 ${testFile_acl03}" "False"
 }
 

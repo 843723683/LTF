@@ -35,6 +35,9 @@ TestInit_LTFLIB(){
 	SshAuto_OneConfig_LTFLIB "${userip_pam02}" "${testuser1_pam02}" "${passwd1_pam02}"
 	TestRetParse_LTFLIB "配置免密登录" "True" "no" "yes"
 
+        SshAuto_SetIpUser_LTFLIB "${userip_pam02}" "${testuser1_pam02}"
+        TestRetParse_LTFLIB "设置默认IP和用户名" "True" "no" "yes"
+
 	shadow_pam02="/etc/shadow"	
 
 
@@ -52,21 +55,6 @@ TestClean_LTFLIB(){
 }
 
 
-## TODO  : 本地(localhost)用户(普通用户)执行命令        
-#    In  : $1 => 执行命令                                                                     
-#          $2 => 是否静默输出 yes -> 静默 no -> 打印输出 
-#          $3 => 是否反转测试 yes -> 反转 no -> 不反转 
-Local_Ord_Command(){                                                                     
-        if [ $# -ne 3 ];then
-		OutputRet_LTFLIB ${ERROR}
-		TestRetParse_LTFLIB "NoAllowedCommand_SOPORD 参数错误"
-        fi
-	SshAuto_Command_LTFLIB "${userip_pam02}" "${testuser1_pam02}" "$1" "$2" "$3"
-
-        return $? 
-}
-
-
 ## TODO :
 testcase_1(){
 	cat ${shadow_pam02} | grep "${testuser1_pam02}" 
@@ -81,7 +69,7 @@ testcase_1(){
 
 ## TODO : 普通用户无权查看${shadow_pam02} 
 testcase_2(){
-	Local_Ord_Command "cat ${shadow_pam02}" "no" "yes"
+	SshAuto_CmdDef_LTFLIB "cat ${shadow_pam02}" "no" "yes"
         TestRetParse_LTFLIB "普通用户 ${testuser1_pam02} 无权限查看文件 ${shadow_pam02}"
 }
 

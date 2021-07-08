@@ -45,6 +45,9 @@ TestInit_LTFLIB(){
 	SshAuto_OneConfig_LTFLIB "${userip_acl2}" "${testuser1_acl2}" "${passwd1_acl2}"
 	TestRetParse_LTFLIB "配置免密登录" "True" "no" "yes"
 
+        SshAuto_SetIpUser_LTFLIB "${userip_acl2}" "${testuser1_acl2}"
+        TestRetParse_LTFLIB "设置默认IP和用户名" "True" "no" "yes"
+
 	return $TPASS
 }
 
@@ -59,22 +62,6 @@ TestClean_LTFLIB(){
 
 	return $TPASS
 }
-
-                                                                                               
-## TODO  : 本地(localhost)用户(普通用户)执行命令                                               
-#    In  : $1 => 执行命令                                                                      
-#          $2 => 是否静默输出 yes -> 静默 no -> 打印输出                                       
-#          $3 => 结果是否反转                                                                  
-Local_Ord_Command(){                                                                     
-        if [ $# -ne 3 ];then                                                                   
-		OutputRet_LTFLIB ${ERROR}
-		TestRetParse_LTFLIB "NoAllowedCommand_SOPORD 参数错误"
-        fi                                                                                     
-                                                                                               
-        SshAuto_Command_LTFLIB "${userip_acl2}" "${testuser1_acl2}" "$1" "$2" "$3"              
-        return $?                                                                              
-}
-
 
 ## TODO : 测试文件和文件夹默认权限
 testcase_1(){
@@ -91,10 +78,10 @@ testcase_2(){
 	chmod 700 ${testFile_acl02} ${testDir_acl02}
 	CommRetParse_LTFLIB "chmod 700 ${testFile_acl02} ${testDir_acl02}"
 
-	Local_Ord_Command "cat ${testFile_acl02}" "no" "yes"
+	SshAuto_CmdDef_LTFLIB "cat ${testFile_acl02}" "no" "yes"
 	TestRetParse_LTFLIB "无权限查看文件 ${testFile_acl02}" "False"
 
-	Local_Ord_Command "cd ${testDir_acl02}" "no" "yes"
+	SshAuto_CmdDef_LTFLIB "cd ${testDir_acl02}" "no" "yes"
 	TestRetParse_LTFLIB "无权限进入目录 ${testFile_acl02}" "False"
 }
 
@@ -104,10 +91,10 @@ testcase_3(){
 	setfacl -m u:${testuser1_acl2}:rwx ${testFile_acl02} ${testDir_acl02}
 	CommRetParse_LTFLIB "setfacl -m u:${testuser1_acl2}:rwx ${testFile_acl02} ${testDir_acl02}"
 
-	Local_Ord_Command "cat ${testFile_acl02}" "no" "no"
+	SshAuto_CmdDef_LTFLIB "cat ${testFile_acl02}" "no" "no"
 	TestRetParse_LTFLIB "可以查看文件 ${testFile_acl02}" "False"
 
-	Local_Ord_Command "cd ${testDir_acl02}" "no" "no"
+	SshAuto_CmdDef_LTFLIB "cd ${testDir_acl02}" "no" "no"
 	TestRetParse_LTFLIB "可以进入目录 ${testFile_acl02}" "False"
 }
 
