@@ -40,12 +40,6 @@ TestClean_LTFLIB(){
 }
 
 
-## TODO : 测试用例
-testcase_1(){
-	Template
-	CommRetParse_LTFLIB "Template" "true" "no"
-}
-
 ## TODO : 测试用例集
 #   Out : 0=>TPASS
 #         1=>TFAIL
@@ -56,6 +50,12 @@ Testsuite_LTFLIB(){
 	return $TPASS
 }
 
+
+## TODO : 测试用例
+testcase_1(){
+	Template
+	CommRetParse_LTFLIB "Template" "true" "no"
+}
 
 #----------------------------------------------#
 

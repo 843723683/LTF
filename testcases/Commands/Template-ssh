@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+# ----------------------------------------------------------------------
+# Filename:   Template-ssh
+# Version:    1.0
+# Date:       2021/07/08
+# Author:     Lz
+# Email:      lz843723683@gmail.com
+# History：     
+#             Version 1.0, 2021/07/08
+# Function:   Template-ssh 
+# Out:        
+#             0 => TPASS
+#             1 => TFAIL
+#             2 => TCONF
+# ----------------------------------------------------------------------
+
+
+# 测试主题
+Title_Env_LTFLIB="访问控制测试 - 自主访问控制有效性测试"
+
+# 引入头文件
+HeadFile_Source_LTFLIB="${LIB_SSHAUTO}"
+
+testuser1_templateSsh="ltftemplateSsh"
+passwd1_templateSsh="olleH717.12.#$"
+userip_templateSsh="localhost"
+# 新建用户
+AddUserNames_LTFLIB="${testuser1_templateSsh}"
+# 设置新用户密码
+AddUserPasswds_LTFLIB="${passwd1_templateSsh}"
+
+## TODO : 个性化,初始化
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+TestInit_LTFLIB(){
+	# 配置免密登录
+	SshAuto_OneConfig_LTFLIB "${userip_templateSsh}" "${testuser1_templateSsh}" "${passwd1_templateSsh}"
+	TestRetParse_LTFLIB "配置免密登录" "True" "no" "yes"
+
+        SshAuto_SetIpUser_LTFLIB "${userip_templateSsh}" "${testuser1_templateSsh}"
+        TestRetParse_LTFLIB "设置默认IP和用户名" "True" "no" "yes"
+
+	return $TPASS
+}
+
+
+## TODO : 清理函数
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+TestClean_LTFLIB(){
+	return $TPASS
+}
+
+
+## TODO : 运行测试集
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+Testsuite_LTFLIB(){
+	testcase_1
+
+	return $TPASS
+}
+
+
+## TODO : 测试文件和文件夹默认权限
+testcase_1(){
+}
+
+
+#----------------------------------------------#
+
+source "${LIB_LTFLIB}"
+Main_LTFLIB $@

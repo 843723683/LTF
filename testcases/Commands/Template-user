@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+
+# ----------------------------------------------------------------------
+# Filename:   Template-user 
+# Version:    1.0
+# Date:       2021/07/08
+# Author:     Lz
+# Email:      lz843723683@gmail.com
+# History：     
+#             Version 1.0, 2021/07/08
+# Function:   Template-user 
+# Out:        
+#             0 => TPASS
+#             1 => TFAIL
+#             2 => TCONF
+# ----------------------------------------------------------------------
+
+# 测试主题
+Title_Env_LTFLIB="Template-user"
+
+testuser1_template="ltftemplate"
+passwd1_template="olleH717.12.#$"
+userip_template="localhost"
+# 新建用户
+AddUserNames_LTFLIB="${testuser1_template}"
+# 设置新用户密码
+AddUserPasswds_LTFLIB="${passwd1_template}"
+
+## TODO : 个性化,初始化
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+TestInit_LTFLIB(){
+	# 创建临时目录
+	testDir_template_user="${TmpTestDir_LTFLIB}/dirtemplate_user"
+	mkdir ${testDir_template_user}
+	CommRetParse_FailDiy_LTFLIB ${ERROR} "创建目录失败${testDir_template_user}"
+
+	# 创建临时文件
+	testFile_template_user="${TmpTestDir_LTFLIB}/filetemplate_user"
+	echo "Hello LTF" > ${testFile_template_user}
+	CommRetParse_FailDiy_LTFLIB ${ERROR} "创建文件失败${testFile_template_user}"
+
+	return $TPASS
+}
+
+
+## TODO : 清理函数
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+TestClean_LTFLIB(){
+	Debug_LLE "rm -rf ${testDir_template_user} ${testFile_template_user}"
+	rm -rf ${testDir_template_user} ${testFile_template_user}
+
+	return $TPASS
+}
+
+
+## TODO : 运行测试集
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+Testsuite_LTFLIB(){
+	testcase_1
+
+	return $TPASS
+}
+
+
+## TODO : 测试文件和文件夹默认权限
+testcase_1(){
+	ls -ald ${testDir_template_user} | grep "rwxr-xr-x"
+	CommRetParse_LTFLIB "ls -ald ${testDir_template_user} | grep \"rwxr-xr-x\""
+}
+
+
+#----------------------------------------------#
+
+source "${LIB_LTFLIB}"
+Main_LTFLIB $@
