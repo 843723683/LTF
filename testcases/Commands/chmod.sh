@@ -2,12 +2,12 @@
 
 #-----------------------------------------
 #Filename:      chmod.sh
-#Version:       1.0
-#Date:          2020/09/22
-#Author:        HJQ
-#Email:         hejiaqing@kylinos.com.cn
-#History:
-#               Version 1.0 2020/09/22
+#Version:       2.0
+#Date:          2021/12/28
+#Author:        LZ yaoxiyao
+#Email:         liuzuo@kylinos.com.cn yaoxiyao@kylinos.com.cn
+#History:		  Version 1.0 2021/06/17
+#               Version 2.0 2021/12/28 "新框架复写"
 #Function:      验证命令chmod能否使用
 #Out:           
 #               0 => TPASS
@@ -15,77 +15,71 @@
 #               other => TCONF
 #-----------------------------------------
 
+# 测试主题
+Title_Env_LTFLIB="chmod 功能测试"
 
-#测试的命令
-CMD="chmod"
-#测试中使用的命令
-CMD_IMPORTANT="ls cat"
-#测试结果返回 ： 0 => 成功 1=>失败
-RET=1
-#测试中使用的全局变量
-TESTFILE="/var/tmp/${CMD}_test"
+# 本次测试涉及的命令
+CmdsExist_Env_LTFLIB="chmod ls cat"
 
 
-## TODO： UI界面提示
-#
-Command_UI(){
-        echo "$0 test ${CMD}"
+## TODO : 个性化,初始化
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+TestInit_LTFLIB(){
+	#创建临时文件
+	testFile="${TmpTestDir_LTFLIB}/file_chmod"
+	echo "test ${testFile}" > ${testFile}
+	CommRetParse_FailDiy_LTFLIB ${ERROR} "创建文件失败${testFile}"
+	return $TPASS
 }
 
 
-## TODO： 判断命令是否存在
-#   in ： $1 => 测试命令
-#         $2 => 会用到的命令
-#   Out： 0 => TPASS
-#         1 => TFAIL
-Command_isExist(){
-        local command=""
-        for command in "$@"
-	        do
-                which $command >/dev/null 2>&1
-                [ $? -ne 0 ] && { echo "ERROR:COMMAND $command  NOT EXIST!";exit 2; }
-        done
+## TODO : 清理函数
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+TestClean_LTFLIB(){
+	Debug_LLE "rm -rf ${testFile}"
+	rm -rf ${testFile}
+	return $TPASS  
 }
 
 
-## TODO： 判断命令功能能否使用
-#   Out： 0 => TPASS
-#         1 => TFAIL
-Command_Function(){
-	#创建测试文件
-	cat >${TESTFILE}<<EOF
-	test chmod command
-EOF
-	#修改测试文件的权限并判断是否成功
-	${CMD} 777  ${TESTFILE}
-	[ $? -ne 0 ] && { echo "ERROR:COMMAND FUNCTION CAN'T USE!";Command_Recycling;exit $RET; }
-	#获取测试文件的权限并判断是否修改正确
-	local ls_res=$(ls -l "${TESTFILE}")
-	local permission=${ls_res%%.*}
-	[ $permission != "-rwxrwxrwx" ] && { echo "ERROR:COMMAND FUNCTION ERROR!";Command_Recycling;exit $RET; }
-	#加入参数并判断是否成功
-	$CMD 766 -v ${TESTFILE} &>/dev/null && $CMD 755 -f ${TESTFILE}
-	[ $? -ne 0 ] && { echo "ERROR:PARAMETERS CAN'T USE!";Command_Recycling;exit $RET; }
-	RET=0
+## TODO : 测试用例集
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+Testsuite_LTFLIB(){
+	testcase_1
+	testcase_2
+	return $TPASS
 }
 
 
-## TODO： 回收资源
-#
-Command_Recycling(){
-	rm -rf $TESTFILE
+## TODO : 测试用例
+testcase_1(){
+	chmod 777 ${testFile}
+	local ls_res=`ls -l ${testFile} | awk '{print $1}'`
+
+	echo "${testFile} 当前权限:$ls_res"
+
+	if [ "Z${ls_res}" == "Z-rwxrwxrwx" ];then
+		OutputRet_LTFLIB ${TPASS}
+		TestRetParse_LTFLIB "chmod 777 ${testFile}"
+	else
+		OutputRet_LTFLIB ${TFAIL}
+		TestRetParse_LTFLIB "chmod 777 ${testFile}"
+	fi
 }
 
 
-## TODO： Main
-#
-Command_Main(){
-        Command_UI
-        Command_isExist $CMD $CMD_IMPORTANT
-        Command_Function
-        Command_Recycling
+testcase_2(){
+	chmod 766 -v ${testFile}
+	CommRetParse_LTFLIB "chmod 766 -v ${testFile}"
 }
 
+#----------------------------------------------#
 
-Command_Main
-exit $RET
+source "${LIB_LTFLIB}"
+Main_LTFLIB $@

@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
 #-----------------------------------------
-#Filename:      acl.sh 
-#Version:       1.0
-#Date:          2021/06/17
-#Author:        Lz
-#Email:         liuzuo@kylinos.com.cn
-#History:
-#               Version 1.0 2021/06/17
+#Filename:      acl.sh
+#Version:       2.0
+#Date:          2021/12/28
+#Author:        LZ yaoxiyao
+#Email:         liuzuo@kylinos.com.cn yaoxiyao@kylinos.com.cn
+#History:		  Version 1.0 2021/06/17
+#               Version 2.0 2021/12/28 "新框架复写"
 #Function:      验证命令acl能否使用
 #Out:           
 #               0 => TPASS
@@ -15,80 +15,57 @@
 #               other => TCONF
 #-----------------------------------------
 
+# 测试主题
+Title_Env_LTFLIB="acl 功能测试"
 
-#测试的命令
-CMD="setfacl"
-#测试中使用的命令
-CMD_IMPORTANT="getfacl"
-#测试结果返回 ： 0 => 成功 1=>失败
-RET=0
-#测试中使用的全局变量
-TESTPATH="/var/tmp"
-TESTFILE="${TESTPATH}/ltf_command_acl"
+# 本次测试涉及的命令
+CmdsExist_Env_LTFLIB="setfacl getfacl"
 
 
-## TODO： UI界面提示
-#
-Command_UI(){
-        echo "$0 test ${CMD}"
+## TODO : 个性化,初始化
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+TestInit_LTFLIB(){
+	testFile="${TmpTestDir_LTFLIB}/file_acl"
+	echo "test ${testFile}" > ${testFile}
+	CommRetParse_FailDiy_LTFLIB ${ERROR} "创建文件失败${testFile}"
+	return $TPASS
 }
 
 
-## TODO： 判断命令是否存在
-#   in ： $1 => 测试命令
-#         $2 => 会用到的命令
-#   Out： 0 => TPASS
-#         1 => TFAIL
-Command_isExist(){
-        local command=""
-        for command in "$@"
-        do
-                which $command >/dev/null 2>&1
-                [ $? -ne 0 ] && { echo "ERROR:Command $command not exist!";exit 2; }
-        done
+## TODO : 清理函数
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+TestClean_LTFLIB(){
+	Debug_LLE "rm -rf ${testFile}"
+	rm -rf ${testFile}
+	return $TPASS 
 }
 
 
-## TODO: 初始化
-Command_init(){
-	if [ -f "${TESTFILE}" ];then
-		rm -rf ${TESTFILE}
-	fi
-	touch ${TESTFILE}
+## TODO : 测试用例集
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+Testsuite_LTFLIB(){
+	testcase_1
+	return $TPASS
 }
 
 
-## TODO： 设置和获取acl
-#   Out： 0 => TPASS
-#         1 => TFAIL
-Command_Function1(){
-	setfacl -m user:nobody:r-- ${TESTFILE}
-	[ $? -ne 0 ] && { echo "ERROR: setfacl -m user:nobody:r-- ${TESTFILE}";Command_Recycling;exit 1; }
+## TODO : 测试用例
+testcase_1(){
+	setfacl -m user:nobody:r-- ${testFile}
+	CommRetParse_LTFLIB "setfacl -m user:nobody:r-- ${testFile}"
 
-	getfacl -p ${TESTFILE} | grep -q 'user:nobody:r--'
-	[ $? -ne 0 ] && { echo "ERROR: getfacl ${TESTFILE} | grep -q 'user:nobody:r--'";Command_Recycling;exit 1; }
+	getfacl -p ${testFile} | grep -q 'user:nobody:r--'
+	CommRetParse_LTFLIB "getfacl -p ${testfile} | grep -q 'user:nobody:r--'"
 }
 
 
-## TODO： 回收资源
-#
-Command_Recycling(){
-	if [ -f "${TESTFILE}" ];then
-		rm -rf ${TESTFILE}
-	fi
-}
+#----------------------------------------------#
 
-
-## TODO： Main
-#
-Command_Main(){
-        Command_UI
-        Command_init
-        Command_isExist $CMD $CMD_IMPORTANT
-        Command_Function1
-        Command_Recycling
-}
-
-
-Command_Main
-exit $RET
+source "${LIB_LTFLIB}"
+Main_LTFLIB $@
