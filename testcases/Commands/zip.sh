@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # ----------------------------------------------------------------------
-# Filename:   yes 
+# Filename:   zip 
 # Version:    1.0
 # Date:       2021/06/25
 # Author:     Lz

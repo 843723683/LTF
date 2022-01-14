@@ -1,111 +1,108 @@
 #!/usr/bin/env bash
 
-#-----------------------------------------
-#Filename:      tuna.sh 
-#Version:       1.0
-#Date:          2021/06/15
-#Author:        Lz
-#Email:         liuzuo@kylinos.com.cn
-#History:
-#               Version 1.0 2021/06/15
-#Function:      验证命令ls能否使用
-#Out:           
-#               0 => TPASS
-#               1 => TFAIL
-#               other => TCONF
-#-----------------------------------------
+# ----------------------------------------------------------------------
+# Filename:   tuna
+# Version:    1.0
+# Date:       2021/06/25
+# Author:     Lz
+# Email:      lz843723683@gmail.com
+# History：     
+#             Version 1.0, 2021/01/12
+# Function:   tuna 功能验证
+# Out:        
+#             0 => TPASS
+#             1 => TFAIL
+#             2 => TCONF
+# ----------------------------------------------------------------------
+
+# 测试主题
+Title_Env_LTFLIB="tuna 功能测试"
+
+# 本次测试涉及的命令
+CmdsExist_Env_LTFLIB="tuna head"
 
 
-#测试的命令
-CMD="tuna"
-#测试中使用的命令
-CMD_IMPORTANT="ps"
-#测试结果返回 ： 0 => 成功 1=>失败
-RET=0
-#测试中使用的全局变量
-TESTPATH="/var/tmp"
-
-
-## TODO： UI界面提示
-#
-Command_UI(){
-        echo "$0 test ${CMD}"
+## TODO : 个性化,初始化
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+TestInit_LTFLIB(){
+	return ${TPASS}
 }
 
 
-## TODO： 判断命令是否存在
-#   in ： $1 => 测试命令
-#         $2 => 会用到的命令
-#   Out： 0 => TPASS
-#         1 => TFAIL
-Command_isExist(){
-        local command=""
-        for command in "$@"
-        do
-                which $command >/dev/null 2>&1
-                [ $? -ne 0 ] && { echo "ERROR:Command $command not exist!";exit 2; }
-        done
+## TODO : 清理函数
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+TestClean_LTFLIB(){
+	return ${TPASS}
 }
 
 
-## TODO：显示线程信息列表 
-#   Out： 0 => TPASS
-#         1 => TFAIL
-Command_Function1(){
+## TODO : 测试用例
+testcase_1(){
 	# 显示线程信息列表
-	$CMD -P >/dev/null
-	[ $? -ne 0 ] && { echo "ERROR:$CMD -P ";Command_Recycling;exit 1; }
+	tuna -P | head -n 5
+	CommRetParse_LTFLIB "tuna -P"
 }
 
-## TODO：调整进程亲和性
-#   Out： 0 => TPASS
-#         1 => TFAIL
-Command_Function2(){
+
+testcase_2(){
         # 获取CPU个数
         local cpunum=$(cat /proc/cpuinfo | grep "processor" | wc -l)
-        [ $? -ne 0 ] && { echo "[ FAIL ] : Get cpu num failed";return 1; }
+	CommRetParse_FailDiy_LTFLIB ${ERROR} "Get cpu num failed"
 
 	local filename="$(basename $0)"
 	local tmplog=$(ps -eo "psr,pid,args" | grep "bash"| grep "${filename}" | head -n 1)
-	[ $? -ne 0 ] && { echo "ERROR:获取 ${filename} 进程信息失败";Command_Recycling;exit 1; }
+	CommRetParse_FailDiy_LTFLIB ${ERROR} "获取 ${filename} 进程信息失败"
 	local pid=$(echo "$tmplog" | awk '{print $2}')
-	[ $? -ne 0 ] && { echo "ERROR:获取 ${pid} 进程信息失败";Command_Recycling;exit 1; }
+	CommRetParse_FailDiy_LTFLIB ${ERROR} "获取 ${pid} 进程信息失败"
 
 	# 调整进程至0号CPU运行
 	tuna --cpu 0 --threads ${pid} --move
-	[ $? -ne 0 ] && { echo "ERROR:tuna --cpu 0 --threads ${pid} --move 失败";Command_Recycling;exit 1; }
+	CommRetParse_LTFLIB "tuna --cpu 0 --threads ${pid} --move"
 	local tmplog=$(ps -eo "psr,pid,args" | grep "bash"| grep "${filename}" | head -n 1)
 	echo ${tmplog}
 	local psr_cur=$(echo "$tmplog" | awk '{print $1}')
-	[ ${psr_cur} -ne 0 ] && { echo "ERROR: 进程亲和性调整为0失败，当前为${psr_cur}";Command_Recycling;exit 1; }
+	if [ ${psr_cur} -eq 0 ];then
+		OutputRet_LTFLIB ${TPASS}
+		CommRetParse_LTFLIB "进程亲和性调整为0"
+	else
+		OutputRet_LTFLIB ${TFAIL}
+		CommRetParse_LTFLIB "进程亲和性调整为0"
+	fi
 
 	# 调整进程至最后的CPU运行
 	let local psr_set=$cpunum-1
 	tuna --cpu ${psr_set} --threads ${pid} --move
-	[ $? -ne 0 ] && { echo "ERROR:tuna --cpu ${psr_set} --threads ${pid} --move 失败";Command_Recycling;exit 1; }
+	CommRetParse_LTFLIB "tuna --cpu ${psr_set} --threads ${pid} --move"
 	tmplog=$(ps -eo "psr,pid,args" | grep "bash"| grep "${filename}" | head -n 1)
 	psr_cur=$(echo "$tmplog" | awk '{print $1}')
 	echo ${tmplog}
-	[ ${psr_cur} -ne ${psr_set} ] && { echo "ERROR: 进程亲和性调整为${psr_set}失败，当前为${psr_cur}";Command_Recycling;exit 1; }
-}
-
-## TODO： 回收资源
-#
-Command_Recycling(){
-	true
-}
-
-
-## TODO： Main
-#
-Command_Main(){
-        Command_UI
-        Command_isExist $CMD $CMD_IMPORTANT
-        Command_Function1
-        Command_Function2
-        Command_Recycling
+	if [ ${psr_cur} -eq ${psr_set} ];then
+		OutputRet_LTFLIB ${TPASS}
+		CommRetParse_LTFLIB "进程亲和性调整为${psr_set}"
+	else
+		OutputRet_LTFLIB ${TFAIL}
+		CommRetParse_LTFLIB "进程亲和性调整为${psr_set}"
+	fi
 }
 
 
-Command_Main
-exit $RET
+## TODO : 测试用例集
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+Testsuite_LTFLIB(){
+	testcase_1
+	testcase_2
+
+	return $TPASS
+}
+
+
+#----------------------------------------------#
+
+source "${LIB_LTFLIB}"
+Main_LTFLIB $@

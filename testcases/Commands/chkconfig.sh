@@ -52,7 +52,8 @@ Testsuite_LTFLIB(){
 
 ## TODO : 测试用例
 testcase_1(){
-	chkconfig --list network 2>&1 | egrep "3:on|3:开|3:启用|3:关|3:off"
+	chkconfig --list network
+	chkconfig --list network 2>&1 | egrep -q "3:on|3:开|3:启用|3:关|3:off"
 	CommRetParse_LTFLIB "chkconfig --list network 2>&1 | egrep '3:on|3:开|3:启用|3:关|3:off'"
 }
 

@@ -1,46 +1,85 @@
-#!/bin/bash
-# Author : Lz <lz843723683@163.com>
+#!/usr/bin/env bash
 
-CMD="useradd usermod userdel"
-USERNAME="usertest"
-echo "$0 test ${CMD}"
+# ----------------------------------------------------------------------
+# Filename:   shadow-utils 
+# Version:    1.0
+# Date:       2022/01/13
+# Author:     Lz
+# Email:      lz843723683@gmail.com
+# History：     
+#             Version 1.0, 2022/01/13
+# Function:   shadow-utils 功能验证
+# Out:        
+#             0 => TPASS
+#             1 => TFAIL
+#             2 => TCONF
+# ----------------------------------------------------------------------
 
-retFunc(){
-	[ $1 -ne 0 ]&& { userdel -rf $usertest;exit $2; }	
-}
+# 测试主题
+Title_Env_LTFLIB="shadow-utils 功能测试"
 
-useraddFunc(){
-	echo "Useradd  ${USERNAME}"
-	useradd ${USERNAME}
-	return $?
-}
+# 本次测试涉及的命令
+CmdsExist_Env_LTFLIB="useradd usermod userdel"
 
-usermodFunc(){
-	echo "Usermod  ${USERNAME}"
-	usermod -c "test usermod" ${USERNAME}
-	grep  "${USERNAME}" /etc/passwd | grep -q "test usermod"
-	return $?
-}
 
-userdelFunc(){
-	echo "Userdel  ${USERNAME}"
-	userdel -r ${USERNAME}
-	return $?
-}
-
-main(){
-	for i in ${CMD}
-	do
-		#判断命令是否存在
-		which ${i} >/dev/null 2>&1
-		[ $? -ne 0 ]&&{ echo "No command :${CMD}";exit 1; }
+## TODO : 个性化,初始化
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+TestInit_LTFLIB(){
+	testUser="ltf_shadow_$RANDOM"
 	
-		${i}Func 
-		retFunc $?
-	done
-
-	exit 0
-
+	return ${TPASS}
 }
 
-main
+
+## TODO : 清理函数
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+TestClean_LTFLIB(){
+	cat /etc/passwd | grep ${testUser}
+	if [ $? == 0 ];then
+		userdel -rf ${testUser}
+		Debug_LLE "userdel -rf ${testUser}"
+	fi
+
+	return ${TPASS}
+}
+
+
+## TODO : 测试用例
+testcase_1(){
+	useradd ${testUser}
+	CommRetParse_LTFLIB "useradd ${testUser}"
+
+	#判断用户是否添加成功
+	local etc_passwd_res=$(cat /etc/passwd|grep "$testUser")
+	local username=${etc_passwd_res%%:*}
+	[ "Z${username}" == "Z${testUser}" ] 
+	CommRetParse_LTFLIB "查看/etc/passwd 中是否存在用户${testUser}"
+
+	usermod -c "test usermod" ${testUser}
+	grep  "${testUser}" /etc/passwd | grep -q "test usermod"
+	CommRetParse_LTFLIB "usermod -c \"test usermod\" ${testUser}"
+
+	userdel -rf ${testUser}
+	CommRetParse_LTFLIB "userdel -rf ${testUser}"
+}
+
+
+## TODO : 测试用例集
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+Testsuite_LTFLIB(){
+	testcase_1
+
+	return $TPASS
+}
+
+
+#----------------------------------------------#
+
+source "${LIB_LTFLIB}"
+Main_LTFLIB $@

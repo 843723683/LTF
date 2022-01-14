@@ -61,7 +61,7 @@ testcase_1(){
 	CommRetParse_LTFLIB "lzop -9 ${file1_lzop} -o ${file2_lzop}"
 
 	grep -nur "${strlog_lzop}" ${file1_lzop}
-	CommRetParse_LTFLIB "grep -nur "${strlog_lzop}" file1_lzop"
+	CommRetParse_LTFLIB "grep -nur \"${strlog_lzop}\" file1_lzop"
 }
 
 ## TODO : 测试用例集

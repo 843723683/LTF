@@ -64,7 +64,7 @@ testcase_1(){
 
 	echo "${testFile} 当前权限:$ls_res"
 
-	if [ "Z${ls_res}" == "Z-rwxrwxrwx" ];then
+	if [ "Z${ls_res}" == "Z-rwxrwxrwx" -o "Z${ls_res}" == "Z-rwxrwxrwx." ];then
 		OutputRet_LTFLIB ${TPASS}
 		TestRetParse_LTFLIB "chmod 777 ${testFile}"
 	else

@@ -1,90 +1,76 @@
 #!/usr/bin/env bash
 
-#-----------------------------------------
-#Filename:      mv.sh
-#Version:       1.0
-#Date:          2020/10/09
-#Author:        HJQ
-#Email:         hejiaqing@kylinos.com.cn
-#History:
-#               Version 1.0 2020/10/09
-#Function:      验证命令mv能否使用
-#Out:           
-#               0 => TPASS
-#               1 => TFAIL
-#               other => TCONF
-#-----------------------------------------
+# ----------------------------------------------------------------------
+# Filename:   mv 
+# Version:    1.0
+# Date:       2022/01/14
+# Author:     Lz
+# Email:      lz843723683@gmail.com
+# History：     
+#             Version 1.0, 2022/01/14
+# Function:   mv 功能验证
+# Out:        
+#             0 => TPASS
+#             1 => TFAIL
+#             2 => TCONF
+# ----------------------------------------------------------------------
+
+# 测试主题
+Title_Env_LTFLIB="mv 功能测试"
+
+# 本次测试涉及的命令
+CmdsExist_Env_LTFLIB="mv ls cat rm"
 
 
-#测试的命令
-CMD="mv"
-#测试中使用的命令
-CMD_IMPORTANT="ls cat rm"
-#测试结果返回 ： 0 => 成功 1=>失败
-RET=1
-#测试中使用的全局变量
-TESTFILE="/var/tmp/${CMD}_test"
-
-
-## TODO： UI界面提示
-#
-Command_UI(){
-        echo "$0 test ${CMD}"
-}
-
-
-## TODO： 判断命令是否存在
-#   in ： $CMD => 测试命令
-#	  $CMD_IMPORTANT => 会用到的命令
-#   Out： 0 => TPASS
-#	  1 => TFAIL
-Command_isExist(){
-        local command=""
-        for command in "$@"
-        do
-                which $command >/dev/null 2>&1
-                [ $? -ne 0 ] && { echo "ERROR:COMMAND $command  NOT EXIST!";exit 2; }
-        done
-}
-
-
-## TODO： 判断命令功能能否使用
-#   Out： 0 => TPASS
-#         1 => TFAIL
-Command_Function(){
-        #添加测试文件
-	cat > $TESTFILE << EOF
+## TODO : 个性化,初始化
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+TestInit_LTFLIB(){
+        # 创建临时文件和目录
+        testFile="${TmpTestDir_LTFLIB}/test-mv"
+	cat > $testFile<< EOF
 	command mv test
 EOF
-	#移动测试文件并判断是否执行成功
-	$CMD $TESTFILE ${TESTFILE}_mv
-	[ $? -ne 0 ] && { echo "ERROR:COMMAND FUNCTION CAN'T USE!";Command_Recycling;exit $RET; }
-	#判断命令是否生效
-	ls ${TESTFILE}_mv &>/dev/null
-	[ $? -ne 0 ] && { echo "ERROR:COMMAND FUNCTION ERROR!";Command_Recycling;exit $RET; }
-	#使用参数，判断是否执行成功
-	$CMD -uf ${TESTFILE}_mv ${TESTFILE}_mv_test
-	[ $? -ne 0 ] && { echo "ERROR:PARAMETERS CAN'T USE!";Command_Recycling;exit $RET; }
-	#标志位更新为成功
-	RET=0
+        CommRetParse_FailDiy_LTFLIB ${ERROR} "创建文件失败${testFile}"
+	
+	return ${TPASS}
 }
 
 
-## TODO： 回收资源
-#
-Command_Recycling(){
-        rm -rf ${TESTFILE}_mv_test &>/dev/null
+## TODO : 清理函数
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+TestClean_LTFLIB(){
+	Debug_LLE "rm -rf ${testFile} ${testZip}"
+	rm -rf ${testFile} ${testZip}
+	return ${TPASS}
 }
 
-## TODO： Main
-#     
-Command_Main(){
-        Command_UI
-        Command_isExist $CMD $CMD_IMPORTANT
-        Command_Function
-        Command_Recycling
-}   
-    
-    
-Command_Main
-exit $RET
+
+## TODO : 测试用例
+testcase_1(){
+	mv $testFile ${testFile}_mv
+	CommRetParse_LTFLIB "mv $testFile ${testFile}_mv"
+
+	mv -uf ${testFile}_mv ${testFile}_mv_test
+	CommRetParse_LTFLIB "mv -uf ${testFile}_mv ${testFile}_mv_test"
+}
+
+
+## TODO : 测试用例集
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+Testsuite_LTFLIB(){
+	testcase_1
+
+	return $TPASS
+}
+
+
+#----------------------------------------------#
+
+source "${LIB_LTFLIB}"
+Main_LTFLIB $@

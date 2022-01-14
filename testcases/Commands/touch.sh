@@ -1,19 +1,67 @@
-#!/bin/bash
-# Author : Lz <lz843723683@163.com>
+#!/usr/bin/env bash
 
-CMD="touch"
-TEST_FILE="/var/tmp/touch-test"
-ret=1
+# ----------------------------------------------------------------------
+# Filename:   timeout 
+# Version:    1.0
+# Date:       2021/06/25
+# Author:     Lz
+# Email:      lz843723683@gmail.com
+# History：     
+#             Version 1.0, 2021/01/12
+# Function:   timeout 功能验证
+# Out:        
+#             0 => TPASS
+#             1 => TFAIL
+#             2 => TCONF
+# ----------------------------------------------------------------------
 
-echo "$0 test ${CMD}"
+# 测试主题
+Title_Env_LTFLIB="timeout 功能测试"
 
-#判断命令是否存在
-which ${CMD} >/dev/null 2>&1 
-[ $? -ne 0 ]&&{ echo "No command :${CMD}";exit 2; }
+# 本次测试涉及的命令
+CmdsExist_Env_LTFLIB="timeout"
 
-touch "${TEST_FILE}"
-ls ${TEST_FILE} > /dev/null 2>&1
-ret=$?
 
-rm ${TEST_FILE}
-exit $ret
+## TODO : 个性化,初始化
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+TestInit_LTFLIB(){
+	return ${TPASS}
+}
+
+
+## TODO : 清理函数
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+TestClean_LTFLIB(){
+	return ${TPASS}
+}
+
+
+## TODO : 测试用例
+testcase_1(){
+	timeout 1 sleep 2
+	test $? -eq 124
+	CommRetParse_LTFLIB "timeout 1 sleep 2 :执行失败"
+
+	timeout 2 sleep 1
+	CommRetParse_LTFLIB "timeout 2 sleep 1 :执行成功"
+}
+
+## TODO : 测试用例集
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+Testsuite_LTFLIB(){
+	testcase_1
+
+	return $TPASS
+}
+
+
+#----------------------------------------------#
+
+source "${LIB_LTFLIB}"
+Main_LTFLIB $@

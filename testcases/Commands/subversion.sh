@@ -1,14 +1,63 @@
-#!/bin/bash
-# Author : Lz <lz843723683@163.com>
+#!/usr/bin/env bash
 
-CMD="svn"
+# ----------------------------------------------------------------------
+# Filename:   svn 
+# Version:    1.0
+# Date:       2022/01/13
+# Author:     Lz
+# Email:      lz843723683@gmail.com
+# History：     
+#             Version 1.0, 2022/01/23
+# Function:   svn 功能验证
+# Out:        
+#             0 => TPASS
+#             1 => TFAIL
+#             2 => TCONF
+# ----------------------------------------------------------------------
 
-echo "$0 test ${CMD}"
+# 测试主题
+Title_Env_LTFLIB="svn 功能测试"
 
-#判断命令是否存在
-which ${CMD} >/dev/null 2>&1 
-[ $? -ne 0 ]&&{ echo "No command :${CMD}";exit 2; }
+# 本次测试涉及的命令
+CmdsExist_Env_LTFLIB="svn"
 
-${CMD} --version &>/dev/null
 
-exit $?
+## TODO : 个性化,初始化
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+TestInit_LTFLIB(){
+	return ${TPASS}
+}
+
+
+## TODO : 清理函数
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+TestClean_LTFLIB(){
+	return ${TPASS}
+}
+
+
+## TODO : 测试用例
+testcase_1(){
+	svn --version
+	CommRetParse_LTFLIB "svn --version"
+}
+
+## TODO : 测试用例集
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+Testsuite_LTFLIB(){
+	testcase_1
+
+	return $TPASS
+}
+
+
+#----------------------------------------------#
+
+source "${LIB_LTFLIB}"
+Main_LTFLIB $@
