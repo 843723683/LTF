@@ -42,8 +42,8 @@ TestClean_LTFLIB(){
 
 ## TODO : 测试用例
 testcase_1(){
-	strace yes
-	CommRetParse_LTFLIB "strace yes"
+	strace true
+	CommRetParse_LTFLIB "strace true"
 }
 
 ## TODO : 测试用例集
