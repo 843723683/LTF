@@ -2,12 +2,12 @@
 
 #-----------------------------------------
 #Filename:      cp.sh
-#Version:       1.0
-#Date:          2020/09/21
-#Author:        HJQ
-#Email:         hejiaqing@kylinos.com.cn
-#History:
-#               Version 1.0 2020/09/21
+#Version:       2.0
+#Date:          2021/12/28
+#Author:        LZ yaoxiyao
+#Email:         liuzuo@kylinos.com.cn yaoxiyao@kylinos.com.cn
+#History:       Version 1.0 2021/06/17
+#               Version 2.0 2021/12/28 "新框架复写"
 #Function:      验证命令cp能否使用
 #Out:           
 #               0 => TPASS
@@ -15,77 +15,77 @@
 #               other => TCONF
 #-----------------------------------------
 
+# 测试主题
+Title_Env_LTFLIB="cp 功能测试"
 
-#测试的命令
-CMD="cp"
-#测试中使用的命令
-CMD_IMPORTANT="cat ls diff"
-#测试结果返回 ： 0 => 成功 1=>失败
-RET=1
-#测试中使用的全局变量
-TESTFILE="/var/tmp/${CMD}_test"
+# 本次测试涉及的命令
+CmdsExist_Env_LTFLIB="cp diff"
 
 
-## TODO： UI界面提示
-#
-Command_UI(){
-	echo "$0 test $CMD"
+## TODO : 个性化,初始化
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+TestInit_LTFLIB(){
+	#创建临时文件
+	testFile1="${TmpTestDir_LTFLIB}/file_cp1"
+	echo "test ${testFile1}" >> ${testFile1}
+	CommRetParse_FailDiy_LTFLIB ${ERROR} "创建文件失败${testFile1}"
+
+	testFile2="${TmpTestDir_LTFLIB}/file_cp2"
+	return $TPASS
 }
 
 
-## TODO： 判断命令是否存在
-#   in ： $1 => 测试命令
-#         $2 => 会用到的命令
-#   Out： 0 => TPASS
-#         1 => TFAIL
-Command_isExist(){
-	local command=""
-	for command in "$@"
-	do
-		which $command >/dev/null 2>&1
-		[ $? -ne 0 ] && { echo "ERROR:COMMAND $command  NOT EXIST!";exit 2; }
-	done
+## TODO : 清理函数
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+TestClean_LTFLIB(){
+	Debug_LLE "rm -rf ${testFile1} ${testFile2}"
+	rm -rf ${testFile1} ${testFile2}
+	return $TPASS  
 }
 
 
-## TODO： 判断命令功能能否使用
-#   Out： 0 => TPASS
-#         1 => TFAIL
-Command_Function(){
-	#创建一个测试文件
-	cat>${TESTFILE}<<EOF
-	test cp command
-EOF
-	#复制测试文件并判断是否复制成功
-	$CMD ${TESTFILE} ${TESTFILE}_backup
-	ls ${TESTFILE}_backup &>/dev/null
-	[ $? -ne 0 ] && { echo "ERROR:COMMAND FUNCTION CAN'T USE!";Command_Recycling;exit $RET; }
-	#判断复制是否出错并更新标志位
-	diff ${TESTFILE} ${TESTFILE}_backup
-	[ $? -ne 0 ] && { echo "ERROR:COMMAND FUNCTION ERROR!";Command_Recycling;exit $RET; }
-	#加入参数并判断是否成功
-	$CMD -f ${TESTFILE} ${TESTFILE}_backup && $CMD -p ${TESTFILE} ${TESTFILE}_bkup
-	[ $? -ne 0 ] && { echo "ERROR:COMMAND PARAMETER ERROR!";Command_Recycling;exit $RET; }
-	RET=0
+## TODO : 测试用例
+testcase_1(){
+	cp ${testFile1} ${testFile2}
+	echo -n "${testFile1}:"
+	cat ${testFile1}
+	echo -n "${testFile2}:"
+	cat ${testFile2}
+	diff ${testFile1} ${testFile2}
+	CommRetParse_LTFLIB "cp ${testFile1} ${testFile2}"
 }
 
 
-## TODO： 回收资源
-#
-Command_Recycling(){
-	rm -rf ${TESTFILE} ${TESTFILE}_backup ${TESTFILE}_bkup &>/dev/null
+testcase_2(){
+	cp -f ${testFile1} ${testFile2}
+	CommRetParse_LTFLIB "cp -f ${testFile1} ${testFile2}"
 }
 
 
-## TODO： Main
-#
-Command_Main(){
-	Command_UI
-	Command_isExist $CMD $CMD_IMPORTANT
-	Command_Function
-	Command_Recycling
+testcase_3(){
+	cp -p ${testFile1} ${testFile2}
+	CommRetParse_LTFLIB "cp -p ${testFile1} ${testFile2}"
 }
 
 
-Command_Main
-exit $RET
+## TODO : 测试用例集
+#   Out : 0=>TPASS
+#         1=>TFAIL
+#         2=>TCONF
+Testsuite_LTFLIB(){
+	testcase_1
+	testcase_2
+	testcase_1
+	return $TPASS
+}
+
+
+
+#----------------------------------------------#
+
+source "${LIB_LTFLIB}"
+Main_LTFLIB $@
