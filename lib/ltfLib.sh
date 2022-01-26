@@ -239,6 +239,20 @@ OnCtrlC_LTFLIB(){
 }
 
 
+## TODO: 失败后写日志文件
+#    In: $1 => 调用脚本结果值
+WriteErrorLog_LTFLIB(){
+
+	if [ "$1" == ${TFAIL} ];then
+		echo "${Title_Env_LTFLIB}" >> $LOG_FAIL_FILE
+	elif [ "$1" == ${TCONF} ];then
+		echo "${Title_Env_LTFLIB}" >> $LOG_CONF_FILE
+	elif [ "$1" == ${ERROR} ];then
+		echo "${Title_Env_LTFLIB}" >> $LOG_ERROR_FILE
+	fi
+}
+
+
 ## TODO: 终止退出函数
 #    In: $1 => 调用脚本结果值
 Exit_LTFLIB(){
@@ -250,10 +264,12 @@ Exit_LTFLIB(){
 	Clean_LTFLIB
 
 	if [ $# -eq "1" -a "$1" != "${TPASS}" ];then
+		WriteErrorLog_LTFLIB "$1"
 		exit ${1}
 	fi
 	
 	if [ ${retflag_ltflib} != ${TPASS} ];then
+		WriteErrorLog_LTFLIB "${retflag_ltflib}"
 		exit ${retflag_ltflib}
 	fi
 
@@ -438,3 +454,589 @@ OutputRet_LTFLIB(){
 	RetToFlag_LLE ${flag_ltflib}
 	return $?
 }
+
+
+########## 常用函数 ##########
+
+
+## TODO: 判断软件包是否集成
+#   In :
+#	$1 => isExist(True) / noExist(False)
+#	$2 => yes / no. 是否需要静默输出
+#       $3 => yes / no. 是否需要集成LTF自带的过滤规则
+#	$4 => Package Name,支持正则表达式
+#   Out:
+#	$TPASS => 如果$1为isExist，存在指定软件包。若$1为noExist，不存在指定软件包
+#	$TFAIL => 如果$1为isExist，不存在指定软件包。若$1为noExist，存在指定软件包
+#	$TCONF => 代码问题
+PkgExist_LTFLIB(){
+	if [ $# -ne 4  ];then
+		OutputRet_LTFLIB "${ERROR}"
+		TestRetParse_LTFLIB "Function PkgExist_LTFLIB"
+	fi
+	
+	if [ "Z$1" != "ZisExist" -a "Z$1" != "ZnoExist" -a "Z$1" != "ZTrue" -a "Z$1" != "ZFalse" ];then
+		OutputRet_LTFLIB "${ERROR}"
+		TestRetParse_LTFLIB "PkgExist_LTFLIB: 第一个参数错误，当前为 '$1'"
+	fi
+	
+	local flag="$1"
+	local quiet="$2"
+	local rule="$3"
+	local pkgname="$4"
+	local ret=0
+
+	# 判断软件包是否存在
+	if [ Z"$quiet" == Z"yes" ];then
+		if [ "Z${rule}" == "Zno" ];then
+		# 不需要添加规则
+			rpm -qa | grep -q "${pkgname}"
+		else
+		# 添加规则
+			rpm -qa | grep -q "^${pkgname}-[0-9]"
+		fi
+	else
+		echo "rpm -qa | grep ${pkgname} :"
+		if [ "Z${rule}" == "Zno" ];then
+		# 不需要添加规则
+			rpm -qa | grep "${pkgname}"
+		else
+		# 添加规则
+			rpm -qa | grep "^${pkgname}-[0-9]"
+		fi
+	fi
+	ret=$?
+
+	# 如果不存在软件包
+	if [ $ret -ne 0 ];then
+		echo "未安装软件包 ${pkgname} "
+	fi
+
+	if [ Z"$flag" == Z"noExist" -o Z"$flag" == Z"False" ];then
+		if [ $ret -eq 0 ];then
+		# 存在软件包
+			return $TFAIL
+		else
+		# 不存在软件包
+			return $TPASS
+		fi	
+	else
+		if [ $ret -eq 0 ];then
+		# 存在软件包
+			return $TPASS
+		else
+		# 不存在软件包
+			return $TFAIL
+		fi
+	fi	
+
+	return $ret
+}
+
+
+## TODO: 判断 多个软件包是否集成
+#   In :
+#	$1 => isExist(True) / noExist(False)
+#	$2 => yes / no. 是否需要静默输出
+#       $3 => yes / no. 是否需要集成LTF自带的过滤规则
+#	$4 => Package Name,支持正则表达式
+#   Out:
+#	$TPASS => 如果$1为isExist，存在指定软件包。若$1为noExist，不存在指定软件包
+#	$TFAIL => 如果$1为isExist，不存在指定软件包。若$1为noExist，存在指定软件包
+#	$TCONF => 代码问题
+PkgExistArr_LTFLIB(){
+	if [ $# -ne 4  ];then
+		OutputRet_LTFLIB "${ERROR}"
+		TestRetParse_LTFLIB "Function PkgExistArr_LTFLIB"
+	fi
+	
+	if [ "Z$1" != "ZisExist" -a "Z$1" != "ZnoExist" -a "Z$1" != "ZTrue" -a "Z$1" != "ZFalse" ];then
+		OutputRet_LTFLIB "${ERROR}"
+		TestRetParse_LTFLIB "PkgExistArr_LTFLIB: 第一个参数错误，当前为 '$1'"
+	fi
+	
+	local flag="$1"
+	local quiet="$2"
+	local rule="$3"
+	local pkgname=""
+	local pkgnamearr="$4"
+	local ret="$TPASS"
+
+	local tmpret="$TPASS"
+	local existpkg=""
+	local noexistpkg=""
+
+	# 遍历所有软件包
+	for pkgname in ${pkgnamearr[@]}
+	do
+		# 判断软件包务是否已经存在
+		PkgExist_LTFLIB "$flag" "$quiet" "$rule" "$pkgname"
+		tmpret=$?
+
+		if [ "$flag" == "isExist" -o "$flag" == "True" -a $tmpret -eq $TPASS ];then
+		# 已经安装软件包
+			existpkg="$existpkg $pkgname"
+		elif [ "$flag" == "isExist" -o "$flag" == "True" -a $tmpret -eq $TFAIL ];then
+		# 未安装的软件包
+			noexistpkg="$noexistpkg $pkgname"
+			ret=$TFAIL
+		elif [ "$flag" == "noExist" -o "$flag" == "False" -a $tmpret -eq $TPASS ];then
+		# 未安装的软件包
+			noexistpkg="$noexistpkg $pkgname"
+		elif [ "$flag" == "noExist" -o "$flag" == "False" -a $tmpret -eq $TFAIL ];then
+		# 已经安装软件包
+			existpkg="$existpkg $pkgname"
+			ret=$TFAIL
+		else
+		# 异常
+			echo "[ Error ]: PkgExistArr_LTFLIB function Results Abnormal (flag=$flag , ret=$tmpret)"
+			return $TCONF
+		fi
+	done
+
+	# 判断是否静默输出	
+	if [ Z"$quiet" == Z"no" ];then
+		echo ""
+		echo "已安装的软件包: ($existpkg )"
+		echo "未安装的软件包: ($noexistpkg )"
+	fi
+
+	return $ret
+}
+
+
+## TODO: 判断服务是否存在
+#   In :
+#	$1 => isExist(True) / noExist(False)
+#	$2 => yes / no. 是否需要静默输出
+#	$3 => Service Name
+#   Out:
+#	$TPASS => 如果$1为isExist，存在指定服务。若$1为noExist，不存在指定服务
+#	$TFAIL => 如果$1为isExist，不存在指定服务。若$1为noExist，存在指定服务
+#	$TCONF => 代码问题
+SvcExist_LTFLIB(){
+	if [ $# -ne 3  ];then
+		OutputRet_LTFLIB "${ERROR}"
+		TestRetParse_LTFLIB "Function SvcExist_LTFLIB"
+	fi
+	
+	if [ "Z$1" != "ZisExist" -a "Z$1" != "ZnoExist" -a "Z$1" != "ZTrue" -a "Z$1" != "ZFalse" ];then
+		OutputRet_LTFLIB "${ERROR}"
+		TestRetParse_LTFLIB "SvcExist_LTFLIB: 第一个参数错误，当前为 '$1'"
+	fi
+	
+	local flag="$1"
+	local quiet="$2"
+	local svcname="$3"
+	local ret=0
+	
+	# 判断是否存在systemctl
+	which systemctl &>/dev/null
+	if [ $? -eq 0 ];then
+	# 存在systemctl
+		# 判断服务是否存在,如果存在则返回0
+		if [ Z"$quiet" == Z"yes" ];then
+			systemctl is-enabled $svcname 2>&1 | grep -q -v "No such file or directory"
+			ret=$?
+		else
+			echo -n "systemctl is-enabled $svcname : "
+			systemctl is-enabled $svcname
+	
+			systemctl is-enabled $svcname 2>&1 | grep -q -v "No such file or directory"
+			ret=$?
+		fi
+	else
+		# 判断是否需要静默输出
+		if [ Z"$quiet" == Z"yes" ];then
+			chkconfig --list | grep -q "$svcname"
+			ret=$?
+		else
+			echo "chkconfig --list | grep $svcname"
+			chkconfig --list | grep  $svcname
+			ret=$?
+		fi
+	fi
+
+
+	# 如指定noExist则结果反转
+	if [ Z"$flag" == Z"noExist" -o Z"$flag" == Z"False" ];then
+		if [ $ret -eq 0 ];then
+		# 服务存在
+			return $TFAIL
+		else
+		# 服务不存在
+			return $TPASS
+		fi
+	else
+		if [ $ret -eq 0 ];then
+		# 服务存在
+			return $TPASS
+		else
+		# 服务不存在
+			return $TFAIL
+		fi
+	fi	
+
+	return $ret
+}
+
+
+## TODO: 判断 多个服务是否存在
+#   In :
+#	$1 => isExist(True) / noExist(False)
+#	$2 => yes / no. 是否需要静默输出
+#	$3 => Service Name
+#   Out:
+#	$TPASS => 如果$1为isExist，存在指定服务。若$1为noExist，不存在指定服务
+#	$TFAIL => 如果$1为isExist，不存在指定服务。若$1为noExist，存在指定服务
+#	$TCONF => 代码问题
+SvcExistArr_LTFLIB(){
+	if [ $# -ne 3  ];then
+		OutputRet_LTFLIB "${ERROR}"
+		TestRetParse_LTFLIB "Function SvcExistArr_LTFLIB"
+	fi
+	
+	if [ "Z$1" != "ZisExist" -a "Z$1" != "ZnoExist" -a "Z$1" != "ZTrue" -a "Z$1" != "ZFalse" ];then
+		OutputRet_LTFLIB "${ERROR}"
+		TestRetParse_LTFLIB "SvcExistArr_LTFLIB: 第一个参数错误，当前为 '$1'"
+	fi
+	
+	local flag="$1"
+	local quiet="$2"
+	local svcname=""
+	local svcnamearr="$3"
+	local ret="$TPASS"
+
+	local tmpret="$TPASS"
+	local existsvc=""
+	local noexistsvc=""
+
+	# 遍历所有服务
+	for svcname in ${svcnamearr[@]}
+	do
+		# 判断服务是否存在
+		SvcExist_LTFLIB "$flag" "$quiet" "$svcname"
+		tmpret=$?
+
+		if [ "$flag" == "isExist" -o "$flag" == "True" -a $tmpret -eq $TPASS ];then
+		# 服务当前存在
+			existsvc="$existsvc $svcname"
+		elif [ "$flag" == "isExist" -o "$flag" == "True" -a $tmpret -eq $TFAIL ];then
+		# 服务当前不存在
+			noexistsvc="$noexistsvc $svcname"
+			ret=$TFAIL
+		elif [ "$flag" == "noExist" -o "$flag" == "False" -a $tmpret -eq $TPASS ];then
+		# 服务当前不存在
+			noexistsvc="$noexistsvc $svcname"
+		elif [ "$flag" == "noExist" -o "$flag" == "False" -a $tmpret -eq $TFAIL ];then
+		# 服务当前存在
+			existsvc="$existsvc $svcname"
+			ret=$TFAIL
+		else
+		# 异常
+			echo "[ Error ]: SvcExistArr_LTFLIB function Results Abnormal (flag=$flag , ret=$tmpret)"
+			return $TCONF
+		fi
+	done
+
+	# 判断是否静默输出	
+	if [ Z"$quiet" == Z"no" ];then
+		echo "存在以下服务: ($existsvc )"
+		echo "不存在以下服务: ($noexistsvc )"
+	fi
+
+	return $ret
+}
+
+
+## TODO: 判断服务是否已经激活
+#   In :
+#	$1 => isActive(True) / noActive(False)
+#	$2 => yes / no. 是否需要静默输出
+#	$3 => Service Name
+#   Out:
+#	$TPASS => 如果$1为isActive，指定服务已启动。若$1为noActive，指定服务未启动
+#	$TFAIL => 如果$1为isActive，指定服务未启动。若$1为noActive，指定服务已启动
+#	$TCONF => 代码问题
+SvcActive_LTFLIB(){
+	if [ $# -ne 3  ];then
+		OutputRet_LTFLIB "${ERROR}"
+		TestRetParse_LTFLIB "Function SvcActive_LTFLIB"
+	fi
+
+	if [ "Z$1" != "ZisActive" -a "Z$1" != "ZnoActive" -a "Z$1" != "ZTrue" -a "Z$1" != "ZFalse" ];then
+		OutputRet_LTFLIB "${ERROR}"
+		TestRetParse_LTFLIB "SvcActive_LTFLIB: 第一个参数错误，当前为 '$1'"
+	fi
+	
+	local flag="$1"
+	local quiet="$2"
+	local svcname="$3"
+	local ret=0
+
+        # 判断是否存在systemctl
+        which systemctl &>/dev/null
+        if [ $? -eq 0 ];then
+		# 判断服务当前是否已经激活,如果激活则返回0.(若服务不存在算作未激活)
+		if [ Z"$quiet" == Z"yes" ];then
+			systemctl is-active $svcname > /dev/null
+			ret=$?
+		else
+			echo -n "systemctl is-active $svcname : "
+			systemctl is-active $svcname
+			ret=$?
+		fi
+	else
+		if [ Z"$quiet" == Z"yes" ];then
+			service $svcname status &>/dev/null
+			ret=$?
+		else
+			echo -n "service $svcname status :"
+			service $svcname status
+			ret=$?
+		fi
+
+	fi
+
+	# 如指定noActive则结果反转
+	if [ Z"$flag" == Z"noActive" -o Z"$flag" == Z"False" ];then
+		if [ $ret -eq 0 ];then
+		# 服务已启动
+			return $TFAIL
+		else
+		# 服务未启动
+			return $TPASS
+		fi	
+	else
+		if [ $ret -eq 0 ];then
+		# 服务已启动
+			return $TPASS
+		else
+		# 服务未启动
+			return $TFAIL
+		fi
+	fi	
+
+	return $ret
+}
+
+
+## TODO: 判断 多个服务是否已经激活
+#   In :
+#	$1 => isActive(True) / noActive(False)
+#	$2 => yes / no. 是否需要静默输出
+#	$3 => Service Name
+#   Out:
+#	$TPASS => 如果$1为isActive，指定服务已启动。若$1为noActive，指定服务未启动
+#	$TFAIL => 如果$1为isActive，指定服务未启动。若$1为noActive，指定服务已启动
+#	$TCONF => 代码问题
+SvcActiveArr_LTFLIB(){
+	if [ $# -ne 3  ];then
+		OutputRet_LTFLIB "${ERROR}"
+		TestRetParse_LTFLIB "Function SvcActiveArr_LTFLIB"
+	fi
+
+	if [ "Z$1" != "ZisActive" -a "Z$1" != "ZnoActive" -a "Z$1" != "ZTrue" -a "Z$1" != "ZFalse" ];then
+		OutputRet_LTFLIB "${ERROR}"
+		TestRetParse_LTFLIB "SvcActiveArr_LTFLIB: 第一个参数错误，当前为 '$1'"
+	fi
+	
+	local flag="$1"
+	local quiet="$2"
+	local svcname=""
+	local svcnamearr="$3"
+	local ret="$TPASS"
+
+	local tmpret="$TPASS"
+	local activesvc=""
+	local noactivesvc=""
+
+	# 遍历所有服务
+	for svcname in ${svcnamearr[@]}
+	do
+		# 判断服务是否已经激活
+		SvcActive_LTFLIB "$flag" "$quiet" "$svcname"
+		tmpret=$?
+
+		if [ "$flag" == "isActive" -o "$flag" == "True" -a $tmpret -eq $TPASS ];then
+		# 服务当前已经激活
+			activesvc="$activesvc $svcname"
+		elif [ "$flag" == "isActive" -o "$flag" == "True" -a $tmpret -eq $TFAIL ];then
+		# 服务当前未激活
+			noactivesvc="$noactivesvc $svcname"
+			ret=$TFAIL
+		elif [ "$flag" == "noActive" -o "$flag" == "False" -a $tmpret -eq $TPASS ];then
+		# 服务当前未激活
+			noactivesvc="$noactivesvc $svcname"
+		elif [ "$flag" == "noActive" -o "$flag" == "False" -a $tmpret -eq $TFAIL ];then
+		# 服务当前已经激活
+			activesvc="$activesvc $svcname"
+			ret=$TFAIL
+		else
+		# 异常
+			echo "[ Error ]: SvcActiveArr_LTFLIB function Results Abnormal (flag=$flag , ret=$tmpret)"
+			return $TCONF
+		fi
+	done
+
+	# 判断是否静默输出	
+	if [ Z"$quiet" == Z"no" ];then
+		echo "以下服务已激活: ($activesvc )"
+		echo "以下服务未激活: ($noactivesvc )"
+	fi
+
+	return $ret
+}
+
+
+## TODO: 判断服务是否自启动
+#   In :
+#	$1 => isEnable(True) / noEnable(False)
+#	$2 => yes / no. 是否需要静默输出
+#	$3 => Service Name
+#   Out:
+#	$TPASS => 如果$1为isEnable，指定服务自启动。若$1为noEnable，指定服务未自启动
+#	$TFAIL => 如果$1为isEnable，指定服务未自启动。若$1为noEnable，指定服务自启动
+#	$TCONF => 代码问题
+SvcEnable_LTFLIB(){
+	if [ $# -ne 3  ];then
+		OutputRet_LTFLIB "${ERROR}"
+		TestRetParse_LTFLIB "Function SvcEnable_LTFLIB"
+	fi
+	
+	if [ "Z$1" != "ZisEnable" -a "Z$1" != "ZnoEnable" -a "Z$1" != "ZTrue" -a "Z$1" != "ZFalse" ];then
+		OutputRet_LTFLIB "${ERROR}"
+		TestRetParse_LTFLIB "SvcActiveArr_LTFLIB: 第一个参数错误，当前为 '$1'"
+	fi
+	
+	local flag="$1"
+	local quiet="$2"
+	local svcname="$3"
+	local ret=0
+
+        # 判断是否存在systemctl
+        which systemctl &>/dev/null
+        if [ $? -eq 0 ];then
+		# 判断服务是否自启动,如果自启动则返回0.(若服务不存在算作未自启)
+		if [ Z"$quiet" == Z"yes" ];then
+			systemctl is-enabled $svcname >/dev/null 
+			ret=$?
+		else
+			echo -n "systemctl is-enabled $svcname : "
+			systemctl is-enabled $svcname
+			ret=$?
+		fi
+        else
+                # 查看当前Init
+                local initnum=$(runlevel | awk '{print $2}')
+
+                if [ Z"$quiet" == Z"yes" ];then
+                        chkconfig | grep $svcname | grep -q "${initnum}:启用"
+                        ret=$?
+                else
+                        chkconfig | grep $svcname | grep -q "${initnum}:启用"
+                        ret=$?
+	
+			# 打印日志，判断日志是否为空
+			local tmplog=$(chkconfig | grep ${svcname} | awk  '{$1="";print $0}')
+			# 判断是否为空
+			if [ "Z${tmplog}" == "Z" ];then
+				echo "chkconfig | grep ${svcname} :不存在 ${svcname} 服务"
+			else
+				echo "chkconfig | grep ${svcname} :$tmplog"
+			fi
+                fi
+
+        fi
+
+
+	# 如指定noEnable则结果反转
+	if [ Z"$flag" == Z"noEnable" -o Z"$flag" == Z"False" ];then
+		if [ $ret -eq 0 ];then
+		# 服务自启动
+			return $TFAIL
+		else
+		# 服务未自启动
+			return $TPASS
+		fi
+	else
+		if [ $ret -eq 0 ];then
+		# 服务自启动
+			return $TPASS
+		else
+		# 服务未自启动
+			return $TFAIL
+		fi
+	fi	
+
+	return $ret
+}
+
+
+## TODO: 判断 多个服务是否自启动
+#   In :
+#	$1 => isEnable(True) / noEnable(False)
+#	$2 => yes / no. 是否需要静默输出
+#	$3 => Service Name Arr
+#   Out:
+#	$TPASS => 如果$1为isEnable，指定服务自启动。若$1为noEnable，指定服务未自启动
+#	$TFAIL => 如果$1为isEnable，指定服务未自启动。若$1为noEnable，指定服务自启动
+#	$TCONF => 代码问题
+SvcEnableArr_LTFLIB(){
+	if [ $# -ne 3  ];then
+		OutputRet_LTFLIB "${ERROR}"
+		TestRetParse_LTFLIB "Function SvcEnableArr_LTFLIB"
+	fi
+
+	if [ "Z$1" != "ZisEnable" -a "Z$1" != "ZnoEnable" -a "Z$1" != "ZTrue" -a "Z$1" != "ZFalse" ];then
+		OutputRet_LTFLIB "${ERROR}"
+		TestRetParse_LTFLIB "SvcActiveArr_LTFLIB: 第一个参数错误，当前为 '$1'"
+	fi
+	
+	
+	local flag="$1"
+	local quiet="$2"
+	local svcname=""
+	local svcnamearr="$3"
+	local ret="$TPASS"
+
+	local tmpret="$TPASS"
+	local enablesvc=""
+	local noenablesvc=""
+
+	# 遍历所有服务
+	for svcname in ${svcnamearr[@]}
+	do
+		SvcEnable_LTFLIB "$flag" "$quiet" "$svcname"
+		tmpret=$?
+
+		if [ "$flag" == "isEnable" -o "$flag" == "True" -a $tmpret -eq $TPASS ];then
+		# 服务默认自启动
+			enablesvc="$enablesvc $svcname"
+		elif [ "$flag" == "isEnable" -o "$flag" == "True" -a $tmpret -eq $TFAIL ];then
+		# 服务默认未自启动
+			noenablesvc="$noenablesvc $svcname"
+			ret=$TFAIL
+		elif [ "$flag" == "noEnable" -o "$flag" == "False" -a $tmpret -eq $TPASS ];then
+		# 服务默认未自启动
+			noenablesvc="$noenablesvc $svcname"
+		elif [ "$flag" == "noEnable" -o "$flag" == "False" -a $tmpret -eq $TFAIL ];then
+		# 服务默认自启动
+			enablesvc="$enablesvc $svcname"
+			ret=$TFAIL
+		else
+		# 异常
+			echo "[ Error ]: SvcEnableArr_LTFLIB function Results Abnormal (flag=$flag , ret=$tmpret)"
+			return $TCONF
+		fi
+	done
+
+	# 判断是否静默输出	
+	if [ Z"$quiet" == Z"no" ];then
+		echo "开机自启动服务: ($enablesvc )"
+		echo "开机未自启动服务: ($noenablesvc )"
+	fi
+
+	return $ret
+}
+

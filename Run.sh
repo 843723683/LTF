@@ -92,7 +92,11 @@ RunSetup(){
                 fi
         fi
 	# 报错日志存储
-	LOG_FAIL_FILE="${LOG_PATH}/ltf-fail.log"
+	export LOG_FAIL_FILE="${LOG_PATH}/ltf_fail.log"
+	# 阻塞日志存储
+	export LOG_CONF_FILE="${LOG_PATH}/ltf_conf.log"
+	# 异常日志存储
+	export LOG_ERROR_FILE="${LOG_PATH}/ltf_error.log"
 	# 界面日志打印
 	LOG_USAGE_FILE="${LOG_PATH}/ltf_usage"
 	# 创建界面日志文件
