@@ -40,9 +40,34 @@ Init_LTFMenu(){
 		exit 1
 	fi
 
+	# 需要执行的XML文件
+	xmlPath_LTFMenu=""
+	# 当前测试项目
+	testCases_LTFMenu=""
+
 	# read超时退出
 	TMOUT_LTFMENU=120
 
+	# 安装测试标识
+	INSTALLFLAG="false"
+
+	# 是否生成新XML
+	NEWXML_MENU="false"
+
+	# 新XML文件名
+	NEWXMLFILENAME_MENU=""
+
+	# 开始测试标识
+	RUNTESTCASES_MENU="false"
+	
+	# 回退到开始菜单
+	BACKTOHOME_MENU="false"
+}
+
+
+## TODO : 初始化XML相关变量
+#
+InitXML_LTFMenu(){
 	# 测试项对应的xml文件路径
 	testCasePathArr_menu=()
 	# 测试项名称
@@ -52,45 +77,32 @@ Init_LTFMenu(){
 
 	# 主菜单用户输入
 	UserInputArr=()
-	# 安装测试标识
-	INSTALLFLAG="false"
-
-	# 是否生成新XML
-	NEWXML_MENU="false"
-	# 新XML文件名
-	NEWXMLFILENAME_MENU=""
 }
-
 
 ## TODO : 解析CONFIG_XML_README说明文件
 #
 ReadmeParse_LTFMenu(){
 	# 数组计数
-	local num=0
+	local num=${#testCasePathArr_menu[*]}
 
 	# xml描述文件路径	
 	local readmelogpath=""
 	local readmelog=""
 	# xml 整体路径
 	local xmlpath=""
+	# 所有xml 整体路径
+	local xmlpaths=`find ${1} -maxdepth 1 -type f | sort | grep "\.xml$"`
+	xmlpaths=(${xmlpaths} `find ${1} -maxdepth 1 -mindepth 1 -type d`)
 	# 存储xml文件的最后一级目录
 	local xmldir=""
-	for xmlpath in `find ${LTFMENU_XMLCONFIG_ROOT} -type f | sort | grep "\.xml$"`	
+
+	for xmlpath in ${xmlpaths[@]}
 	do
 		xmldir="${LTFMENU_XMLCONFIG_ROOT##*/}"
 		# 获取xml文件路径
 		testCasePathArr_menu[$num]=${xmlpath#*${xmldir}/}
 		
-		# 判断是否存在目录标识"/"
-		echo "${testCasePathArr_menu[$num]}" | grep -q "/"
-		if [ $? -eq 0 ];then
-			# 存在目录
-			readmelogpath="${LTFMENU_XMLCONFIG_ROOT}/${testCasePathArr_menu[$num]%/*}/${CONFIG_XML_README}"
-		else
-			# 不存在目录
-			readmelogpath="${LTFMENU_XMLCONFIG_ROOT}/${CONFIG_XML_README}"
-		fi
-		
+		readmelogpath="${1}/${CONFIG_XML_README}"
 		# 判断是否存在xml说明文件
 		if [ -f "${readmelogpath}" ];then
 			# 存在xml说明文件
@@ -110,7 +122,7 @@ ReadmeParse_LTFMenu(){
 		else
 		# 说明文件中不存在对应条目
 			testCaseNameArr_menu[$num]=${testCasePathArr_menu[$num]%*.xml}
-			testCaseLogArr_menu[$num]="#####"
+			testCaseLogArr_menu[$num]="unKnown"
 		fi
 
 		let num=num+1
@@ -160,7 +172,7 @@ TestCaseUsageNew_LTFMenu(){
 	# 总共列数
 	let local colmax=${itemnum}/${rowmax}
 	let local colmax_remainder=${itemnum}%${rowmax}
-	if [ ${colmax_remainder} -gt 1 ];then
+	if [ ${colmax_remainder} -gt 0 ];then
 		let colmax=colmax+1
 	fi
 	
@@ -252,9 +264,12 @@ TestCaseUsageNew_LTFMenu(){
 		rshirftreal="${rshirftreal}${rshirft}"
 	done
 
+	# 开始测试
+	printf "\n${rshirftreal}%-2s : %-20s %-20s\n" "r" "Run Testcases" "开始测试"
+	# 返回首页
+	printf "${rshirftreal}%-2s : %-20s %-20s\n" "b" "Back To Homepage" "返回首页"
 	# 选择benchmarks	
-	printf "\n${rshirftreal}%-2s : %-20s %-20s\n" "s" "Select Benchmark" "自定义性能工具"
-
+	printf "${rshirftreal}%-2s : %-20s %-20s\n" "s" "Select Benchmark" "自定义性能工具"
 	# 退出界面
 	printf "${rshirftreal}%-2s : %-20s %-20s\n" "q" "Quit" "退出"
 	printf "${fmtreal_1}\n" $prmtreal_1
@@ -277,9 +292,12 @@ TestCaseUsageOld_LTFMenu(){
 		let num=num+1
 	done
 
+	# 开始测试
+	printf "\n\t${rshirftreal}%-2s : %-20s %-20s\n" "r" "Run Testcases" "开始测试"
+	# 返回首页
+	printf "\t${rshirftreal}%-2s : %-20s %-20s\n" "b" "Back To Homepage" "返回首页"
 	# 选择benchmarks	
-	printf "\n\t%-2s : %-20s %-20s\n" "s" "Select Benchmark" "自定义性能工具"
-
+	printf "\t%-2s : %-20s %-20s\n" "s" "Select Benchmark" "自定义性能工具"
 	# 退出界面
 	printf "\t%-2s : %-20s %-20s\n" "q" "Quit" "退出"
 	printf "%-s\n" "---------------------------------------------------"
@@ -315,7 +333,11 @@ Read_MainPage_LTFMenu(){
 	local outtime="$1"
 
         # 必须使用空格作为分隔符
-        printf "%s\n" "Separate multiple items with spaces (e.g. 1 2)"
+        #printf "%s\n" "Separate multiple items with spaces (e.g. 1 2)"
+
+	# 打印当前选择
+        printf "%s\n" "Current Testcases:${testCases_LTFMenu}"
+	
 
         # 临时变量，测试项数量减1
         let local tmpindex=$testcasenum-1
@@ -340,15 +362,15 @@ Read_MainPage_LTFMenu(){
 		for num in ${UserInputArr[@]}
 		do
 			# 判断用户输入是否属于常规序列号中
-			if [ $num -lt ${testcasenum} -a $num -gt 0 ] 2>/dev/null ;then
+			if [ $num -lt ${testcasenum} -a $num -ge 0 ] 2>/dev/null ;then
 				# 用户输入正常
 				true
-			elif [ $num -eq 0 ] 2>/dev/null ;then
-				# 用户输入0,全量测试,判断是否只输入一个字符
-				if [ ${#UserInputArr[@]} -ne 1 ];then
-					printf "Warn: 0 and other options cannot be set at the same time\n"
-					flag="false"
-				fi
+			elif [ "$num" == "b" ];then
+				# 回退到初始目录
+				BACKTOHOME_MENU="true"
+			elif [ "$num" == "r" ];then
+				# 运行测试 
+				RUNTESTCASES_MENU="true"
 			elif [ "$num" == "s" ];then
 				# 新增xml文件
 				SelectBenchmark_LTFMenu ${TMOUT_LTFMENU}
@@ -388,6 +410,11 @@ EnableBenchmark_LTFMenu(){
 
 	for num in ${UserInputArr[@]}
 	do
+		# 判断是否为目录
+		if [ -d "${LTFMENU_XMLCONFIG_ROOT}/${testCasePathArr_menu[$num]}" ];then
+			continue
+		fi
+
 		if [ "Z${testCaseNameArr_menu[$num]}" == "ZBenchmarks" -o "Z${testCaseNameArr_menu[$num]}" == "ZAll-Test-Item" ];then
 			# 存在性能测试
 			return 0
@@ -503,7 +530,10 @@ SelectBenchmark_LTFMenu(){
 	done
 	
         # 必须使用空格作为分隔符
-        printf "%s\n" "Separate multiple items with spaces (e.g. 1 2)"
+        #printf "%s\n" "Separate multiple items with spaces (e.g. 1 2)"
+
+	# 打印当前选择
+        printf "%s\n" "Current Testcases: ${testCases_LTFMenu}"
 
         # 临时变量，测试项数量减1
         let local tmpindex=${#benchmarkfilearr[@]}-1
@@ -612,14 +642,6 @@ Read_LTFMenu(){
 		return 0
 	fi
 	
-	# 判断是否存在性能测试
-	EnableBenchmark_LTFMenu
-	if [ $? -eq 0 ];then
-	# 存在性能测试
-		# 设置是否仅进行安装测试标签
-		SetInstallBenchmark_LTFMenu ${outtime}
-	fi
-	
 	return 0
 }
 
@@ -631,30 +653,7 @@ RunLTF_LTFMenu(){
 	# 清除屏幕
 	clear
 
-	local xmlpath=""
-	local input=""
-	for input in ${UserInputArr[@]}
-	do
-		# 判断是否为全量测试
-		if [ "Z${testCaseNameArr_menu[$input]}" == "ZAll-Test-Item" ];then
-			if [ "Z$INSTALLFLAG" == "Ztrue" ];then
-				printf "Comand : ./Run.sh -a -i \n"
-				./Run.sh -a -i
-			else
-				printf "Comand : ./Run.sh -a \n"
-				./Run.sh -a
-			fi
-			return 0
-		fi
-
-		# 收集测试项
-		if [ "Z$xmlpath" == "Z" ];then
-			xmlpath="${testCasePathArr_menu[$input]}"
-		else
-			xmlpath="$xmlpath:${testCasePathArr_menu[$input]}"
-		fi
-	done
-
+	local xmlpath="${xmlPath_LTFMenu}"
 	# 运行指定测试
 	if [ "Z$INSTALLFLAG" == "Ztrue" ];then
 		printf "Command : ./Run.sh -f $xmlpath -i \n"
@@ -668,26 +667,89 @@ RunLTF_LTFMenu(){
 
 ## TODO : 主函数
 #
+ParseInput_LTFMenu(){
+	local input=""
+	for input in ${UserInputArr[@]}
+	do
+		# 非数字直接退出
+		if [ "${input}" -ge 0 ] 2>/dev/null;then
+			true
+		else
+			return 0
+		fi
+
+		# 判断是否为目录
+		if [ -d "${LTFMENU_XMLCONFIG_ROOT}/${testCasePathArr_menu[$input]}" ];then
+			# 后续判断XML的目录
+			xmlPath_Cur="${LTFMENU_XMLCONFIG_ROOT}/${testCasePathArr_menu[$input]}"
+			continue
+		fi
+
+		# 收集测试项
+		if [ "Z$xmlPath_LTFMenu" == "Z" ];then
+			xmlPath_LTFMenu="${testCasePathArr_menu[$input]}"
+			testCases_LTFMenu="${testCaseNameArr_menu[$input]}(${testCaseLogArr_menu[$input]})"
+		else
+			# 判断是否存在
+			echo ${xmlPath_LTFMenu} | grep -q ${testCasePathArr_menu[$input]}
+			if [ $? -ne 0 ];then
+				xmlPath_LTFMenu="$xmlPath_LTFMenu:${testCasePathArr_menu[$input]}"
+				testCases_LTFMenu="${testCases_LTFMenu},${testCaseNameArr_menu[$input]}(${testCaseLogArr_menu[$input]})"
+			fi
+		fi
+	done
+
+	# 等待时间
+	local outtime=${TMOUT_LTFMENU}
+	# 判断是否存在性能测试
+	EnableBenchmark_LTFMenu
+	if [ $? -eq 0 ];then
+	# 存在性能测试
+		# 设置是否仅进行安装测试标签
+		SetInstallBenchmark_LTFMenu ${outtime}
+	fi
+}
+
+
+## TODO : 主函数
+#
 Main_LTFMenu(){
+	# 初始化
+	Init_LTFMenu
+
+	local xmlpath_cur="${LTFMENU_XMLCONFIG_ROOT}"
 	while :
 	do
-		# 初始化
-		Init_LTFMenu
+		InitXML_LTFMenu
 
 		# 解析config/readme文件
-		ReadmeParse_LTFMenu
+		ReadmeParse_LTFMenu ${xmlpath_cur}
 
 		# 用户界面
 		Usage_LTFMenu
 
 		# 读取用户输入
 		Read_LTFMenu
-		if [ ${NEWXML_MENU} == "true" ];then
-			NEWXML_MENU="false"
-		else
-			#没有增加xml
+
+		# 解析用户数字输入
+		ParseInput_LTFMenu
+
+		# 解析用户非数字字符
+		if [ -d "${xmlPath_Cur}" ];then
+		# 判断是否存在目录
+			xmlpath_cur="${xmlPath_Cur}"
+			xmlPath_Cur=""
+			continue
+		elif [ ${RUNTESTCASES_MENU} == "true" ];then
 			break
+		elif [ ${BACKTOHOME_MENU} == "true" ];then
+			BACKTOHOME_MENU="false"
+			xmlpath_cur="${LTFMENU_XMLCONFIG_ROOT}"
+			continue
+		else
+			xmlpath_cur="${LTFMENU_XMLCONFIG_ROOT}"
 		fi
+		
 	done
 
 	# 执行Run.sh文件
