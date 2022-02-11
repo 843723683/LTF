@@ -779,11 +779,11 @@ SvcActive_LTFLIB(){
         if [ $? -eq 0 ];then
 		# 判断服务当前是否已经激活,如果激活则返回0.(若服务不存在算作未激活)
 		if [ Z"$quiet" == Z"yes" ];then
-			systemctl is-active $svcname > /dev/null
+			sudo systemctl is-active $svcname > /dev/null
 			ret=$?
 		else
 			echo -n "systemctl is-active $svcname : "
-			systemctl is-active $svcname
+			sudo systemctl is-active $svcname
 			ret=$?
 		fi
 	else
