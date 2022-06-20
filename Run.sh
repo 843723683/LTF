@@ -165,7 +165,8 @@ Run(){
 	local caseScript=$3
 
 	# 日志文件
-	local logFile=${LOG_PATH}/$(basename ${caseDir}).ret
+	#local logFile=${LOG_PATH}/$(basename ${caseDir}).ret
+	local logFile=${LOG_PATH}/$(basename ${caseDir}).txt
 	
 	local ret=${TPASS}
 
